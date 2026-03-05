@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centime Expense Management — MVP Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50:'#e6f5f5',100:'#ccebeb',200:'#99d7d9',300:'#4db8bb',400:'#009a9f',500:'#008085',600:'#006d71',700:'#024743',800:'#013633',900:'#012524' },
+            gold: { 100:'#fef6dc',200:'#fde9a6',300:'#fdc231',400:'#e5ad1e',500:'#c4940f' },
+            surface: { 0:'#ffffff',warm:'#faf6ee',50:'#f7f8f9',100:'#f1f2f4',200:'#e3e5e8',300:'#cdd0d5' },
+            ink: { 900:'#0f1419',800:'#1a2028',700:'#2d3440',500:'#5f6b7a',400:'#8b95a3',300:'#b5bcc7' },
+            st: {
+              gl: { light:'#eefbf3',base:'#0f9d58',dark:'#0b7a42',border:'#b7eaca' },
+              am: { light:'#fef9eb',base:'#d4930d',dark:'#a87308',border:'#fde68a' },
+              rd: { light:'#fef2f2',base:'#d93025',dark:'#ae241c',border:'#fcc8c5' },
+              bl: { light:'#ebf6ff',base:'#1a73e8',dark:'#1557b0',border:'#b3d4fc' },
+              gy: { light:'#f7f8f9',base:'#5f6b7a',dark:'#3d4654',border:'#e3e5e8' },
+            }
+          },
+          fontFamily: { sans:['-apple-system','BlinkMacSystemFont','Segoe UI','Inter','Roboto','sans-serif'], mono:['"SF Mono"','Fira Code','Menlo','monospace'] },
+          fontSize: { 'xxs':['0.625rem',{lineHeight:'0.875rem'}],'xs':['0.75rem',{lineHeight:'1rem'}],'sm':['0.8125rem',{lineHeight:'1.25rem'}],'base':['0.875rem',{lineHeight:'1.375rem'}],'md':['0.9375rem',{lineHeight:'1.5rem'}],'lg':['1.125rem',{lineHeight:'1.75rem'}],'xl':['1.25rem',{lineHeight:'1.75rem'}],'2xl':['1.5rem',{lineHeight:'2rem'}] },
+          borderRadius: { card:'12px' }
+        }
+      }
+    }
+  </script>
+  <style>
+    *{-webkit-font-smoothing:antialiased}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;margin:0;overflow:hidden;height:100vh}
+    .page{display:none}.page.active{display:block}
+    .nav-item{transition:all .12s ease}
+    .nav-item.active{background:rgba(255,255,255,.12)}
+    .trow{transition:background .1s ease}
+    .trow:hover{background:rgba(0,128,133,.04)}
+    [data-tab]{cursor:pointer}
+    .tab-underline{transition:all .15s ease}
+  </style>
+</head>
+<body class="bg-surface-50 text-ink-900 flex h-screen">
+
+<!-- ===== SIDEBAR ===== -->
+<aside id="sidebar" class="w-[220px] bg-brand-700 flex flex-col shrink-0 h-screen">
+  <div class="px-4 py-3.5 border-b border-white/10 flex items-center gap-2.5">
+    <div class="w-7 h-7 bg-white/15 rounded-lg flex items-center justify-center">
+      <svg class="w-3.5 h-3.5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+    </div>
+    <span class="text-sm font-semibold text-white">Centime</span>
+  </div>
+  <nav class="px-2 py-3 flex-1 overflow-y-auto" id="nav">
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Main</div>
+      <a href="#" data-page="dashboard" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm font-medium text-white rounded-lg mt-0.5 active">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+      <a href="#" data-page="expenses" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+        My Expenses
+        <span class="ml-auto text-xxs font-medium bg-gold-300 text-brand-800 px-1.5 py-0.5 rounded-full">3</span>
+      </a>
+      <a href="#" data-page="transactions" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        Card Transactions
+      </a>
+    </div>
+    <div class="mb-4 manager-only">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Approvals</div>
+      <a href="#" data-page="review" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        Review Queue
+        <span class="ml-auto text-xxs font-medium bg-st-rd-base text-white px-1.5 py-0.5 rounded-full">7</span>
+      </a>
+    </div>
+    <div class="finance-only">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Finance</div>
+      <a href="#" data-page="reconciliation" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        Reconciliation
+      </a>
+      <a href="#" data-page="policies" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        Policies
+      </a>
+      <a href="#" data-page="reports" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Reports
+      </a>
+    </div>
+  </nav>
+  <!-- Role Switcher -->
+  <div class="px-2 py-2 border-t border-white/10">
+    <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider mb-1">View as</div>
+    <div class="flex gap-1">
+      <button onclick="setRole('employee')" data-role="employee" class="role-btn text-xxs px-2 py-1 rounded-md bg-white/10 text-white font-medium">Employee</button>
+      <button onclick="setRole('manager')" data-role="manager" class="role-btn text-xxs px-2 py-1 rounded-md text-white/50 hover:text-white font-medium">Manager</button>
+      <button onclick="setRole('finance')" data-role="finance" class="role-btn text-xxs px-2 py-1 rounded-md text-white/50 hover:text-white font-medium">Finance</button>
+    </div>
+  </div>
+  <!-- User -->
+  <div class="px-2 py-3 border-t border-white/10">
+    <div class="flex items-center gap-2.5 px-2.5">
+      <div class="w-7 h-7 bg-brand-400 rounded-full flex items-center justify-center text-xs font-semibold text-white" id="user-avatar">JM</div>
+      <div>
+        <div class="text-sm font-medium text-white" id="user-name">J. Martinez</div>
+        <div class="text-xxs text-white/50" id="user-role">Sales &middot; Employee</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="flex-1 overflow-y-auto">
+
+<!-- ==================== DASHBOARD ==================== -->
+<div id="page-dashboard" class="page active p-6">
+  <div class="flex items-center justify-between mb-5">
+    <div>
+      <h1 class="text-2xl font-semibold text-ink-900">Dashboard</h1>
+      <p class="text-sm text-ink-400 mt-0.5">March 5, 2026 &middot; Welcome back, Jamie</p>
+    </div>
+    <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1.5" onclick="showPage('submit')">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      New Expense
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-5 gap-3 mb-6">
+    <div class="bg-white border border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Pending</div>
+      <div class="text-xl font-semibold text-ink-900 mt-1" style="font-variant-numeric:tabular-nums">$1,247.50</div>
+      <div class="text-xs text-ink-400 mt-0.5">3 expenses</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Approved (MTD)</div>
+      <div class="text-xl font-semibold text-st-gl-base mt-1" style="font-variant-numeric:tabular-nums">$4,892.30</div>
+      <div class="text-xs text-ink-400 mt-0.5">12 expenses</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Total (MTD)</div>
+      <div class="text-xl font-semibold text-ink-900 mt-1" style="font-variant-numeric:tabular-nums">$6,139.80</div>
+      <div class="text-xs text-ink-400 mt-0.5">15 expenses</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Violations</div>
+      <div class="text-xl font-semibold text-st-am-base mt-1" style="font-variant-numeric:tabular-nums">2</div>
+      <div class="text-xs text-ink-400 mt-0.5">Needs attention</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Corporate Card</div>
+      <div class="text-xl font-semibold text-brand-500 mt-1" style="font-variant-numeric:tabular-nums">87%</div>
+      <div class="text-xs text-ink-400 mt-0.5">Usage rate</div>
+    </div>
+  </div>
+
+  <!-- Action Items -->
+  <div class="flex items-start gap-3 bg-st-am-light border border-st-am-border rounded-card px-4 py-3 mb-6">
+    <svg class="w-4 h-4 text-st-am-base mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.834-1.964-.834-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+    <div class="flex-1">
+      <div class="text-sm font-medium text-st-am-dark">3 card transactions need your attention</div>
+      <div class="text-xs text-st-am-dark/80 mt-0.5">Attach receipts and submit before the March 10 deadline.</div>
+    </div>
+    <button class="text-xs font-medium text-st-am-dark hover:underline shrink-0" onclick="showPage('transactions')">View Transactions</button>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <!-- Recent Expenses -->
+    <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-2.5 border-b border-surface-200">
+        <span class="text-sm font-semibold text-ink-900">Recent Expenses</span>
+        <button class="text-xs text-brand-500 hover:text-brand-600 font-medium" onclick="showPage('expenses')">View All</button>
+      </div>
+      <div class="divide-y divide-surface-200">
+        <div class="flex items-center px-4 py-2.5 trow cursor-pointer" onclick="showPage('expenses')">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-ink-900">Marriott Downtown</div>
+            <div class="text-xs text-ink-400">Feb 28 &middot; Lodging</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900 mr-3" style="font-variant-numeric:tabular-nums">$247.50</div>
+          <span class="inline-flex items-center gap-1.5 bg-st-gl-light text-st-gl-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-gl-border"><span class="w-1.5 h-1.5 rounded-full bg-st-gl-base"></span>Approved</span>
+        </div>
+        <div class="flex items-center px-4 py-2.5 trow cursor-pointer" onclick="showPage('expenses')">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-ink-900">Uber</div>
+            <div class="text-xs text-ink-400">Feb 27 &middot; Transportation</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900 mr-3" style="font-variant-numeric:tabular-nums">$34.20</div>
+          <span class="inline-flex items-center gap-1.5 bg-st-am-light text-st-am-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-am-border"><span class="w-1.5 h-1.5 rounded-full bg-st-am-base"></span>Pending</span>
+        </div>
+        <div class="flex items-center px-4 py-2.5 trow cursor-pointer" onclick="showPage('expenses')">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-ink-900">Ruth's Chris</div>
+            <div class="text-xs text-ink-400">Feb 26 &middot; Meals</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900 mr-3" style="font-variant-numeric:tabular-nums">$312.80</div>
+          <span class="inline-flex items-center gap-1.5 bg-st-am-light text-st-am-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-am-border">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.834-1.964-.834-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>Violation</span>
+        </div>
+        <div class="flex items-center px-4 py-2.5 trow cursor-pointer" onclick="showPage('expenses')">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-ink-900">AWS</div>
+            <div class="text-xs text-ink-400">Feb 25 &middot; Software</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900 mr-3" style="font-variant-numeric:tabular-nums">$89.99</div>
+          <span class="inline-flex items-center gap-1.5 bg-st-gl-light text-st-gl-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-gl-border">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Auto</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unmatched Card Transactions -->
+    <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+      <div class="flex items-center justify-between px-4 py-2.5 border-b border-surface-200">
+        <span class="text-sm font-semibold text-ink-900">Unsubmitted Card Transactions</span>
+        <button class="text-xs text-brand-500 hover:text-brand-600 font-medium" onclick="showPage('transactions')">View All</button>
+      </div>
+      <div class="divide-y divide-surface-200">
+        <div class="flex items-center px-4 py-2.5 trow cursor-pointer" onclick="showPage('submit')">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-ink-900">Delta Airlines</div>
+            <div class="text-xs text-ink-400">Mar 3 &middot; ****7734 &middot; MCC 3000</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900 mr-3" style="font-variant-numeric:tabular-nums">$524.00</div>
+          <span class="inline-flex items-center gap-1 text-xs font-medium text-st-rd-dark bg-st-rd-light px-1.5 py-0.5 rounded-md border border-st-rd-border">No receipt</span>
+        </div>
+        <div class="flex items-center px-4 py-2.5 trow cursor-pointer" onclick="showPage('submit')">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-ink-900">Hilton Garden Inn</div>
+            <div class="text-xs text-ink-400">Mar 2 &middot; ****7734 &middot; MCC 7011</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900 mr-3" style="font-variant-numeric:tabular-nums">$189.00</div>
+          <span class="inline-flex items-center gap-1 text-xs font-medium text-st-rd-dark bg-st-rd-light px-1.5 py-0.5 rounded-md border border-st-rd-border">No receipt</span>
+        </div>
+        <div class="flex items-center px-4 py-2.5 trow cursor-pointer" onclick="showPage('submit')">
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-ink-900">Shell Gas Station</div>
+            <div class="text-xs text-ink-400">Mar 1 &middot; ****7734 &middot; MCC 5541</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900 mr-3" style="font-variant-numeric:tabular-nums">$62.45</div>
+          <span class="inline-flex items-center gap-1 text-xs font-medium text-st-rd-dark bg-st-rd-light px-1.5 py-0.5 rounded-md border border-st-rd-border">No receipt</span>
+        </div>
+      </div>
+      <div class="px-4 py-2.5 border-t border-surface-200 bg-surface-50">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-ink-400">3 transactions &middot; $775.45 total</span>
+          <span class="text-xs text-st-am-dark font-medium">Due Mar 10</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MY EXPENSES ==================== -->
+<div id="page-expenses" class="page p-6">
+  <div class="flex items-center justify-between mb-5">
+    <h1 class="text-2xl font-semibold text-ink-900">My Expenses</h1>
+    <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1.5" onclick="showPage('submit')">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      New Expense
+    </button>
+  </div>
+
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <div class="flex items-center justify-between px-4 py-2.5 border-b border-surface-200">
+      <div class="flex items-center gap-2">
+        <button class="text-xs font-medium px-2.5 py-1 rounded-md bg-brand-500 text-white">All</button>
+        <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">Pending</button>
+        <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">Approved</button>
+        <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">Rejected</button>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="relative">
+          <svg class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" placeholder="Search..." class="text-sm pl-8 pr-3 py-1 rounded-lg border border-surface-300 w-48 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500">
+        </div>
+      </div>
+    </div>
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-surface-200 bg-surface-50">
+          <th class="w-8 px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Date</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Merchant</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Category</th>
+          <th class="text-right text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Amount</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Card</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Status</th>
+          <th class="text-center text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Receipt</th>
+          <th class="w-10"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2 text-sm text-ink-700" style="font-variant-numeric:tabular-nums">Feb 28</td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Marriott Downtown</div><div class="text-xs text-ink-400">MCC 7011</div></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Lodging</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$247.50</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded-md border border-brand-200">****7734</span></td>
+          <td class="px-3 py-2"><span class="inline-flex items-center gap-1.5 bg-st-gl-light text-st-gl-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-gl-border"><span class="w-1.5 h-1.5 rounded-full bg-st-gl-base"></span>Approved</span></td>
+          <td class="px-3 py-2 text-center"><svg class="w-4 h-4 text-st-gl-base mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></td>
+          <td class="px-3 py-2"><button class="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-ink-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button></td>
+        </tr>
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Feb 27</td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Uber</div><div class="text-xs text-ink-400">MCC 4121</div></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Transport</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$34.20</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded-md border border-brand-200">****7734</span></td>
+          <td class="px-3 py-2"><span class="inline-flex items-center gap-1.5 bg-st-am-light text-st-am-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-am-border"><span class="w-1.5 h-1.5 rounded-full bg-st-am-base"></span>Pending</span></td>
+          <td class="px-3 py-2 text-center"><svg class="w-4 h-4 text-st-gl-base mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></td>
+          <td class="px-3 py-2"><button class="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-ink-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button></td>
+        </tr>
+        <tr class="trow group bg-st-am-light/30">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Feb 26</td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Ruth's Chris Steak House</div><div class="text-xs text-ink-400">MCC 5812</div></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Meals</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$312.80</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-ink-500 bg-surface-100 px-1.5 py-0.5 rounded-md border border-surface-200">Personal</span></td>
+          <td class="px-3 py-2"><span class="inline-flex items-center gap-1.5 bg-st-am-light text-st-am-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-am-border"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.834-1.964-.834-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>Violation</span></td>
+          <td class="px-3 py-2 text-center"><svg class="w-4 h-4 text-st-gl-base mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></td>
+          <td class="px-3 py-2"><button class="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-ink-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button></td>
+        </tr>
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Feb 25</td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Amazon Web Services</div><div class="text-xs text-ink-400">MCC 5734</div></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Software</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$89.99</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded-md border border-brand-200">****7734</span></td>
+          <td class="px-3 py-2"><span class="inline-flex items-center gap-1.5 bg-st-gl-light text-st-gl-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-gl-border"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Auto</span></td>
+          <td class="px-3 py-2 text-center"><svg class="w-4 h-4 text-st-gl-base mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></td>
+          <td class="px-3 py-2"><button class="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-ink-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button></td>
+        </tr>
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Feb 24</td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Starbucks</div><div class="text-xs text-ink-400">MCC 5814</div></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Meals</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$12.45</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded-md border border-brand-200">****7734</span></td>
+          <td class="px-3 py-2"><span class="inline-flex items-center gap-1.5 bg-st-gl-light text-st-gl-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-gl-border"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Auto</span></td>
+          <td class="px-3 py-2 text-center"><svg class="w-4 h-4 text-st-gl-base mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></td>
+          <td class="px-3 py-2"><button class="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-ink-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button></td>
+        </tr>
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Feb 22</td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Southwest Airlines</div><div class="text-xs text-ink-400">MCC 3000</div></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Airfare</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$445.00</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded-md border border-brand-200">****7734</span></td>
+          <td class="px-3 py-2"><span class="inline-flex items-center gap-1.5 bg-st-gl-light text-st-gl-dark text-xs font-medium px-2 py-0.5 rounded-md border border-st-gl-border"><span class="w-1.5 h-1.5 rounded-full bg-st-gl-base"></span>Approved</span></td>
+          <td class="px-3 py-2 text-center"><svg class="w-4 h-4 text-st-gl-base mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></td>
+          <td class="px-3 py-2"><button class="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-ink-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg></button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="flex items-center justify-between px-4 py-2 border-t border-surface-200 bg-surface-50">
+      <div class="text-xs text-ink-400">Showing 1-6 of 24</div>
+      <div class="flex items-center gap-1">
+        <button class="text-xs text-ink-400 px-2 py-1 rounded-md hover:bg-surface-100">Prev</button>
+        <button class="text-xs text-white bg-brand-500 px-2 py-1 rounded-md">1</button>
+        <button class="text-xs text-ink-500 px-2 py-1 rounded-md hover:bg-surface-100">2</button>
+        <button class="text-xs text-ink-500 px-2 py-1 rounded-md hover:bg-surface-100">3</button>
+        <button class="text-xs text-ink-500 px-2 py-1 rounded-md hover:bg-surface-100">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CARD TRANSACTIONS ==================== -->
+<div id="page-transactions" class="page p-6">
+  <div class="flex items-center justify-between mb-5">
+    <div>
+      <h1 class="text-2xl font-semibold text-ink-900">Card Transactions</h1>
+      <p class="text-sm text-ink-400 mt-0.5">Corporate card ending ****7734 &middot; US Bank Visa</p>
+    </div>
+  </div>
+
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-surface-200">
+      <button class="text-xs font-medium px-2.5 py-1 rounded-md bg-st-am-base text-white">Unsubmitted (3)</button>
+      <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">Matched (12)</button>
+      <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">All (15)</button>
+    </div>
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-surface-200 bg-surface-50">
+          <th class="w-8 px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Transaction Date</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Merchant</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">MCC / Category</th>
+          <th class="text-right text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Amount</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Receipt</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Age</th>
+          <th class="w-28"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Mar 3, 2026</td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Delta Airlines</div></td>
+          <td class="px-3 py-2"><span class="text-xs text-ink-500">3000 &middot; Airlines</span></td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$524.00</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-st-rd-dark bg-st-rd-light px-1.5 py-0.5 rounded-md border border-st-rd-border">Missing</span></td>
+          <td class="px-3 py-2 text-sm text-ink-500">2 days</td>
+          <td class="px-3 py-2"><button class="bg-brand-500 hover:bg-brand-600 text-white text-xs font-medium px-3 py-1 rounded-lg" onclick="showPage('submit')">Submit</button></td>
+        </tr>
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Mar 2, 2026</td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Hilton Garden Inn</div></td>
+          <td class="px-3 py-2"><span class="text-xs text-ink-500">7011 &middot; Lodging</span></td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$189.00</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-st-rd-dark bg-st-rd-light px-1.5 py-0.5 rounded-md border border-st-rd-border">Missing</span></td>
+          <td class="px-3 py-2 text-sm text-ink-500">3 days</td>
+          <td class="px-3 py-2"><button class="bg-brand-500 hover:bg-brand-600 text-white text-xs font-medium px-3 py-1 rounded-lg" onclick="showPage('submit')">Submit</button></td>
+        </tr>
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2 text-sm text-ink-700">Mar 1, 2026</td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Shell Gas Station</div></td>
+          <td class="px-3 py-2"><span class="text-xs text-ink-500">5541 &middot; Gas Stations</span></td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$62.45</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-st-rd-dark bg-st-rd-light px-1.5 py-0.5 rounded-md border border-st-rd-border">Missing</span></td>
+          <td class="px-3 py-2 text-sm text-st-am-dark font-medium">4 days</td>
+          <td class="px-3 py-2"><button class="bg-brand-500 hover:bg-brand-600 text-white text-xs font-medium px-3 py-1 rounded-lg" onclick="showPage('submit')">Submit</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== SUBMIT EXPENSE ==================== -->
+<div id="page-submit" class="page p-6">
+  <div class="flex items-center gap-3 mb-5">
+    <button class="text-ink-400 hover:text-ink-700" onclick="showPage('dashboard')">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <h1 class="text-2xl font-semibold text-ink-900">Submit Expense</h1>
+  </div>
+
+  <!-- Pre-filled from card transaction -->
+  <div class="flex items-start gap-3 bg-brand-50 border border-brand-200 rounded-card px-4 py-3 mb-5">
+    <svg class="w-4 h-4 text-brand-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+    <div>
+      <div class="text-sm font-medium text-brand-700">Pre-filled from card transaction</div>
+      <div class="text-xs text-brand-600/80 mt-0.5">Delta Airlines &middot; ****7734 &middot; Mar 3, 2026 &middot; $524.00</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-6">
+    <!-- Left: Form -->
+    <div class="col-span-2 space-y-4">
+      <div class="bg-white border border-surface-200 rounded-card p-5">
+        <h2 class="text-md font-semibold text-ink-900 mb-4">Expense Details</h2>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-ink-700 mb-1">Merchant</label>
+            <input type="text" value="Delta Airlines" class="w-full text-sm text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-surface-50">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-700 mb-1">Amount</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-400">$</span>
+              <input type="text" value="524.00" class="w-full text-sm text-ink-900 pl-7 pr-3 py-1.5 rounded-lg border border-surface-300 bg-surface-50 text-right font-mono" style="font-variant-numeric:tabular-nums">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-700 mb-1">Date</label>
+            <input type="date" value="2026-03-03" class="w-full text-sm text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-white">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-700 mb-1">Category</label>
+            <select class="w-full text-sm text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-white">
+              <option selected>Airfare</option>
+              <option>Lodging</option>
+              <option>Meals & Entertainment</option>
+              <option>Transportation</option>
+              <option>Office Supplies</option>
+              <option>Software</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-700 mb-1">GL Code</label>
+            <select class="w-full text-sm text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-white">
+              <option selected>6200-100 Travel — Airfare</option>
+              <option>6210-100 Travel — Lodging</option>
+              <option>6220-100 Travel — Meals</option>
+              <option>6230-100 Travel — Ground</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-ink-700 mb-1">Cost Center</label>
+            <select class="w-full text-sm text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-white">
+              <option selected>Sales — West Region</option>
+              <option>Sales — East Region</option>
+              <option>Engineering</option>
+              <option>Marketing</option>
+            </select>
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-ink-700 mb-1">Business Purpose <span class="text-ink-400 font-normal">(required)</span></label>
+            <input type="text" placeholder="e.g., Client visit to Acme Corp, Dallas" class="w-full text-sm text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-white placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500">
+          </div>
+        </div>
+      </div>
+
+      <!-- Policy check -->
+      <div class="bg-white border border-surface-200 rounded-card p-5">
+        <h2 class="text-md font-semibold text-ink-900 mb-3">Policy Check</h2>
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+            <span class="text-sm text-ink-700">Corporate card used</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>
+            <span class="text-sm text-ink-700">Within airfare limit ($2,000)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-st-am-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01"/></svg>
+            <span class="text-sm text-st-am-dark">Receipt required for expenses over $25</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h8"/></svg>
+            <span class="text-sm text-ink-400">Routes to: D. Wilkinson (Direct Manager)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">Submit for Approval</button>
+        <button class="bg-white hover:bg-surface-50 text-ink-700 text-sm font-medium px-5 py-2 rounded-lg border border-surface-300">Save as Draft</button>
+        <button class="text-ink-400 hover:text-ink-700 text-sm px-3 py-2" onclick="showPage('dashboard')">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Right: Receipt upload -->
+    <div>
+      <div class="bg-white border border-surface-200 rounded-card p-5">
+        <h2 class="text-md font-semibold text-ink-900 mb-3">Receipt</h2>
+        <div class="border-2 border-dashed border-surface-300 rounded-lg p-8 text-center hover:border-brand-400 transition-colors cursor-pointer">
+          <svg class="w-8 h-8 text-ink-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <div class="text-sm font-medium text-ink-700">Drop receipt here</div>
+          <div class="text-xs text-ink-400 mt-1">or click to upload</div>
+          <div class="text-xs text-ink-300 mt-2">JPG, PNG, PDF up to 10MB</div>
+        </div>
+        <div class="mt-3 text-xs text-ink-400">
+          <div class="font-medium text-ink-500 mb-1">OCR will extract:</div>
+          <div>Amount, date, vendor, tax</div>
+        </div>
+      </div>
+
+      <div class="bg-gold-100 border border-gold-200 rounded-card p-4 mt-3">
+        <div class="flex items-start gap-2">
+          <svg class="w-4 h-4 text-gold-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div>
+            <div class="text-xs font-medium text-gold-500">Tip</div>
+            <div class="text-xs text-ink-500 mt-0.5">Forward receipts to <span class="font-mono text-ink-700">receipts@centime.com</span> to auto-match with card transactions.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MANAGER REVIEW QUEUE ==================== -->
+<div id="page-review" class="page p-6">
+  <div class="flex items-center justify-between mb-5">
+    <div>
+      <h1 class="text-2xl font-semibold text-ink-900">Review Queue</h1>
+      <p class="text-sm text-ink-400 mt-0.5">7 expenses awaiting your approval</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <button class="bg-st-gl-base hover:bg-st-gl-dark text-white text-xs font-medium px-3 py-1.5 rounded-lg inline-flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        Batch Approve (0)
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <div class="flex items-center gap-2 px-4 py-2.5 border-b border-surface-200">
+      <button class="text-xs font-medium px-2.5 py-1 rounded-md bg-brand-500 text-white">Needs Review (7)</button>
+      <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">Approved (23)</button>
+      <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">Returned (2)</button>
+    </div>
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-surface-200 bg-surface-50">
+          <th class="w-8 px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Employee</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Merchant</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Category</th>
+          <th class="text-right text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Amount</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Flags</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Submitted</th>
+          <th class="w-44"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow group bg-st-am-light/30">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Jamie Martinez</div><div class="text-xs text-ink-400">Sales</div></td>
+          <td class="px-3 py-2 text-sm text-ink-900">Ruth's Chris</td>
+          <td class="px-3 py-2 text-sm text-ink-700">Meals</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$312.80</td>
+          <td class="px-3 py-2">
+            <div class="flex gap-1">
+              <span class="text-xxs font-medium text-st-am-dark bg-st-am-light px-1.5 py-0.5 rounded border border-st-am-border">Over limit</span>
+              <span class="text-xxs font-medium text-ink-500 bg-surface-100 px-1.5 py-0.5 rounded border border-surface-200">Personal</span>
+            </div>
+          </td>
+          <td class="px-3 py-2 text-sm text-ink-500">2 days ago</td>
+          <td class="px-3 py-2">
+            <div class="flex gap-1.5">
+              <button class="bg-st-gl-base hover:bg-st-gl-dark text-white text-xs font-medium px-2.5 py-1 rounded-lg">Approve</button>
+              <button class="bg-white hover:bg-surface-50 text-ink-700 text-xs font-medium px-2.5 py-1 rounded-lg border border-surface-300">Return</button>
+              <button class="text-st-rd-base hover:text-st-rd-dark text-xs font-medium px-2 py-1">Reject</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Sarah Chen</div><div class="text-xs text-ink-400">Engineering</div></td>
+          <td class="px-3 py-2 text-sm text-ink-900">Zoom</td>
+          <td class="px-3 py-2 text-sm text-ink-700">Software</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$149.90</td>
+          <td class="px-3 py-2"><span class="text-xxs text-st-gl-dark">Clean</span></td>
+          <td class="px-3 py-2 text-sm text-ink-500">1 day ago</td>
+          <td class="px-3 py-2">
+            <div class="flex gap-1.5">
+              <button class="bg-st-gl-base hover:bg-st-gl-dark text-white text-xs font-medium px-2.5 py-1 rounded-lg">Approve</button>
+              <button class="bg-white hover:bg-surface-50 text-ink-700 text-xs font-medium px-2.5 py-1 rounded-lg border border-surface-300">Return</button>
+              <button class="text-st-rd-base hover:text-st-rd-dark text-xs font-medium px-2 py-1">Reject</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Michael Torres</div><div class="text-xs text-ink-400">Sales</div></td>
+          <td class="px-3 py-2 text-sm text-ink-900">Lyft</td>
+          <td class="px-3 py-2 text-sm text-ink-700">Transport</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$28.50</td>
+          <td class="px-3 py-2"><span class="text-xxs text-st-gl-dark">Clean</span></td>
+          <td class="px-3 py-2 text-sm text-ink-500">1 day ago</td>
+          <td class="px-3 py-2">
+            <div class="flex gap-1.5">
+              <button class="bg-st-gl-base hover:bg-st-gl-dark text-white text-xs font-medium px-2.5 py-1 rounded-lg">Approve</button>
+              <button class="bg-white hover:bg-surface-50 text-ink-700 text-xs font-medium px-2.5 py-1 rounded-lg border border-surface-300">Return</button>
+              <button class="text-st-rd-base hover:text-st-rd-dark text-xs font-medium px-2 py-1">Reject</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="trow group">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Sarah Chen</div><div class="text-xs text-ink-400">Engineering</div></td>
+          <td class="px-3 py-2 text-sm text-ink-900">WeWork</td>
+          <td class="px-3 py-2 text-sm text-ink-700">Office</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$450.00</td>
+          <td class="px-3 py-2"><span class="text-xxs text-st-gl-dark">Clean</span></td>
+          <td class="px-3 py-2 text-sm text-ink-500">3 days ago</td>
+          <td class="px-3 py-2">
+            <div class="flex gap-1.5">
+              <button class="bg-st-gl-base hover:bg-st-gl-dark text-white text-xs font-medium px-2.5 py-1 rounded-lg">Approve</button>
+              <button class="bg-white hover:bg-surface-50 text-ink-700 text-xs font-medium px-2.5 py-1 rounded-lg border border-surface-300">Return</button>
+              <button class="text-st-rd-base hover:text-st-rd-dark text-xs font-medium px-2 py-1">Reject</button>
+            </div>
+          </td>
+        </tr>
+        <tr class="trow group bg-st-am-light/30">
+          <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+          <td class="px-3 py-2"><div class="text-sm font-medium text-ink-900">Alex Rivera</div><div class="text-xs text-ink-400">Marketing</div></td>
+          <td class="px-3 py-2 text-sm text-ink-900">Facebook Ads</td>
+          <td class="px-3 py-2 text-sm text-ink-700">Advertising</td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$2,500.00</td>
+          <td class="px-3 py-2"><span class="text-xxs font-medium text-st-am-dark bg-st-am-light px-1.5 py-0.5 rounded border border-st-am-border">High amount</span></td>
+          <td class="px-3 py-2 text-sm text-st-am-dark font-medium">5 days ago</td>
+          <td class="px-3 py-2">
+            <div class="flex gap-1.5">
+              <button class="bg-st-gl-base hover:bg-st-gl-dark text-white text-xs font-medium px-2.5 py-1 rounded-lg">Approve</button>
+              <button class="bg-white hover:bg-surface-50 text-ink-700 text-xs font-medium px-2.5 py-1 rounded-lg border border-surface-300">Return</button>
+              <button class="text-st-rd-base hover:text-st-rd-dark text-xs font-medium px-2 py-1">Reject</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== RECONCILIATION ==================== -->
+<div id="page-reconciliation" class="page p-6">
+  <div class="flex items-center justify-between mb-5">
+    <div>
+      <h1 class="text-2xl font-semibold text-ink-900">Card Reconciliation</h1>
+      <p class="text-sm text-ink-400 mt-0.5">March 2026 &middot; Period closes Mar 10</p>
+    </div>
+    <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-1.5 rounded-lg inline-flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      Send Reminders
+    </button>
+  </div>
+
+  <!-- Status cards -->
+  <div class="grid grid-cols-5 gap-3 mb-6">
+    <div class="bg-white border-2 border-st-gl-border rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-st-gl-dark uppercase tracking-wider">Matched</div>
+      <div class="text-xl font-semibold text-st-gl-base mt-1" style="font-variant-numeric:tabular-nums">142</div>
+      <div class="text-xs text-ink-400">$48,230.50</div>
+    </div>
+    <div class="bg-white border-2 border-st-am-border rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-st-am-dark uppercase tracking-wider">Pending Submit</div>
+      <div class="text-xl font-semibold text-st-am-base mt-1" style="font-variant-numeric:tabular-nums">18</div>
+      <div class="text-xs text-ink-400">$6,420.00</div>
+    </div>
+    <div class="bg-white border-2 border-st-rd-border rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-st-rd-dark uppercase tracking-wider">Unsubmitted</div>
+      <div class="text-xl font-semibold text-st-rd-base mt-1" style="font-variant-numeric:tabular-nums">7</div>
+      <div class="text-xs text-ink-400">$3,180.25</div>
+    </div>
+    <div class="bg-white border-2 border-st-bl-border rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-st-bl-dark uppercase tracking-wider">Disputed</div>
+      <div class="text-xl font-semibold text-st-bl-base mt-1" style="font-variant-numeric:tabular-nums">2</div>
+      <div class="text-xs text-ink-400">$890.00</div>
+    </div>
+    <div class="bg-white border-2 border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-500 uppercase tracking-wider">Personal Use</div>
+      <div class="text-xl font-semibold text-ink-700 mt-1" style="font-variant-numeric:tabular-nums">3</div>
+      <div class="text-xs text-ink-400">$425.60</div>
+    </div>
+  </div>
+
+  <!-- Unsubmitted transactions table -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <div class="flex items-center justify-between px-4 py-2.5 border-b border-surface-200">
+      <div class="flex items-center gap-2">
+        <button class="text-xs font-medium px-2.5 py-1 rounded-md bg-st-rd-base text-white">Unsubmitted (7)</button>
+        <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">Pending (18)</button>
+        <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">Disputed (2)</button>
+        <button class="text-xs font-medium px-2.5 py-1 rounded-md text-ink-500 hover:bg-surface-100">All (172)</button>
+      </div>
+      <span class="text-xs text-st-rd-dark font-medium">5 days until period close</span>
+    </div>
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-surface-200 bg-surface-50">
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-4 py-2">Employee</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Merchant</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Card</th>
+          <th class="text-right text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Amount</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Trans. Date</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Age</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Last Reminder</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow">
+          <td class="px-4 py-2"><div class="text-sm font-medium text-ink-900">Jamie Martinez</div><div class="text-xs text-ink-400">Sales</div></td>
+          <td class="px-3 py-2 text-sm text-ink-900">Delta Airlines</td>
+          <td class="px-3 py-2"><span class="text-xs font-mono text-ink-500">****7734</span></td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$524.00</td>
+          <td class="px-3 py-2 text-sm text-ink-700">Mar 3</td>
+          <td class="px-3 py-2 text-sm text-ink-500">2 days</td>
+          <td class="px-3 py-2 text-xs text-ink-400">Not sent</td>
+        </tr>
+        <tr class="trow">
+          <td class="px-4 py-2"><div class="text-sm font-medium text-ink-900">Alex Rivera</div><div class="text-xs text-ink-400">Marketing</div></td>
+          <td class="px-3 py-2 text-sm text-ink-900">Google Ads</td>
+          <td class="px-3 py-2"><span class="text-xs font-mono text-ink-500">****3291</span></td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$1,200.00</td>
+          <td class="px-3 py-2 text-sm text-ink-700">Feb 28</td>
+          <td class="px-3 py-2 text-sm text-st-am-dark font-medium">5 days</td>
+          <td class="px-3 py-2 text-xs text-ink-400">T-5 sent</td>
+        </tr>
+        <tr class="trow">
+          <td class="px-4 py-2"><div class="text-sm font-medium text-ink-900">Sarah Chen</div><div class="text-xs text-ink-400">Engineering</div></td>
+          <td class="px-3 py-2 text-sm text-ink-900">Hertz Rental</td>
+          <td class="px-3 py-2"><span class="text-xs font-mono text-ink-500">****8810</span></td>
+          <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$387.50</td>
+          <td class="px-3 py-2 text-sm text-ink-700">Feb 25</td>
+          <td class="px-3 py-2 text-sm text-st-rd-dark font-medium">8 days</td>
+          <td class="px-3 py-2 text-xs text-st-am-dark">T-3 sent</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== POLICIES ==================== -->
+<div id="page-policies" class="page p-6">
+  <div class="flex items-center justify-between mb-5">
+    <h1 class="text-2xl font-semibold text-ink-900">Expense Policies</h1>
+    <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-1.5 rounded-lg inline-flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      New Policy Rule
+    </button>
+  </div>
+
+  <!-- Policy hierarchy -->
+  <div class="bg-white border border-surface-200 rounded-card p-5 mb-5">
+    <h2 class="text-md font-semibold text-ink-900 mb-3">Policy Hierarchy</h2>
+    <p class="text-xs text-ink-500 mb-4">Rules cascade from company defaults down. More specific rules override general ones.</p>
+    <div class="flex items-center gap-2">
+      <div class="bg-brand-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg">Company Default</div>
+      <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      <div class="bg-brand-500 text-white text-xs font-medium px-3 py-1.5 rounded-lg">Department</div>
+      <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      <div class="bg-brand-400 text-white text-xs font-medium px-3 py-1.5 rounded-lg">Role</div>
+      <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      <div class="bg-brand-300 text-white text-xs font-medium px-3 py-1.5 rounded-lg">Project / Event</div>
+      <span class="text-xs text-ink-400 ml-2">Most specific wins</span>
+    </div>
+  </div>
+
+  <!-- Card mandate -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden mb-5">
+    <div class="px-4 py-2.5 border-b border-surface-200 flex items-center justify-between">
+      <span class="text-sm font-semibold text-ink-900">Corporate Card Mandate</span>
+      <span class="text-xs text-ink-400">Default: Level 2 company-wide</span>
+    </div>
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-surface-200 bg-surface-50">
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-4 py-2">Category</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Mandate Level</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Behavior</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Scope</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow">
+          <td class="px-4 py-2 text-sm font-medium text-ink-900">All Categories</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium px-2 py-0.5 rounded-md bg-brand-50 text-brand-600 border border-brand-200">L2 Preferred</span></td>
+          <td class="px-3 py-2 text-sm text-ink-500">Personal card accepted with justification</td>
+          <td class="px-3 py-2 text-xs text-ink-400">Company default</td>
+        </tr>
+        <tr class="trow">
+          <td class="px-4 py-2 text-sm font-medium text-ink-900">Airfare</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium px-2 py-0.5 rounded-md bg-st-am-light text-st-am-dark border border-st-am-border">L3 Required</span></td>
+          <td class="px-3 py-2 text-sm text-ink-500">Blocked — exception request to finance</td>
+          <td class="px-3 py-2 text-xs text-ink-400">Category override</td>
+        </tr>
+        <tr class="trow">
+          <td class="px-4 py-2 text-sm font-medium text-ink-900">T&E &gt; $50</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium px-2 py-0.5 rounded-md bg-st-am-light text-st-am-dark border border-st-am-border">L3 Required</span></td>
+          <td class="px-3 py-2 text-sm text-ink-500">Blocked — exception request to finance</td>
+          <td class="px-3 py-2 text-xs text-ink-400">Amount threshold</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Spend limits -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <div class="px-4 py-2.5 border-b border-surface-200">
+      <span class="text-sm font-semibold text-ink-900">Spend Limits & Receipt Rules</span>
+    </div>
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-surface-200 bg-surface-50">
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-4 py-2">Rule</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Threshold</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Violation Type</th>
+          <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Scope</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow">
+          <td class="px-4 py-2 text-sm text-ink-900">Receipt required</td>
+          <td class="px-3 py-2 text-sm font-mono text-ink-700">$25.00+</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-st-rd-dark bg-st-rd-light px-1.5 py-0.5 rounded border border-st-rd-border">Hard block</span></td>
+          <td class="px-3 py-2 text-xs text-ink-400">Company default</td>
+        </tr>
+        <tr class="trow">
+          <td class="px-4 py-2 text-sm text-ink-900">Meal per-person limit</td>
+          <td class="px-3 py-2 text-sm font-mono text-ink-700">$75.00</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-st-am-dark bg-st-am-light px-1.5 py-0.5 rounded border border-st-am-border">Justify</span></td>
+          <td class="px-3 py-2 text-xs text-ink-400">Company default</td>
+        </tr>
+        <tr class="trow">
+          <td class="px-4 py-2 text-sm text-ink-900">Auto-approval threshold</td>
+          <td class="px-3 py-2 text-sm font-mono text-ink-700">$100.00</td>
+          <td class="px-3 py-2 text-xs text-ink-400">N/A — clean expenses below this skip approval</td>
+          <td class="px-3 py-2 text-xs text-ink-400">Company default</td>
+        </tr>
+        <tr class="trow">
+          <td class="px-4 py-2 text-sm text-ink-900">Single transaction limit</td>
+          <td class="px-3 py-2 text-sm font-mono text-ink-700">$5,000.00</td>
+          <td class="px-3 py-2"><span class="text-xs font-medium text-st-rd-dark bg-st-rd-light px-1.5 py-0.5 rounded border border-st-rd-border">Hard block</span></td>
+          <td class="px-3 py-2 text-xs text-ink-400">Company default</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== REPORTS ==================== -->
+<div id="page-reports" class="page p-6">
+  <div class="flex items-center justify-between mb-5">
+    <h1 class="text-2xl font-semibold text-ink-900">Reports</h1>
+    <div class="flex items-center gap-2">
+      <select class="text-sm text-ink-700 px-3 py-1.5 rounded-lg border border-surface-300 bg-white">
+        <option>March 2026</option>
+        <option>February 2026</option>
+        <option>January 2026</option>
+      </select>
+      <button class="bg-white hover:bg-surface-50 text-ink-700 text-sm font-medium px-4 py-1.5 rounded-lg border border-surface-300 inline-flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="grid grid-cols-4 gap-3 mb-6">
+    <div class="bg-white border border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Policy Compliance</div>
+      <div class="text-xl font-semibold text-st-gl-base mt-1">94%</div>
+      <div class="text-xs text-ink-400">+2% vs last month</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Corporate Card Ratio</div>
+      <div class="text-xl font-semibold text-brand-500 mt-1">87%</div>
+      <div class="text-xs text-ink-400">Target: 90%</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Avg Approval Time</div>
+      <div class="text-xl font-semibold text-ink-900 mt-1">1.4 days</div>
+      <div class="text-xs text-ink-400">Down from 2.1</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-3.5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Unreconciled</div>
+      <div class="text-xl font-semibold text-st-am-base mt-1">$9,610</div>
+      <div class="text-xs text-ink-400">27 transactions</div>
+    </div>
+  </div>
+
+  <!-- Spend by category -->
+  <div class="grid grid-cols-2 gap-4">
+    <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+      <div class="px-4 py-2.5 border-b border-surface-200">
+        <span class="text-sm font-semibold text-ink-900">Spend by Category</span>
+      </div>
+      <div class="p-4">
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span class="text-ink-700">Airfare</span><span class="font-mono text-ink-900" style="font-variant-numeric:tabular-nums">$18,420</span></div>
+            <div class="w-full bg-surface-100 rounded-full h-2"><div class="bg-brand-500 h-2 rounded-full" style="width:72%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span class="text-ink-700">Lodging</span><span class="font-mono text-ink-900" style="font-variant-numeric:tabular-nums">$12,840</span></div>
+            <div class="w-full bg-surface-100 rounded-full h-2"><div class="bg-brand-400 h-2 rounded-full" style="width:50%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span class="text-ink-700">Meals & Entertainment</span><span class="font-mono text-ink-900" style="font-variant-numeric:tabular-nums">$8,960</span></div>
+            <div class="w-full bg-surface-100 rounded-full h-2"><div class="bg-brand-300 h-2 rounded-full" style="width:35%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span class="text-ink-700">Software</span><span class="font-mono text-ink-900" style="font-variant-numeric:tabular-nums">$5,230</span></div>
+            <div class="w-full bg-surface-100 rounded-full h-2"><div class="bg-brand-200 h-2 rounded-full" style="width:20%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1"><span class="text-ink-700">Transportation</span><span class="font-mono text-ink-900" style="font-variant-numeric:tabular-nums">$3,780</span></div>
+            <div class="w-full bg-surface-100 rounded-full h-2"><div class="bg-brand-100 h-2 rounded-full" style="width:15%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+      <div class="px-4 py-2.5 border-b border-surface-200">
+        <span class="text-sm font-semibold text-ink-900">Top Spenders</span>
+      </div>
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-surface-200 bg-surface-50">
+            <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-4 py-2">Employee</th>
+            <th class="text-right text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Total</th>
+            <th class="text-right text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2"># Exp</th>
+            <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Card %</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-surface-200">
+          <tr class="trow">
+            <td class="px-4 py-2"><div class="text-sm font-medium text-ink-900">Alex Rivera</div><div class="text-xs text-ink-400">Marketing</div></td>
+            <td class="px-3 py-2 text-sm font-mono text-ink-900 text-right" style="font-variant-numeric:tabular-nums">$8,420</td>
+            <td class="px-3 py-2 text-sm text-ink-500 text-right">14</td>
+            <td class="px-3 py-2 text-sm text-st-gl-base">92%</td>
+          </tr>
+          <tr class="trow">
+            <td class="px-4 py-2"><div class="text-sm font-medium text-ink-900">Jamie Martinez</div><div class="text-xs text-ink-400">Sales</div></td>
+            <td class="px-3 py-2 text-sm font-mono text-ink-900 text-right" style="font-variant-numeric:tabular-nums">$6,140</td>
+            <td class="px-3 py-2 text-sm text-ink-500 text-right">15</td>
+            <td class="px-3 py-2 text-sm text-st-am-base">78%</td>
+          </tr>
+          <tr class="trow">
+            <td class="px-4 py-2"><div class="text-sm font-medium text-ink-900">Sarah Chen</div><div class="text-xs text-ink-400">Engineering</div></td>
+            <td class="px-3 py-2 text-sm font-mono text-ink-900 text-right" style="font-variant-numeric:tabular-nums">$4,890</td>
+            <td class="px-3 py-2 text-sm text-ink-500 text-right">8</td>
+            <td class="px-3 py-2 text-sm text-st-gl-base">100%</td>
+          </tr>
+          <tr class="trow">
+            <td class="px-4 py-2"><div class="text-sm font-medium text-ink-900">Michael Torres</div><div class="text-xs text-ink-400">Sales</div></td>
+            <td class="px-3 py-2 text-sm font-mono text-ink-900 text-right" style="font-variant-numeric:tabular-nums">$3,210</td>
+            <td class="px-3 py-2 text-sm text-ink-500 text-right">11</td>
+            <td class="px-3 py-2 text-sm text-st-gl-base">95%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+const roles = {
+  employee: { name:'J. Martinez', initials:'JM', label:'Sales · Employee', sections:[] },
+  manager:  { name:'D. Wilkinson', initials:'DW', label:'Sales Director · Manager', sections:['manager-only'] },
+  finance:  { name:'R. Patel', initials:'RP', label:'Controller · Finance', sections:['manager-only','finance-only'] }
+};
+
+let currentRole = 'employee';
+
+function setRole(role) {
+  currentRole = role;
+  const r = roles[role];
+  document.getElementById('user-name').textContent = r.name;
+  document.getElementById('user-avatar').textContent = r.initials;
+  document.getElementById('user-role').innerHTML = r.label;
+
+  // Toggle role buttons
+  document.querySelectorAll('.role-btn').forEach(b => {
+    b.classList.toggle('bg-white/10', b.dataset.role === role);
+    b.classList.toggle('text-white', b.dataset.role === role);
+    b.classList.toggle('text-white/50', b.dataset.role !== role);
+  });
+
+  // Toggle nav sections
+  document.querySelectorAll('.manager-only').forEach(el => el.style.display = r.sections.includes('manager-only') ? '' : 'none');
+  document.querySelectorAll('.finance-only').forEach(el => el.style.display = r.sections.includes('finance-only') ? '' : 'none');
+
+  // If on a page we can't see, go to dashboard
+  const hiddenPages = [];
+  if (!r.sections.includes('manager-only')) hiddenPages.push('review');
+  if (!r.sections.includes('finance-only')) hiddenPages.push('reconciliation','policies','reports');
+  const activePage = document.querySelector('.page.active')?.id?.replace('page-','');
+  if (hiddenPages.includes(activePage)) showPage('dashboard');
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + name);
+  if (page) page.classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === name);
+    a.classList.toggle('text-white', a.dataset.page === name);
+    a.classList.toggle('font-medium', a.dataset.page === name);
+    if (a.dataset.page !== name) {
+      a.classList.remove('text-white');
+      a.classList.add('text-white/70');
+    } else {
+      a.classList.remove('text-white/70');
+      a.classList.add('text-white');
+    }
+  });
+}
+
+// Nav click handlers
+document.querySelectorAll('[data-page]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    showPage(a.dataset.page);
+  });
+});
+
+// Init
+setRole('employee');
+</script>
+
+</body>
+</html>

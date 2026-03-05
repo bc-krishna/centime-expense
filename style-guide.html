@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centime Expense Management — Style Guide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#e6f5f5',
+              100: '#ccebeb',
+              200: '#99d7d9',
+              300: '#4db8bb',
+              400: '#009a9f',
+              500: '#008085',
+              600: '#006d71',
+              700: '#024743',
+              800: '#013633',
+              900: '#012524',
+            },
+            gold: {
+              100: '#fef6dc',
+              200: '#fde9a6',
+              300: '#fdc231',
+              400: '#e5ad1e',
+              500: '#c4940f',
+            },
+            surface: {
+              0:   '#ffffff',
+              warm: '#faf6ee',
+              50:  '#f7f8f9',
+              100: '#f1f2f4',
+              200: '#e3e5e8',
+              300: '#cdd0d5',
+            },
+            ink: {
+              900: '#0f1419',
+              800: '#1a2028',
+              700: '#2d3440',
+              500: '#5f6b7a',
+              400: '#8b95a3',
+              300: '#b5bcc7',
+            },
+            status: {
+              green:  { light: '#eefbf3', base: '#0f9d58', dark: '#0b7a42', border: '#b7eaca' },
+              amber:  { light: '#fef9eb', base: '#d4930d', dark: '#a87308', border: '#fde68a' },
+              red:    { light: '#fef2f2', base: '#d93025', dark: '#ae241c', border: '#fcc8c5' },
+              blue:   { light: '#ebf6ff', base: '#1a73e8', dark: '#1557b0', border: '#b3d4fc' },
+              gray:   { light: '#f7f8f9', base: '#5f6b7a', dark: '#3d4654', border: '#e3e5e8' },
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Inter', 'Roboto', 'sans-serif'],
+            mono: ['"SF Mono"', '"Fira Code"', 'Menlo', 'monospace'],
+          },
+          fontSize: {
+            'xxs': ['0.625rem', { lineHeight: '0.875rem' }],
+            'xs':  ['0.75rem',  { lineHeight: '1rem' }],
+            'sm':  ['0.8125rem', { lineHeight: '1.25rem' }],
+            'base': ['0.875rem', { lineHeight: '1.375rem' }],
+            'md':  ['0.9375rem', { lineHeight: '1.5rem' }],
+            'lg':  ['1.125rem', { lineHeight: '1.75rem' }],
+            'xl':  ['1.25rem',  { lineHeight: '1.75rem' }],
+            '2xl': ['1.5rem',   { lineHeight: '2rem' }],
+          },
+          borderRadius: {
+            'card': '12px',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { -webkit-font-smoothing: antialiased; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; }
+    .swatch { width: 3rem; height: 3rem; border-radius: 0.5rem; }
+    .guide-section { margin-bottom: 3rem; }
+    .guide-section h2 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #5f6b7a; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e3e5e8; }
+    .guide-section h3 { font-size: 0.8125rem; font-weight: 600; color: #2d3440; margin-bottom: 0.5rem; }
+    .component-row { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .sidebar-demo { width: 220px; }
+  </style>
+</head>
+<body class="bg-surface-50 text-ink-900">
+
+  <div class="max-w-6xl mx-auto px-8 py-10">
+
+    <!-- Header -->
+    <div class="mb-10">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-semibold text-ink-900">Centime Expense Management</h1>
+          <p class="text-sm text-ink-500">Design System & Style Guide v1.0</p>
+        </div>
+      </div>
+      <p class="text-base text-ink-500 mt-3 max-w-2xl">On-brand with Centime's teal identity. Clean, dense, task-oriented. Built for finance professionals who process hundreds of transactions.</p>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- DESIGN PRINCIPLES -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Design Principles</h2>
+      <div class="grid grid-cols-4 gap-4">
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-sm font-semibold text-ink-900 mb-1">Density over decoration</div>
+          <p class="text-xs text-ink-500">Tables, not cards. Compact rows, not spacious tiles. Information density is a feature.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-sm font-semibold text-ink-900 mb-1">Color = meaning</div>
+          <p class="text-xs text-ink-500">Teal for brand actions. Gold for highlights. Status colors for feedback. Nothing decorative.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-sm font-semibold text-ink-900 mb-1">Progressive disclosure</div>
+          <p class="text-xs text-ink-500">Show the summary. Let users drill in. Don't front-load every detail.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-sm font-semibold text-ink-900 mb-1">Keyboard-first</div>
+          <p class="text-xs text-ink-500">Power users live in the keyboard. Tab, Enter, shortcuts. Mouse is optional.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- COLOR PALETTE -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Color Palette</h2>
+
+      <h3>Brand / Teal</h3>
+      <p class="text-xs text-ink-500 mb-3">The Centime identity. Primary actions, active states, links. Teal communicates confidence and financial trust.</p>
+      <div class="flex gap-3 mb-6">
+        <div class="text-center">
+          <div class="swatch bg-brand-50"></div>
+          <div class="text-xxs text-ink-500 mt-1">50</div>
+          <div class="text-xxs text-ink-400 font-mono">#e6f5f5</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-brand-100"></div>
+          <div class="text-xxs text-ink-500 mt-1">100</div>
+          <div class="text-xxs text-ink-400 font-mono">#ccebeb</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-brand-200"></div>
+          <div class="text-xxs text-ink-500 mt-1">200</div>
+          <div class="text-xxs text-ink-400 font-mono">#99d7d9</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-brand-300"></div>
+          <div class="text-xxs text-ink-500 mt-1">300</div>
+          <div class="text-xxs text-ink-400 font-mono">#4db8bb</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-brand-400"></div>
+          <div class="text-xxs text-ink-500 mt-1">400</div>
+          <div class="text-xxs text-ink-400 font-mono">#009a9f</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-brand-500"></div>
+          <div class="text-xxs text-ink-500 mt-1">500</div>
+          <div class="text-xxs text-ink-400 font-mono">#008085</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-brand-600"></div>
+          <div class="text-xxs text-ink-500 mt-1">600</div>
+          <div class="text-xxs text-ink-400 font-mono">#006d71</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-brand-700"></div>
+          <div class="text-xxs text-ink-500 mt-1">700</div>
+          <div class="text-xxs text-ink-400 font-mono">#024743</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-brand-800"></div>
+          <div class="text-xxs text-ink-500 mt-1">800</div>
+          <div class="text-xxs text-ink-400 font-mono">#013633</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-brand-900"></div>
+          <div class="text-xxs text-ink-500 mt-1">900</div>
+          <div class="text-xxs text-ink-400 font-mono">#012524</div>
+        </div>
+      </div>
+
+      <h3>Gold / Accent</h3>
+      <p class="text-xs text-ink-500 mb-3">Secondary highlights, promotional badges, important callouts. Use sparingly — it draws the eye.</p>
+      <div class="flex gap-3 mb-6">
+        <div class="text-center">
+          <div class="swatch bg-gold-100"></div>
+          <div class="text-xxs text-ink-500 mt-1">100</div>
+          <div class="text-xxs text-ink-400 font-mono">#fef6dc</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-gold-200"></div>
+          <div class="text-xxs text-ink-500 mt-1">200</div>
+          <div class="text-xxs text-ink-400 font-mono">#fde9a6</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-gold-300"></div>
+          <div class="text-xxs text-ink-500 mt-1">300</div>
+          <div class="text-xxs text-ink-400 font-mono">#fdc231</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-gold-400"></div>
+          <div class="text-xxs text-ink-500 mt-1">400</div>
+          <div class="text-xxs text-ink-400 font-mono">#e5ad1e</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-gold-500"></div>
+          <div class="text-xxs text-ink-500 mt-1">500</div>
+          <div class="text-xxs text-ink-400 font-mono">#c4940f</div>
+        </div>
+      </div>
+
+      <h3>Neutral / Surface</h3>
+      <p class="text-xs text-ink-500 mb-3">Backgrounds, borders, text. 90% of the interface. Includes warm off-white from the Centime site.</p>
+      <div class="flex gap-3 mb-6">
+        <div class="text-center">
+          <div class="swatch bg-white border border-surface-200"></div>
+          <div class="text-xxs text-ink-500 mt-1">White</div>
+          <div class="text-xxs text-ink-400 font-mono">#fff</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-surface-warm border border-surface-200"></div>
+          <div class="text-xxs text-ink-500 mt-1">Warm</div>
+          <div class="text-xxs text-ink-400 font-mono">#faf6ee</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-surface-50"></div>
+          <div class="text-xxs text-ink-500 mt-1">50</div>
+          <div class="text-xxs text-ink-400 font-mono">#f7f8f9</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-surface-100"></div>
+          <div class="text-xxs text-ink-500 mt-1">100</div>
+          <div class="text-xxs text-ink-400 font-mono">#f1f2f4</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-surface-200"></div>
+          <div class="text-xxs text-ink-500 mt-1">200</div>
+          <div class="text-xxs text-ink-400 font-mono">#e3e5e8</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-surface-300"></div>
+          <div class="text-xxs text-ink-500 mt-1">300</div>
+          <div class="text-xxs text-ink-400 font-mono">#cdd0d5</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-ink-400"></div>
+          <div class="text-xxs text-ink-500 mt-1">Ink 400</div>
+          <div class="text-xxs text-ink-400 font-mono">#8b95a3</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-ink-500"></div>
+          <div class="text-xxs text-ink-500 mt-1">Ink 500</div>
+          <div class="text-xxs text-ink-400 font-mono">#5f6b7a</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-ink-700"></div>
+          <div class="text-xxs text-ink-500 mt-1">Ink 700</div>
+          <div class="text-xxs text-ink-400 font-mono">#2d3440</div>
+        </div>
+        <div class="text-center">
+          <div class="swatch bg-ink-900"></div>
+          <div class="text-xxs text-ink-500 mt-1">Ink 900</div>
+          <div class="text-xxs text-ink-400 font-mono">#0f1419</div>
+        </div>
+      </div>
+
+      <h3>Status Colors</h3>
+      <p class="text-xs text-ink-500 mb-3">Semantic only. Each status has background, text, and border variants.</p>
+      <div class="flex gap-4 mb-2">
+        <div class="flex items-center gap-2 bg-status-green-light border border-status-green-border rounded-lg px-3 py-2">
+          <div class="w-2 h-2 rounded-full bg-status-green-base"></div>
+          <span class="text-sm font-medium text-status-green-dark">Approved</span>
+        </div>
+        <div class="flex items-center gap-2 bg-status-amber-light border border-status-amber-border rounded-lg px-3 py-2">
+          <div class="w-2 h-2 rounded-full bg-status-amber-base"></div>
+          <span class="text-sm font-medium text-status-amber-dark">Pending</span>
+        </div>
+        <div class="flex items-center gap-2 bg-status-red-light border border-status-red-border rounded-lg px-3 py-2">
+          <div class="w-2 h-2 rounded-full bg-status-red-base"></div>
+          <span class="text-sm font-medium text-status-red-dark">Rejected</span>
+        </div>
+        <div class="flex items-center gap-2 bg-status-blue-light border border-status-blue-border rounded-lg px-3 py-2">
+          <div class="w-2 h-2 rounded-full bg-status-blue-base"></div>
+          <span class="text-sm font-medium text-status-blue-dark">Info / Draft</span>
+        </div>
+        <div class="flex items-center gap-2 bg-status-gray-light border border-status-gray-border rounded-lg px-3 py-2">
+          <div class="w-2 h-2 rounded-full bg-status-gray-base"></div>
+          <span class="text-sm font-medium text-status-gray-dark">Inactive</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TYPOGRAPHY -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Typography</h2>
+      <p class="text-xs text-ink-500 mb-4">System font stack. Compact scale — base is 14px. Dense interfaces need smaller type.</p>
+
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-surface-200 bg-surface-50">
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-4 py-2">Name</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-4 py-2">Size / Height</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-4 py-2">Usage</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-4 py-2">Sample</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-200">
+            <tr><td class="px-4 py-2.5 text-sm font-mono text-ink-500">2xl</td><td class="px-4 py-2.5 text-sm text-ink-500">24 / 32</td><td class="px-4 py-2.5 text-sm text-ink-500">Page titles</td><td class="px-4 py-2.5 text-2xl font-semibold text-ink-900">Expenses</td></tr>
+            <tr><td class="px-4 py-2.5 text-sm font-mono text-ink-500">xl</td><td class="px-4 py-2.5 text-sm text-ink-500">20 / 28</td><td class="px-4 py-2.5 text-sm text-ink-500">Section headers</td><td class="px-4 py-2.5 text-xl font-semibold text-ink-900">Card Transactions</td></tr>
+            <tr><td class="px-4 py-2.5 text-sm font-mono text-ink-500">base</td><td class="px-4 py-2.5 text-sm text-ink-500">14 / 22</td><td class="px-4 py-2.5 text-sm text-ink-500">Body, table cells</td><td class="px-4 py-2.5 text-base text-ink-700">Marriott Downtown — $247.50</td></tr>
+            <tr><td class="px-4 py-2.5 text-sm font-mono text-ink-500">sm</td><td class="px-4 py-2.5 text-sm text-ink-500">13 / 20</td><td class="px-4 py-2.5 text-sm text-ink-500">Labels, secondary</td><td class="px-4 py-2.5 text-sm text-ink-500">Submitted Feb 28, 2026 by J. Martinez</td></tr>
+            <tr><td class="px-4 py-2.5 text-sm font-mono text-ink-500">xs</td><td class="px-4 py-2.5 text-sm text-ink-500">12 / 16</td><td class="px-4 py-2.5 text-sm text-ink-500">Badges, metadata</td><td class="px-4 py-2.5 text-xs font-medium text-ink-500">MCC 5812 &middot; RESTAURANTS</td></tr>
+            <tr><td class="px-4 py-2.5 text-sm font-mono text-ink-500">xxs</td><td class="px-4 py-2.5 text-sm text-ink-500">10 / 14</td><td class="px-4 py-2.5 text-sm text-ink-500">Column headers</td><td class="px-4 py-2.5 text-xxs font-semibold uppercase tracking-wider text-ink-500">TRANSACTION DATE</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4">
+        <h3>Monospace</h3>
+        <p class="text-sm font-mono text-ink-700">$1,247.50 &nbsp;&middot;&nbsp; 4821-****-7734 &nbsp;&middot;&nbsp; GL:6210-100</p>
+        <p class="text-xs text-ink-400 mt-1">Amounts, card numbers, GL codes, IDs</p>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- BUTTONS -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Buttons</h2>
+
+      <h3>Variants</h3>
+      <div class="component-row mb-4">
+        <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors">Submit Expense</button>
+        <button class="bg-white hover:bg-surface-50 text-ink-700 text-sm font-medium px-4 py-1.5 rounded-lg border border-surface-300 transition-colors">Cancel</button>
+        <button class="bg-status-red-base hover:bg-status-red-dark text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors">Reject</button>
+        <button class="bg-status-green-base hover:bg-status-green-dark text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors">Approve</button>
+        <button class="text-brand-500 hover:text-brand-600 text-sm font-medium px-2 py-1.5 transition-colors hover:bg-brand-50 rounded-lg">View Details</button>
+        <button class="bg-white hover:bg-surface-50 text-ink-400 text-sm px-4 py-1.5 rounded-lg border border-surface-200 transition-colors cursor-not-allowed" disabled>Disabled</button>
+      </div>
+
+      <h3>With Icons</h3>
+      <div class="component-row mb-4">
+        <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          New Expense
+        </button>
+        <button class="bg-white hover:bg-surface-50 text-ink-700 text-sm font-medium px-4 py-1.5 rounded-lg border border-surface-300 transition-colors inline-flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          Upload Receipt
+        </button>
+        <button class="bg-brand-700 hover:bg-brand-800 text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+          Filter
+        </button>
+      </div>
+
+      <h3>Gold CTA (promotional / upgrade)</h3>
+      <div class="component-row">
+        <button class="bg-gold-300 hover:bg-gold-400 text-brand-800 text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors inline-flex items-center gap-1.5">
+          Get Corporate Card
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </button>
+        <span class="text-xs text-ink-400 ml-2">Use for upsell / card adoption nudges only</span>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- BADGES -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Badges & Status Indicators</h2>
+
+      <h3>Status Badges</h3>
+      <div class="component-row mb-4">
+        <span class="inline-flex items-center gap-1.5 bg-status-green-light text-status-green-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-green-border">
+          <span class="w-1.5 h-1.5 rounded-full bg-status-green-base"></span>Approved
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-status-amber-light text-status-amber-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-amber-border">
+          <span class="w-1.5 h-1.5 rounded-full bg-status-amber-base"></span>Pending Review
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-status-red-light text-status-red-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-red-border">
+          <span class="w-1.5 h-1.5 rounded-full bg-status-red-base"></span>Rejected
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-status-blue-light text-status-blue-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-blue-border">
+          <span class="w-1.5 h-1.5 rounded-full bg-status-blue-base"></span>Draft
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-status-gray-light text-status-gray-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-gray-border">
+          <span class="w-1.5 h-1.5 rounded-full bg-status-gray-base"></span>Voided
+        </span>
+      </div>
+
+      <h3>Expense-Specific</h3>
+      <div class="component-row mb-4">
+        <span class="inline-flex items-center gap-1.5 bg-brand-50 text-brand-700 text-xs font-medium px-2 py-0.5 rounded-md border border-brand-200">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          Corporate Card
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-status-amber-light text-status-amber-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-amber-border">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.834-1.964-.834-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          Policy Violation
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-status-red-light text-status-red-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-red-border">
+          Missing Receipt
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-surface-100 text-ink-500 text-xs font-medium px-2 py-0.5 rounded-md border border-surface-200">
+          Personal Card
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-status-green-light text-status-green-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-green-border">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Auto-Approved
+        </span>
+      </div>
+
+      <h3>Card Mandate Levels</h3>
+      <div class="component-row">
+        <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-surface-100 text-ink-500 border border-surface-200">L1 Encouraged</span>
+        <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-brand-50 text-brand-600 border border-brand-200">L2 Preferred</span>
+        <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-status-amber-light text-status-amber-dark border border-status-amber-border">L3 Required</span>
+        <span class="text-xs font-medium px-2 py-0.5 rounded-md bg-status-red-light text-status-red-dark border border-status-red-border">L4 Mandatory</span>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- FORM INPUTS -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Form Inputs</h2>
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-ink-700 mb-1">Merchant Name</label>
+          <input type="text" value="Marriott Downtown" class="w-full text-sm text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-shadow">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-ink-700 mb-1">Amount</label>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-400">$</span>
+            <input type="text" value="247.50" class="w-full text-sm text-ink-900 pl-7 pr-3 py-1.5 rounded-lg border border-surface-300 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-shadow text-right" style="font-variant-numeric:tabular-nums">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-ink-700 mb-1">Category</label>
+          <select class="w-full text-sm text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-shadow">
+            <option>Lodging</option>
+            <option>Meals & Entertainment</option>
+            <option>Transportation</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-ink-700 mb-1">GL Code</label>
+          <input type="text" value="6210-100" class="w-full text-sm font-mono text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-shadow">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-ink-700 mb-1">Date</label>
+          <input type="date" value="2026-02-28" class="w-full text-sm text-ink-900 px-3 py-1.5 rounded-lg border border-surface-300 bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-shadow">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-ink-700 mb-1">Error State</label>
+          <input type="text" class="w-full text-sm px-3 py-1.5 rounded-lg border border-status-red-border bg-status-red-light focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-status-red-base transition-shadow" placeholder="Required field">
+          <p class="text-xs text-status-red-base mt-1">Receipt required for expenses over $25.00</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- DATA TABLE -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Data Table</h2>
+      <p class="text-xs text-ink-500 mb-3">The primary interface pattern. Compact rows, sortable columns, inline status.</p>
+
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <!-- Toolbar -->
+        <div class="flex items-center justify-between px-4 py-2.5 border-b border-surface-200">
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-semibold text-ink-900">My Expenses</span>
+            <span class="text-xs text-ink-400">24 items</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <svg class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <input type="text" placeholder="Search..." class="text-sm pl-8 pr-3 py-1 rounded-lg border border-surface-300 bg-white w-48 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500">
+            </div>
+            <button class="text-sm text-ink-500 hover:text-ink-700 px-2.5 py-1 rounded-lg border border-surface-300 hover:bg-surface-50 inline-flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+              Filter
+            </button>
+          </div>
+        </div>
+
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-surface-200 bg-surface-50">
+              <th class="w-8 px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Date</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Merchant</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Category</th>
+              <th class="text-right text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Amount</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Card</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wider px-3 py-2">Status</th>
+              <th class="w-10"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-200">
+            <tr class="hover:bg-brand-50/30 transition-colors group">
+              <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+              <td class="px-3 py-2 text-sm text-ink-700" style="font-variant-numeric:tabular-nums">Feb 28</td>
+              <td class="px-3 py-2">
+                <div class="text-sm font-medium text-ink-900">Marriott Downtown</div>
+                <div class="text-xs text-ink-400">MCC 7011 &middot; Lodging</div>
+              </td>
+              <td class="px-3 py-2 text-sm text-ink-700">Lodging</td>
+              <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$247.50</td>
+              <td class="px-3 py-2">
+                <span class="inline-flex items-center gap-1 text-xs font-medium text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded-md border border-brand-200">****7734</span>
+              </td>
+              <td class="px-3 py-2">
+                <span class="inline-flex items-center gap-1.5 bg-status-green-light text-status-green-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-green-border">
+                  <span class="w-1.5 h-1.5 rounded-full bg-status-green-base"></span>Approved
+                </span>
+              </td>
+              <td class="px-3 py-2">
+                <button class="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-ink-700 transition-opacity">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                </button>
+              </td>
+            </tr>
+            <tr class="hover:bg-brand-50/30 transition-colors group">
+              <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+              <td class="px-3 py-2 text-sm text-ink-700" style="font-variant-numeric:tabular-nums">Feb 27</td>
+              <td class="px-3 py-2">
+                <div class="text-sm font-medium text-ink-900">Uber</div>
+                <div class="text-xs text-ink-400">MCC 4121 &middot; Transportation</div>
+              </td>
+              <td class="px-3 py-2 text-sm text-ink-700">Transport</td>
+              <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$34.20</td>
+              <td class="px-3 py-2">
+                <span class="inline-flex items-center gap-1 text-xs font-medium text-brand-700 bg-brand-50 px-1.5 py-0.5 rounded-md border border-brand-200">****7734</span>
+              </td>
+              <td class="px-3 py-2">
+                <span class="inline-flex items-center gap-1.5 bg-status-amber-light text-status-amber-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-amber-border">
+                  <span class="w-1.5 h-1.5 rounded-full bg-status-amber-base"></span>Pending
+                </span>
+              </td>
+              <td class="px-3 py-2">
+                <button class="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-ink-700 transition-opacity">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                </button>
+              </td>
+            </tr>
+            <tr class="hover:bg-brand-50/30 transition-colors group bg-status-amber-light/30">
+              <td class="px-4 py-2"><input type="checkbox" class="rounded border-surface-300"></td>
+              <td class="px-3 py-2 text-sm text-ink-700" style="font-variant-numeric:tabular-nums">Feb 26</td>
+              <td class="px-3 py-2">
+                <div class="text-sm font-medium text-ink-900">Ruth's Chris Steak House</div>
+                <div class="text-xs text-ink-400">MCC 5812 &middot; Restaurants</div>
+              </td>
+              <td class="px-3 py-2 text-sm text-ink-700">Meals</td>
+              <td class="px-3 py-2 text-sm text-ink-900 text-right font-mono" style="font-variant-numeric:tabular-nums">$312.80</td>
+              <td class="px-3 py-2">
+                <span class="inline-flex items-center gap-1 text-xs font-medium text-ink-500 bg-surface-100 px-1.5 py-0.5 rounded-md border border-surface-200">Personal</span>
+              </td>
+              <td class="px-3 py-2">
+                <span class="inline-flex items-center gap-1.5 bg-status-amber-light text-status-amber-dark text-xs font-medium px-2 py-0.5 rounded-md border border-status-amber-border">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.834-1.964-.834-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                  Violation
+                </span>
+              </td>
+              <td class="px-3 py-2">
+                <button class="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-ink-700 transition-opacity">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="flex items-center justify-between px-4 py-2 border-t border-surface-200 bg-surface-50">
+          <div class="text-xs text-ink-400">Showing 1-3 of 24</div>
+          <div class="flex items-center gap-1">
+            <button class="text-xs text-ink-400 px-2 py-1 rounded-md hover:bg-surface-100">Prev</button>
+            <button class="text-xs text-white bg-brand-500 px-2 py-1 rounded-md">1</button>
+            <button class="text-xs text-ink-500 px-2 py-1 rounded-md hover:bg-surface-100">2</button>
+            <button class="text-xs text-ink-500 px-2 py-1 rounded-md hover:bg-surface-100">3</button>
+            <button class="text-xs text-ink-500 px-2 py-1 rounded-md hover:bg-surface-100">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SIDEBAR -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Sidebar Navigation</h2>
+      <p class="text-xs text-ink-500 mb-3">Dark teal sidebar matching Centime's nav identity. 220px expanded, 56px collapsed.</p>
+
+      <div class="flex gap-6">
+        <!-- Expanded -->
+        <div class="sidebar-demo bg-brand-700 rounded-card overflow-hidden text-white">
+          <div class="px-4 py-3.5 border-b border-white/10">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 bg-white/15 rounded-lg flex items-center justify-center">
+                <svg class="w-3.5 h-3.5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+              </div>
+              <span class="text-sm font-semibold text-white">Centime</span>
+            </div>
+          </div>
+          <nav class="px-2 py-3">
+            <div class="mb-4">
+              <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Main</div>
+              <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 text-sm font-medium text-white bg-white/10 rounded-lg mt-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Dashboard
+              </a>
+              <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg mt-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+                My Expenses
+                <span class="ml-auto text-xxs font-medium bg-gold-300 text-brand-800 px-1.5 py-0.5 rounded-full">3</span>
+              </a>
+              <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg mt-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                Card Transactions
+              </a>
+            </div>
+            <div class="mb-4">
+              <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Approvals</div>
+              <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg mt-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                Review Queue
+                <span class="ml-auto text-xxs font-medium bg-status-red-base text-white px-1.5 py-0.5 rounded-full">7</span>
+              </a>
+            </div>
+            <div>
+              <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Finance</div>
+              <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg mt-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                Reconciliation
+              </a>
+              <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg mt-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                Policies
+              </a>
+              <a href="#" class="flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/5 rounded-lg mt-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                Reports
+              </a>
+            </div>
+          </nav>
+          <div class="px-2 py-3 border-t border-white/10 mt-2">
+            <div class="flex items-center gap-2.5 px-2.5">
+              <div class="w-7 h-7 bg-brand-400 rounded-full flex items-center justify-center text-xs font-semibold text-white">JM</div>
+              <div>
+                <div class="text-sm font-medium text-white">J. Martinez</div>
+                <div class="text-xxs text-white/50">Sales &middot; Employee</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collapsed -->
+        <div class="w-14 bg-brand-700 rounded-card overflow-hidden">
+          <div class="px-3 py-3.5 border-b border-white/10 flex justify-center">
+            <div class="w-7 h-7 bg-white/15 rounded-lg flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+            </div>
+          </div>
+          <nav class="py-3 flex flex-col items-center gap-1">
+            <a href="#" class="p-2 text-white bg-white/10 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></a>
+            <a href="#" class="p-2 text-white/50 hover:text-white hover:bg-white/5 rounded-lg relative"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg><span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-gold-300 rounded-full"></span></a>
+            <a href="#" class="p-2 text-white/50 hover:text-white hover:bg-white/5 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></a>
+            <div class="w-6 border-t border-white/10 my-1"></div>
+            <a href="#" class="p-2 text-white/50 hover:text-white hover:bg-white/5 rounded-lg relative"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg><span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-status-red-base rounded-full"></span></a>
+          </nav>
+          <div class="py-3 border-t border-white/10 flex justify-center mt-2">
+            <div class="w-7 h-7 bg-brand-400 rounded-full flex items-center justify-center text-xs font-semibold text-white">JM</div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="flex-1 space-y-3">
+          <div class="bg-white border border-surface-200 rounded-card p-4">
+            <h3>Brand Application</h3>
+            <ul class="text-xs text-ink-700 space-y-1 mt-2">
+              <li><strong class="text-brand-700">Dark Teal #024743</strong> — sidebar background, matching centime.com nav</li>
+              <li><strong class="text-brand-500">Teal #008085</strong> — primary actions, active states, links</li>
+              <li><strong class="text-gold-400">Gold #fdc231</strong> — notification counts, promotional CTAs, accent highlights</li>
+              <li><strong>White/10</strong> — sidebar borders and hover states on dark background</li>
+            </ul>
+          </div>
+          <div class="bg-white border border-surface-200 rounded-card p-4">
+            <h3>Role-Based Sections</h3>
+            <div class="mt-2 space-y-1">
+              <div class="flex items-center gap-2 text-xs"><span class="w-16 text-ink-400">Employee</span><span class="text-ink-700">Dashboard, My Expenses, Card Transactions</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="w-16 text-ink-400">Manager</span><span class="text-ink-700">+ Review Queue</span></div>
+              <div class="flex items-center gap-2 text-xs"><span class="w-16 text-ink-400">Finance</span><span class="text-ink-700">+ Reconciliation, Policies, Reports</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- STAT CARDS -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Stat Cards</h2>
+      <div class="grid grid-cols-5 gap-3">
+        <div class="bg-white border border-surface-200 rounded-card p-3">
+          <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Pending</div>
+          <div class="text-xl font-semibold text-ink-900 mt-0.5" style="font-variant-numeric:tabular-nums">$1,247.50</div>
+          <div class="text-xs text-ink-400 mt-0.5">3 expenses</div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-3">
+          <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Approved</div>
+          <div class="text-xl font-semibold text-status-green-base mt-0.5" style="font-variant-numeric:tabular-nums">$4,892.30</div>
+          <div class="text-xs text-ink-400 mt-0.5">12 expenses</div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-3">
+          <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">This Month</div>
+          <div class="text-xl font-semibold text-ink-900 mt-0.5" style="font-variant-numeric:tabular-nums">$6,139.80</div>
+          <div class="text-xs text-ink-400 mt-0.5">15 expenses</div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-3">
+          <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Violations</div>
+          <div class="text-xl font-semibold text-status-amber-base mt-0.5" style="font-variant-numeric:tabular-nums">2</div>
+          <div class="text-xs text-ink-400 mt-0.5">Needs attention</div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-3">
+          <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Card Usage</div>
+          <div class="text-xl font-semibold text-brand-500 mt-0.5" style="font-variant-numeric:tabular-nums">87%</div>
+          <div class="text-xs text-ink-400 mt-0.5">Corporate card</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ALERTS -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Alerts & Banners</h2>
+      <div class="space-y-3">
+        <div class="flex items-start gap-3 bg-status-amber-light border border-status-amber-border rounded-card px-4 py-3">
+          <svg class="w-4 h-4 text-status-amber-base mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.834-1.964-.834-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <div class="text-sm font-medium text-status-amber-dark">Policy Violation: Meal limit exceeded</div>
+            <div class="text-xs text-status-amber-dark/80 mt-0.5">$312.80 exceeds the per-person limit of $75.00 (Meals Policy). Justification required.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 bg-status-red-light border border-status-red-border rounded-card px-4 py-3">
+          <svg class="w-4 h-4 text-status-red-base mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+          <div>
+            <div class="text-sm font-medium text-status-red-dark">Blocked: Corporate card required</div>
+            <div class="text-xs text-status-red-dark/80 mt-0.5">Airfare requires the corporate card (Level 3). Submit a policy exception to finance.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 bg-brand-50 border border-brand-200 rounded-card px-4 py-3">
+          <svg class="w-4 h-4 text-brand-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div>
+            <div class="text-sm font-medium text-brand-700">Use your corporate card for this category</div>
+            <div class="text-xs text-brand-600/80 mt-0.5">Eliminates per-user charges and speeds up reconciliation.</div>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 bg-status-green-light border border-status-green-border rounded-card px-4 py-3">
+          <svg class="w-4 h-4 text-status-green-base mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div>
+            <div class="text-sm font-medium text-status-green-dark">Auto-approved</div>
+            <div class="text-xs text-status-green-dark/80 mt-0.5">Met all policy requirements. Visible in your manager's dashboard.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ELEVATION -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Elevation & Borders</h2>
+      <p class="text-xs text-ink-500 mb-3">Borders over shadows. Rounded corners at 12px for cards (matching centime.com's rounded style).</p>
+      <div class="flex gap-6 items-end">
+        <div class="text-center">
+          <div class="w-24 h-16 bg-white border border-surface-200 rounded-card"></div>
+          <div class="text-xxs text-ink-400 mt-2">Default<br>border + 12px</div>
+        </div>
+        <div class="text-center">
+          <div class="w-24 h-16 bg-white border border-surface-200 rounded-card shadow-sm"></div>
+          <div class="text-xxs text-ink-400 mt-2">Raised<br>shadow-sm</div>
+        </div>
+        <div class="text-center">
+          <div class="w-24 h-16 bg-white rounded-card shadow-lg ring-1 ring-black/5"></div>
+          <div class="text-xxs text-ink-400 mt-2">Floating<br>dropdowns</div>
+        </div>
+        <div class="text-center">
+          <div class="w-24 h-16 bg-white rounded-card shadow-xl ring-1 ring-black/5"></div>
+          <div class="text-xxs text-ink-400 mt-2">Modal<br>shadow-xl</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- DO / DON'T -->
+    <!-- ============================================ -->
+    <div class="guide-section">
+      <h2>Do / Don't</h2>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white border border-status-green-border rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-4 h-4 text-status-green-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-sm font-semibold text-status-green-dark">Do</span>
+          </div>
+          <ul class="text-xs text-ink-700 space-y-1.5">
+            <li>Use <strong>teal #008085</strong> for primary actions only</li>
+            <li>Use <strong>dark teal #024743</strong> for sidebar/nav backgrounds</li>
+            <li>Use <strong>gold #fdc231</strong> sparingly for highlights and card nudges</li>
+            <li>Use tables for list data — compact and scannable</li>
+            <li>Right-align monetary amounts with tabular nums</li>
+            <li>Surface policy info before the user violates it</li>
+            <li>Use 12px border-radius on cards (Centime's style)</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-status-red-border rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <svg class="w-4 h-4 text-status-red-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <span class="text-sm font-semibold text-status-red-dark">Don't</span>
+          </div>
+          <ul class="text-xs text-ink-700 space-y-1.5">
+            <li>Use blue as primary — we're teal, not blue</li>
+            <li>Use card grids for tabular data (wastes space)</li>
+            <li>Add decorative gradients or illustrations</li>
+            <li>Mix teal and gold in the same button</li>
+            <li>Animate transitions beyond 150ms</li>
+            <li>Use color without an accompanying text label</li>
+            <li>Use sharp corners (4px) — Centime uses rounder shapes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="border-t border-surface-200 pt-6 mt-10 text-center">
+      <p class="text-xs text-ink-400">Centime Expense Management Style Guide v1.0 — March 2026</p>
+      <p class="text-xxs text-ink-300 mt-1">Brand: Teal #008085 / Dark Teal #024743 / Gold #fdc231. Radius: 12px cards. Type: System stack at 14px base.</p>
+    </div>
+
+  </div>
+</body>
+</html>
