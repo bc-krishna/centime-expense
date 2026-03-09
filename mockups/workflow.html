@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centime Expense — Workflow Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          brand: { 50:'#e6f5f5',100:'#ccebeb',200:'#99d7d9',300:'#4db8bb',400:'#009a9f',500:'#008085',600:'#006d71',700:'#024743',800:'#013633',900:'#012524' },
+          gold: { 100:'#fef6dc',200:'#fde9a6',300:'#fdc231',400:'#e5ad1e',500:'#c4940f' },
+          surface: { 0:'#ffffff',warm:'#faf6ee',50:'#f7f8f9',100:'#f1f2f4',200:'#e3e5e8',300:'#cdd0d5' },
+          ink: { 900:'#0f1419',800:'#1a2028',700:'#2d3440',500:'#5f6b7a',400:'#8b95a3',300:'#b5bcc7' },
+          st: { gl:{light:'#eefbf3',base:'#0f9d58',dark:'#0b7a42',border:'#b7eaca'}, am:{light:'#fef9eb',base:'#d4930d',dark:'#a87308',border:'#fde68a'}, rd:{light:'#fef2f2',base:'#d93025',dark:'#ae241c',border:'#fcc8c5'}, bl:{light:'#ebf6ff',base:'#1a73e8',dark:'#1557b0',border:'#b3d4fc'} }
+        },
+        fontFamily: { sans:['-apple-system','BlinkMacSystemFont','Segoe UI','Inter','Roboto','sans-serif'], mono:['"SF Mono"','Fira Code','Menlo','monospace'] },
+        fontSize: { 'xxs':['0.625rem',{lineHeight:'0.875rem'}],'xs':['0.75rem',{lineHeight:'1rem'}],'sm':['0.8125rem',{lineHeight:'1.25rem'}],'base':['0.875rem',{lineHeight:'1.375rem'}],'md':['0.9375rem',{lineHeight:'1.5rem'}],'lg':['1.125rem',{lineHeight:'1.75rem'}],'xl':['1.25rem',{lineHeight:'1.75rem'}],'2xl':['1.5rem',{lineHeight:'2rem'}] },
+        borderRadius: { card:'12px' }
+      }}
+    }
+  </script>
+  <style>
+    *{-webkit-font-smoothing:antialiased}
+    body{margin:0;overflow-x:hidden;min-height:100vh}
+    .step{display:none;opacity:0;transition:opacity .3s ease}
+    .step.active{display:block;opacity:1}
+    .trow{transition:background .1s ease}
+    .trow:hover{background:rgba(0,128,133,.04)}
+    input:focus,select:focus,textarea:focus{outline:none}
+
+    /* Stepper */
+    .stepper-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;transition:all .2s;cursor:pointer;flex-shrink:0}
+    .stepper-circle.completed{background:#0f9d58;color:white;border:2px solid #0f9d58}
+    .stepper-circle.current{background:#008085;color:white;border:2px solid #008085;box-shadow:0 0 0 4px rgba(0,128,133,.2)}
+    .stepper-circle.future{background:white;color:#8b95a3;border:2px solid #cdd0d5}
+    .stepper-line{height:2px;flex:1;min-width:8px;transition:background .2s}
+    .stepper-line.done{background:#0f9d58}
+    .stepper-line.pending{background:#cdd0d5}
+
+    /* Success checkmark animation */
+    @keyframes checkScale{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+    @keyframes checkDraw{to{stroke-dashoffset:0}}
+    .success-circle{animation:checkScale .5s ease forwards}
+    .success-check{stroke-dasharray:30;stroke-dashoffset:30;animation:checkDraw .4s .4s ease forwards}
+
+    /* Pulse */
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+    .pulse-dot{animation:pulse-dot 1.5s ease-in-out infinite}
+
+    /* Fade in items sequentially */
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .fade-in-item{opacity:0;animation:fadeInUp .4s ease forwards}
+
+    /* Spin */
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .animate-spin{animation:spin 1s linear infinite}
+
+    /* Persona banner */
+    .persona-employee{background:linear-gradient(90deg,#ebf6ff,#f7f8f9);border-left:4px solid #1a73e8}
+    .persona-manager{background:linear-gradient(90deg,#fef9eb,#f7f8f9);border-left:4px solid #d4930d}
+    .persona-finance{background:linear-gradient(90deg,#eefbf3,#f7f8f9);border-left:4px solid #0f9d58}
+  </style>
+</head>
+<body class="bg-surface-50 font-sans text-ink-900 antialiased">
+
+  <!-- ===== HEADER ===== -->
+  <header class="h-[52px] bg-brand-700 flex items-center justify-between px-6 shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="w-7 h-7 rounded-lg bg-gold-300 flex items-center justify-center">
+        <svg class="w-4 h-4 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg>
+      </div>
+      <span class="text-sm font-semibold text-white">Centime Expense</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-xs text-white/60">Workflow Demo</span>
+      <a href="index.html" class="text-xs text-white/50 hover:text-white/80 transition">&larr; Back to Mockups</a>
+    </div>
+  </header>
+
+  <!-- ===== STEPPER ===== -->
+  <div class="bg-white border-b border-surface-200 px-4 py-4">
+    <div id="stepper" class="flex items-center max-w-6xl mx-auto">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- ===== STEP TITLE BAR ===== -->
+  <div id="step-title-bar" class="bg-surface-50 border-b border-surface-200 px-6 py-3">
+    <div class="max-w-5xl mx-auto">
+      <h2 id="step-title" class="text-lg font-semibold text-ink-900"></h2>
+      <p id="step-desc" class="text-sm text-ink-500 mt-0.5"></p>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="max-w-5xl mx-auto px-6 py-6">
+
+    <!-- ==================== STEP 1: My Expenses ==================== -->
+    <div id="step-1" class="step">
+      <!-- Persona -->
+      <div class="persona-employee rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-bl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">JD</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Viewing as: Jane Doe (Employee)</div>
+          <div class="text-xs text-ink-500">Sales Department</div>
+        </div>
+      </div>
+
+      <!-- Notification banner -->
+      <div class="bg-st-am-light border border-st-am-border rounded-card px-4 py-3 mb-5 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <svg class="w-5 h-5 text-st-am-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          <span class="text-sm text-st-am-dark font-medium">You have 2 unmatched card transactions</span>
+        </div>
+        <button onclick="goToStep(3)" class="text-sm font-medium text-st-am-dark hover:text-st-am-base underline">Review &rarr;</button>
+      </div>
+
+      <!-- Action bar -->
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-md font-semibold text-ink-900">My Expenses</h3>
+        <button onclick="goToStep(2)" class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center gap-1.5 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          New Expense
+        </button>
+      </div>
+
+      <!-- Expense table -->
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Date</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Merchant</th>
+              <th class="text-right text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Amount</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Category</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Report</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 3</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Southwest Airlines</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$342.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Air Travel</td>
+              <td class="px-5 py-2.5 text-sm text-brand-500 font-medium">Feb Travel</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Submitted</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 1</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Office Depot</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$45.80</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Office Supplies</td>
+              <td class="px-5 py-2.5 text-sm text-ink-400">--</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-surface-100 text-ink-500">Draft</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Feb 28</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Marriott Courtyard</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$189.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Lodging</td>
+              <td class="px-5 py-2.5 text-sm text-brand-500 font-medium">Feb Travel</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Submitted</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 2: Create Manual Expense ==================== -->
+    <div id="step-2" class="step">
+      <div class="persona-employee rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-bl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">JD</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Viewing as: Jane Doe (Employee)</div>
+          <div class="text-xs text-ink-500">Sales Department</div>
+        </div>
+      </div>
+
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-white border border-surface-200 rounded-card p-6">
+          <h3 class="text-md font-semibold text-ink-900 mb-5">Expense Details</h3>
+
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-ink-500 mb-1">Date</label>
+              <input type="text" value="Mar 7, 2026" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-900">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-ink-500 mb-1">Merchant</label>
+              <input type="text" value="Olive Garden - Downtown" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-900">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-ink-500 mb-1">Category</label>
+              <select class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-900">
+                <option selected>Meals & Entertainment</option>
+                <option>Transportation</option>
+                <option>Lodging</option>
+                <option>Air Travel</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-ink-500 mb-1">Amount</label>
+              <input type="text" value="$127.50" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-900 font-mono">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-medium text-ink-500 mb-1">Card Used</label>
+              <select class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-900">
+                <option selected>Personal Card (Reimbursable)</option>
+                <option>Centime Visa ****4521</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-ink-500 mb-1">Department</label>
+              <select class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-900">
+                <option selected>Sales</option>
+                <option>Marketing</option>
+                <option>Engineering</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-5">
+            <div>
+              <label class="block text-xs font-medium text-ink-500 mb-1">Project</label>
+              <select class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-900">
+                <option selected>Q1 Client Acquisition</option>
+                <option>General Operations</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-ink-500 mb-1">GL Account</label>
+              <select class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-900">
+                <option selected>6200 - Meals & Entertainment</option>
+                <option>6100 - Travel</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Attendees -->
+          <div class="border border-surface-200 rounded-lg p-4 mb-5">
+            <div class="flex items-center gap-2 mb-3">
+              <svg class="w-4 h-4 text-ink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span class="text-sm font-semibold text-ink-900">Attendees</span>
+              <span class="text-xxs bg-surface-100 text-ink-500 px-1.5 py-0.5 rounded-full ml-1">2</span>
+            </div>
+            <div class="space-y-2 mb-3">
+              <div class="flex items-center gap-2 bg-surface-50 rounded-lg px-3 py-2">
+                <div class="w-6 h-6 bg-brand-200 rounded-full flex items-center justify-center text-brand-700 text-xxs font-semibold">JD</div>
+                <span class="text-sm text-ink-900">Jane Doe</span>
+                <span class="text-xs text-ink-400">(Acme Corp)</span>
+              </div>
+              <div class="flex items-center gap-2 bg-surface-50 rounded-lg px-3 py-2">
+                <div class="w-6 h-6 bg-gold-200 rounded-full flex items-center justify-center text-gold-500 text-xxs font-semibold">MT</div>
+                <span class="text-sm text-ink-900">Michael Torres</span>
+                <span class="text-xs text-ink-400">(Prospera Inc.)</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-ink-500 mb-1">Business Purpose</label>
+              <input type="text" value="Client lunch - Q1 pipeline review" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-900">
+            </div>
+          </div>
+
+          <!-- Receipt -->
+          <div class="border border-surface-200 rounded-lg p-4 mb-5">
+            <div class="flex items-center gap-2 mb-3">
+              <svg class="w-4 h-4 text-ink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span class="text-sm font-semibold text-ink-900">Receipt</span>
+            </div>
+            <div class="flex items-center gap-3 bg-st-gl-light border border-st-gl-border rounded-lg px-3 py-2.5">
+              <div class="w-10 h-12 bg-surface-200 rounded flex items-center justify-center">
+                <svg class="w-5 h-5 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+              </div>
+              <div class="flex-1">
+                <div class="text-sm font-medium text-ink-900">olive-garden-receipt.jpg</div>
+                <div class="text-xs text-ink-400">245 KB</div>
+              </div>
+              <svg class="w-5 h-5 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+          </div>
+
+          <!-- Policy -->
+          <div class="bg-st-gl-light border border-st-gl-border rounded-lg px-4 py-3 flex items-center gap-2.5">
+            <svg class="w-5 h-5 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <span class="text-sm text-st-gl-dark font-medium">Within policy &mdash; Meal with attendees &lt; $150 limit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 3: Card Import ==================== -->
+    <div id="step-3" class="step">
+      <div class="persona-employee rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-bl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">JD</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Viewing as: Jane Doe (Employee)</div>
+          <div class="text-xs text-ink-500">Sales Department</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 mb-4">
+        <svg class="w-5 h-5 text-ink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        <span class="text-sm font-medium text-ink-700">Centime Visa ****4521</span>
+        <span class="text-xxs bg-st-am-light text-st-am-dark font-medium px-2 py-0.5 rounded-full ml-2">4 unmatched</span>
+      </div>
+
+      <div class="space-y-2">
+        <!-- Delta - Expanded -->
+        <div class="bg-white border-2 border-brand-400 rounded-card overflow-hidden">
+          <div class="flex items-center gap-4 px-5 py-3 bg-brand-50">
+            <div class="w-8 h-8 bg-st-bl-light rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-st-bl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+            </div>
+            <div class="flex-1">
+              <div class="text-sm font-semibold text-ink-900">Delta Airlines</div>
+              <div class="text-xs text-ink-400">Mar 5, 2026 &middot; MCC: Air Travel</div>
+            </div>
+            <div class="text-md font-semibold font-mono text-ink-900">$487.00</div>
+            <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">No receipt</span>
+          </div>
+          <!-- Expanded form -->
+          <div class="px-5 py-4 border-t border-surface-200">
+            <div class="grid grid-cols-3 gap-4 mb-4">
+              <div>
+                <label class="block text-xs font-medium text-ink-500 mb-1">Merchant</label>
+                <input type="text" value="Delta Airlines" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-700">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-ink-500 mb-1">Amount</label>
+                <input type="text" value="$487.00" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-700 font-mono">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-ink-500 mb-1">Date</label>
+                <input type="text" value="Mar 5, 2026" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-700">
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+              <div>
+                <label class="block text-xs font-medium text-ink-500 mb-1">Category (MCC)</label>
+                <input type="text" value="Air Travel" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-700">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-ink-500 mb-1">Project</label>
+                <select class="w-full border border-brand-400 rounded-lg px-3 py-2 text-sm bg-white text-ink-900 ring-1 ring-brand-400">
+                  <option selected>Q1 Client Acquisition</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-ink-500 mb-1">GL Account</label>
+                <select class="w-full border border-brand-400 rounded-lg px-3 py-2 text-sm bg-white text-ink-900 ring-1 ring-brand-400">
+                  <option selected>6100 - Travel</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-xs font-medium text-ink-500 mb-1">Business Purpose</label>
+              <input type="text" value="Flight to Chicago for Prospera client meetings" class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-white text-ink-900">
+            </div>
+            <div class="border-2 border-dashed border-surface-300 rounded-lg p-4 text-center mb-4">
+              <svg class="w-6 h-6 text-ink-300 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              <div class="text-xs text-ink-400">Drop receipt here or click to upload</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hilton - collapsed -->
+        <div class="bg-white border border-surface-200 rounded-card flex items-center gap-4 px-5 py-3">
+          <div class="w-8 h-8 bg-st-gl-light rounded-lg flex items-center justify-center">
+            <svg class="w-4 h-4 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="text-sm font-medium text-ink-900">Hilton Hotels</div>
+            <div class="text-xs text-ink-400">Mar 5, 2026</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900">$289.00</div>
+          <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            Receipt auto-matched (94%)
+          </span>
+        </div>
+
+        <!-- Uber - collapsed -->
+        <div class="bg-white border border-surface-200 rounded-card flex items-center gap-4 px-5 py-3">
+          <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center">
+            <svg class="w-4 h-4 text-ink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="text-sm font-medium text-ink-900">Uber</div>
+            <div class="text-xs text-ink-400">Mar 6, 2026</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900">$34.50</div>
+          <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">No receipt</span>
+        </div>
+
+        <!-- Staples - collapsed -->
+        <div class="bg-white border border-surface-200 rounded-card flex items-center gap-4 px-5 py-3">
+          <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center">
+            <svg class="w-4 h-4 text-ink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="text-sm font-medium text-ink-900">Staples</div>
+            <div class="text-xs text-ink-400">Mar 7, 2026</div>
+          </div>
+          <div class="text-sm font-mono text-ink-900">$67.23</div>
+          <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">No receipt</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 4: Build Report ==================== -->
+    <div id="step-4" class="step">
+      <div class="persona-employee rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-bl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">JD</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Viewing as: Jane Doe (Employee)</div>
+          <div class="text-xs text-ink-500">Sales Department</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="block text-xs font-medium text-ink-500 mb-1">Report Name</label>
+          <input type="text" value="March 2026 - Sales Travel & Entertainment" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2.5 text-sm bg-white text-ink-900 font-medium">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-ink-500 mb-1">Report Period</label>
+          <input type="text" value="Mar 1 - Mar 31, 2026" readonly class="w-full border border-surface-200 rounded-lg px-3 py-2.5 text-sm bg-surface-50 text-ink-700">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-5">
+        <!-- Expense list (2 cols) -->
+        <div class="col-span-2">
+          <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+            <div class="bg-surface-50 border-b border-surface-200 px-5 py-2.5">
+              <span class="text-xs font-semibold text-ink-500 uppercase tracking-wide">Expenses in Report</span>
+            </div>
+            <div class="divide-y divide-surface-100">
+              <div class="flex items-center gap-3 px-5 py-3 trow">
+                <svg class="w-4 h-4 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-ink-900">Olive Garden</div>
+                  <div class="text-xs text-ink-400">Personal Card &middot; Meals & Entertainment</div>
+                </div>
+                <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Receipt</span>
+                <span class="text-sm font-mono text-ink-900">$127.50</span>
+              </div>
+              <div class="flex items-center gap-3 px-5 py-3 trow">
+                <svg class="w-4 h-4 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-ink-900">Delta Airlines</div>
+                  <div class="text-xs text-ink-400">Centime Visa ****4521 &middot; Air Travel</div>
+                </div>
+                <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Receipt</span>
+                <span class="text-sm font-mono text-ink-900">$487.00</span>
+              </div>
+              <div class="flex items-center gap-3 px-5 py-3 trow">
+                <svg class="w-4 h-4 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-ink-900">Hilton Hotels</div>
+                  <div class="text-xs text-ink-400">Centime Visa ****4521 &middot; Lodging</div>
+                </div>
+                <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  Auto-matched
+                </span>
+                <span class="text-sm font-mono text-ink-900">$289.00</span>
+              </div>
+              <div class="flex items-center gap-3 px-5 py-3 trow">
+                <svg class="w-4 h-4 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-ink-900">Uber</div>
+                  <div class="text-xs text-ink-400">Centime Visa ****4521 &middot; Transportation</div>
+                </div>
+                <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Receipt</span>
+                <span class="text-sm font-mono text-ink-900">$34.50</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report totals -->
+        <div>
+          <div class="bg-white border border-surface-200 rounded-card p-5">
+            <h4 class="text-sm font-semibold text-ink-900 mb-4">Report Summary</h4>
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-sm text-ink-500">Total</span>
+                <span class="text-lg font-bold font-mono text-ink-900">$938.00</span>
+              </div>
+              <div class="h-px bg-surface-200"></div>
+              <div class="flex justify-between">
+                <span class="text-xs text-ink-500">Corporate Card</span>
+                <span class="text-sm font-mono text-ink-700">$810.50</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-xs text-ink-500">Personal (Reimbursable)</span>
+                <span class="text-sm font-mono text-st-bl-dark font-medium">$127.50</span>
+              </div>
+              <div class="h-px bg-surface-200"></div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-ink-500">Receipts</span>
+                <span class="text-xs font-medium text-st-gl-dark bg-st-gl-light px-2 py-0.5 rounded-full">4/4 attached</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs text-ink-500">Policy</span>
+                <span class="text-xs font-medium text-st-gl-dark bg-st-gl-light px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  All within policy
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 5: Submitted ==================== -->
+    <div id="step-5" class="step">
+      <div class="persona-employee rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-bl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">JD</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Viewing as: Jane Doe (Employee)</div>
+          <div class="text-xs text-ink-500">Sales Department</div>
+        </div>
+      </div>
+
+      <div class="max-w-lg mx-auto text-center py-6">
+        <!-- Animated checkmark -->
+        <div class="mb-5">
+          <svg class="w-20 h-20 mx-auto success-circle" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="36" fill="#eefbf3" stroke="#0f9d58" stroke-width="3"/>
+            <path class="success-check" d="M24 40l10 10 22-22" fill="none" stroke="#0f9d58" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-ink-900 mb-2">Report Submitted Successfully</h3>
+        <p class="text-sm text-ink-500 mb-6">Your expense report has been sent for approval.</p>
+
+        <!-- Summary card -->
+        <div class="bg-white border border-surface-200 rounded-card p-5 text-left mb-6">
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Report</span>
+              <span class="text-sm font-medium text-ink-900">March 2026 - Sales Travel & Entertainment</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Total</span>
+              <span class="text-sm font-mono font-semibold text-ink-900">$938.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Submitted</span>
+              <span class="text-sm text-ink-700">Mar 9, 2026 at 2:34 PM</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Approver</span>
+              <span class="text-sm text-ink-700">Mark Johnson (Sales Director)</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Est. Reimbursement</span>
+              <span class="text-sm font-mono font-medium text-st-bl-dark">$127.50</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Approval flow preview -->
+        <div class="bg-white border border-surface-200 rounded-card p-5 text-left">
+          <h4 class="text-xs font-semibold text-ink-500 uppercase tracking-wide mb-4">Approval Flow</h4>
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col items-center gap-1">
+              <div class="w-8 h-8 rounded-full bg-st-gl-base flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <span class="text-xxs text-st-gl-dark font-medium">Submitted</span>
+            </div>
+            <div class="flex-1 h-0.5 bg-st-gl-base mx-2"></div>
+            <div class="flex flex-col items-center gap-1">
+              <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center pulse-dot">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              </div>
+              <span class="text-xxs text-brand-500 font-semibold">Manager</span>
+            </div>
+            <div class="flex-1 h-0.5 bg-surface-300 mx-2"></div>
+            <div class="flex flex-col items-center gap-1">
+              <div class="w-8 h-8 rounded-full bg-white border-2 border-surface-300 flex items-center justify-center">
+                <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+              </div>
+              <span class="text-xxs text-ink-400">Finance</span>
+            </div>
+            <div class="flex-1 h-0.5 bg-surface-300 mx-2"></div>
+            <div class="flex flex-col items-center gap-1">
+              <div class="w-8 h-8 rounded-full bg-white border-2 border-surface-300 flex items-center justify-center">
+                <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+              </div>
+              <span class="text-xxs text-ink-400">GL Posting</span>
+            </div>
+            <div class="flex-1 h-0.5 bg-surface-300 mx-2"></div>
+            <div class="flex flex-col items-center gap-1">
+              <div class="w-8 h-8 rounded-full bg-white border-2 border-surface-300 flex items-center justify-center">
+                <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg>
+              </div>
+              <span class="text-xxs text-ink-400">Reimburse</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 6: Manager Approval ==================== -->
+    <div id="step-6" class="step">
+      <div class="persona-manager rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-am-base rounded-full flex items-center justify-center text-white text-xs font-semibold">MJ</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Now viewing as: Mark Johnson (Sales Director)</div>
+          <div class="text-xs text-ink-500">Manager &middot; Approval Queue</div>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Jane Doe - Expanded -->
+        <div class="bg-white border-2 border-brand-400 rounded-card overflow-hidden">
+          <div class="flex items-center gap-4 px-5 py-3 bg-brand-50">
+            <div class="w-8 h-8 bg-st-bl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">JD</div>
+            <div class="flex-1">
+              <div class="text-sm font-semibold text-ink-900">Jane Doe</div>
+              <div class="text-xs text-ink-400">March 2026 - Sales Travel & Entertainment</div>
+            </div>
+            <span class="text-md font-bold font-mono text-ink-900">$938.00</span>
+            <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Submitted Mar 9</span>
+          </div>
+          <div class="px-5 py-4 border-t border-surface-200">
+            <!-- Mini expense table -->
+            <table class="w-full mb-4">
+              <thead>
+                <tr class="border-b border-surface-200">
+                  <th class="text-left text-xxs font-semibold text-ink-500 uppercase py-2">Expense</th>
+                  <th class="text-right text-xxs font-semibold text-ink-500 uppercase py-2">Amount</th>
+                  <th class="text-left text-xxs font-semibold text-ink-500 uppercase py-2 pl-4">Category</th>
+                  <th class="text-center text-xxs font-semibold text-ink-500 uppercase py-2">Receipt</th>
+                  <th class="text-left text-xxs font-semibold text-ink-500 uppercase py-2">Policy</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-surface-100 text-sm">
+                <tr>
+                  <td class="py-2 text-ink-900">Olive Garden</td>
+                  <td class="py-2 text-right font-mono text-ink-900">$127.50</td>
+                  <td class="py-2 pl-4 text-ink-500">Meals & Ent.</td>
+                  <td class="py-2 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+                  <td class="py-2"><span class="text-xxs px-1.5 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark font-medium">OK</span></td>
+                </tr>
+                <tr>
+                  <td class="py-2 text-ink-900">Delta Airlines</td>
+                  <td class="py-2 text-right font-mono text-ink-900">$487.00</td>
+                  <td class="py-2 pl-4 text-ink-500">Air Travel</td>
+                  <td class="py-2 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+                  <td class="py-2"><span class="text-xxs px-1.5 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark font-medium">OK</span></td>
+                </tr>
+                <tr>
+                  <td class="py-2 text-ink-900">Hilton Hotels</td>
+                  <td class="py-2 text-right font-mono text-ink-900">$289.00</td>
+                  <td class="py-2 pl-4 text-ink-500">Lodging</td>
+                  <td class="py-2 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+                  <td class="py-2"><span class="text-xxs px-1.5 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark font-medium">OK</span></td>
+                </tr>
+                <tr>
+                  <td class="py-2 text-ink-900">Uber</td>
+                  <td class="py-2 text-right font-mono text-ink-900">$34.50</td>
+                  <td class="py-2 pl-4 text-ink-500">Transportation</td>
+                  <td class="py-2 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+                  <td class="py-2"><span class="text-xxs px-1.5 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark font-medium">OK</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">All items within policy</span>
+              <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">4/4 receipts attached</span>
+            </div>
+
+            <!-- Receipts strip -->
+            <div class="flex gap-2 mb-4">
+              <div class="w-12 h-14 bg-surface-100 rounded border border-surface-200 flex items-center justify-center"><svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+              <div class="w-12 h-14 bg-surface-100 rounded border border-surface-200 flex items-center justify-center"><svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+              <div class="w-12 h-14 bg-surface-100 rounded border border-surface-200 flex items-center justify-center"><svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+              <div class="w-12 h-14 bg-surface-100 rounded border border-surface-200 flex items-center justify-center"><svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+            </div>
+
+            <!-- Comment -->
+            <div class="mb-4">
+              <label class="block text-xs font-medium text-ink-500 mb-1">Comment</label>
+              <textarea readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-700 resize-none" rows="2">Approved — good documentation on attendees.</textarea>
+            </div>
+
+            <div class="flex gap-3">
+              <button onclick="goToStep(7)" class="flex-1 bg-st-gl-base hover:bg-st-gl-dark text-white text-sm font-medium py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Approve
+              </button>
+              <button class="flex-1 bg-white border border-st-rd-base text-st-rd-base hover:bg-st-rd-light text-sm font-medium py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tom Williams - collapsed -->
+        <div class="bg-white border border-surface-200 rounded-card flex items-center gap-4 px-5 py-3">
+          <div class="w-8 h-8 bg-brand-300 rounded-full flex items-center justify-center text-white text-xs font-semibold">TW</div>
+          <div class="flex-1">
+            <div class="text-sm font-medium text-ink-900">Tom Williams</div>
+            <div class="text-xs text-ink-400">Feb Mileage</div>
+          </div>
+          <span class="text-sm font-mono text-ink-700">$234.80</span>
+          <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Submitted Mar 7</span>
+        </div>
+
+        <!-- Sarah Chen - collapsed -->
+        <div class="bg-white border border-surface-200 rounded-card flex items-center gap-4 px-5 py-3">
+          <div class="w-8 h-8 bg-gold-400 rounded-full flex items-center justify-center text-white text-xs font-semibold">SC</div>
+          <div class="flex-1">
+            <div class="text-sm font-medium text-ink-900">Sarah Chen</div>
+            <div class="text-xs text-ink-400">Client Dinner - Prospera</div>
+          </div>
+          <span class="text-sm font-mono text-ink-700">$89.50</span>
+          <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Submitted Mar 8</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 7: Finance Review ==================== -->
+    <div id="step-7" class="step">
+      <div class="persona-finance rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-gl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">LP</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Now viewing as: Lisa Park (Finance Admin)</div>
+          <div class="text-xs text-ink-500">Finance Department</div>
+        </div>
+      </div>
+
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <!-- Header -->
+        <div class="px-5 py-4 border-b border-surface-200">
+          <div class="flex items-center justify-between mb-2">
+            <div>
+              <h3 class="text-md font-semibold text-ink-900">March 2026 - Sales Travel & Entertainment</h3>
+              <p class="text-xs text-ink-400">Jane Doe &middot; Sales Department &middot; $938.00</p>
+            </div>
+            <span class="text-xxs font-medium px-2.5 py-1 rounded-full bg-st-gl-light text-st-gl-dark flex items-center gap-1">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Manager Approved &mdash; Pending Finance Review
+            </span>
+          </div>
+        </div>
+
+        <!-- GL coding table -->
+        <table class="w-full">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Expense</th>
+              <th class="text-right text-xxs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Amount</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">GL Account</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Dept</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Cost Center</th>
+              <th class="text-center text-xxs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100 text-sm">
+            <tr class="trow">
+              <td class="px-5 py-2.5 font-medium text-ink-900">Olive Garden</td>
+              <td class="px-5 py-2.5 text-right font-mono">$127.50</td>
+              <td class="px-5 py-2.5 text-ink-700">6200 - M&E</td>
+              <td class="px-5 py-2.5 text-ink-700">Sales</td>
+              <td class="px-5 py-2.5 text-ink-700">CC-200</td>
+              <td class="px-5 py-2.5 text-center"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Valid</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 font-medium text-ink-900">Delta Airlines</td>
+              <td class="px-5 py-2.5 text-right font-mono">$487.00</td>
+              <td class="px-5 py-2.5 text-ink-700">6100 - Travel</td>
+              <td class="px-5 py-2.5 text-ink-700">Sales</td>
+              <td class="px-5 py-2.5 text-ink-700">CC-200</td>
+              <td class="px-5 py-2.5 text-center"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Valid</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 font-medium text-ink-900">Hilton Hotels</td>
+              <td class="px-5 py-2.5 text-right font-mono">$289.00</td>
+              <td class="px-5 py-2.5 text-ink-700">6100 - Travel</td>
+              <td class="px-5 py-2.5 text-ink-700">Sales</td>
+              <td class="px-5 py-2.5 text-ink-700">CC-200</td>
+              <td class="px-5 py-2.5 text-center"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Valid</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 font-medium text-ink-900">Uber</td>
+              <td class="px-5 py-2.5 text-right font-mono">$34.50</td>
+              <td class="px-5 py-2.5 text-ink-700">6150 - Transport</td>
+              <td class="px-5 py-2.5 text-ink-700">Sales</td>
+              <td class="px-5 py-2.5 text-ink-700">CC-200</td>
+              <td class="px-5 py-2.5 text-center"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Valid</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Validation -->
+        <div class="px-5 py-4 border-t border-surface-200">
+          <div class="flex gap-3 mb-4">
+            <span class="text-xs font-medium text-st-gl-dark bg-st-gl-light px-2.5 py-1 rounded-full flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              All GL codes valid
+            </span>
+            <span class="text-xs font-medium text-st-gl-dark bg-st-gl-light px-2.5 py-1 rounded-full flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              All cost centers active
+            </span>
+          </div>
+          <div class="mb-4">
+            <label class="block text-xs font-medium text-ink-500 mb-1">Comment</label>
+            <textarea readonly class="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm bg-surface-50 text-ink-700 resize-none" rows="2">GL coding verified. Ready to post.</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 8: GL Posting ==================== -->
+    <div id="step-8" class="step">
+      <div class="persona-finance rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-gl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">LP</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Now viewing as: Lisa Park (Finance Admin)</div>
+          <div class="text-xs text-ink-500">Finance Department</div>
+        </div>
+      </div>
+
+      <!-- ERP Target -->
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-9 h-9 bg-st-gl-base rounded-lg flex items-center justify-center">
+          <span class="text-white text-xs font-bold">QB</span>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-ink-900">QuickBooks Online</div>
+          <div class="text-xs text-ink-400">ERP Integration Target</div>
+        </div>
+        <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark ml-2">Connected</span>
+      </div>
+
+      <div class="grid grid-cols-5 gap-5">
+        <!-- Journal entries (3 cols) -->
+        <div class="col-span-3">
+          <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+            <div class="bg-surface-50 border-b border-surface-200 px-5 py-2.5 flex items-center justify-between">
+              <span class="text-xs font-semibold text-ink-500 uppercase tracking-wide">Journal Entry Preview</span>
+              <span class="text-xs text-ink-400">Date: Mar 9, 2026</span>
+            </div>
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-surface-200">
+                  <th class="text-left text-xxs font-semibold text-ink-500 uppercase px-5 py-2">Account</th>
+                  <th class="text-right text-xxs font-semibold text-ink-500 uppercase px-5 py-2">Debit</th>
+                  <th class="text-right text-xxs font-semibold text-ink-500 uppercase px-5 py-2">Credit</th>
+                  <th class="text-left text-xxs font-semibold text-ink-500 uppercase px-5 py-2">Memo</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-surface-100 text-sm font-mono">
+                <tr>
+                  <td class="px-5 py-2 text-ink-900">6200 Meals & Entertainment</td>
+                  <td class="px-5 py-2 text-right text-ink-900">$127.50</td>
+                  <td class="px-5 py-2 text-right text-ink-300">&mdash;</td>
+                  <td class="px-5 py-2 text-xs font-sans text-ink-500">Sales - CC-200</td>
+                </tr>
+                <tr>
+                  <td class="px-5 py-2 text-ink-900">6100 Travel</td>
+                  <td class="px-5 py-2 text-right text-ink-900">$776.00</td>
+                  <td class="px-5 py-2 text-right text-ink-300">&mdash;</td>
+                  <td class="px-5 py-2 text-xs font-sans text-ink-500">Sales - CC-200</td>
+                </tr>
+                <tr>
+                  <td class="px-5 py-2 text-ink-900">6150 Transportation</td>
+                  <td class="px-5 py-2 text-right text-ink-900">$34.50</td>
+                  <td class="px-5 py-2 text-right text-ink-300">&mdash;</td>
+                  <td class="px-5 py-2 text-xs font-sans text-ink-500">Sales - CC-200</td>
+                </tr>
+                <tr class="bg-surface-50">
+                  <td class="px-5 py-2 text-ink-900">2100 Corp Card Payable</td>
+                  <td class="px-5 py-2 text-right text-ink-300">&mdash;</td>
+                  <td class="px-5 py-2 text-right text-ink-900">$810.50</td>
+                  <td class="px-5 py-2 text-xs font-sans text-ink-500"></td>
+                </tr>
+                <tr class="bg-surface-50">
+                  <td class="px-5 py-2 text-ink-900">2200 Employee Reimbursable</td>
+                  <td class="px-5 py-2 text-right text-ink-300">&mdash;</td>
+                  <td class="px-5 py-2 text-right text-ink-900">$127.50</td>
+                  <td class="px-5 py-2 text-xs font-sans text-ink-500"></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="border-t-2 border-surface-300 font-semibold">
+                  <td class="px-5 py-2 text-sm text-ink-900">Totals</td>
+                  <td class="px-5 py-2 text-right text-sm font-mono text-ink-900">$938.00</td>
+                  <td class="px-5 py-2 text-right text-sm font-mono text-ink-900">$938.00</td>
+                  <td class="px-5 py-2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Posting status (2 cols) -->
+        <div class="col-span-2">
+          <div class="bg-white border border-surface-200 rounded-card p-5">
+            <h4 class="text-sm font-semibold text-ink-900 mb-4">Posting Status</h4>
+            <div id="posting-steps" class="space-y-3">
+              <div class="posting-item flex items-center gap-2.5" data-delay="0">
+                <svg class="w-5 h-5 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span class="text-sm text-ink-700">GL codes validated</span>
+              </div>
+              <div class="posting-item flex items-center gap-2.5" data-delay="500">
+                <svg class="w-5 h-5 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span class="text-sm text-ink-700">Cost centers verified</span>
+              </div>
+              <div class="posting-item flex items-center gap-2.5" data-delay="1000">
+                <svg class="w-5 h-5 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span class="text-sm text-ink-700">Period open (Mar 2026)</span>
+              </div>
+              <div id="posting-spinner" class="posting-item flex items-center gap-2.5" data-delay="1500">
+                <svg class="w-5 h-5 text-brand-500 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                <span class="text-sm text-brand-500 font-medium">Posting journal entry...</span>
+              </div>
+              <div id="posting-success" class="posting-item flex items-center gap-2.5 hidden" data-delay="3000">
+                <svg class="w-5 h-5 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span class="text-sm text-st-gl-dark font-medium">Posted successfully</span>
+              </div>
+            </div>
+
+            <div id="posting-result" class="mt-5 pt-4 border-t border-surface-200 hidden">
+              <div class="space-y-2">
+                <div class="flex justify-between">
+                  <span class="text-xs text-ink-500">QBO Reference</span>
+                  <span class="text-sm font-mono font-medium text-brand-500">JE-2026-03-0847</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-xs text-ink-500">Posted</span>
+                  <span class="text-sm text-ink-700">Mar 9, 2026 at 3:12 PM</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 9: Reimbursement ==================== -->
+    <div id="step-9" class="step">
+      <div class="persona-finance rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-gl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">LP</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Now viewing as: Lisa Park (Finance Admin)</div>
+          <div class="text-xs text-ink-500">Finance Department</div>
+        </div>
+      </div>
+
+      <!-- Integration banner -->
+      <div class="bg-brand-50 border border-brand-200 rounded-card px-4 py-3 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg>
+        </div>
+        <div>
+          <div class="text-sm font-medium text-brand-700">Payments processed through Centime AP</div>
+          <div class="text-xs text-brand-500">Automated ACH reimbursement</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-5">
+        <!-- Reimbursement details -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <h4 class="text-sm font-semibold text-ink-900 mb-4">Reimbursement Details</h4>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Employee</span>
+              <span class="text-sm text-ink-900">Jane Doe</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Report</span>
+              <span class="text-sm text-ink-900">March 2026 - Sales T&E</span>
+            </div>
+            <div class="h-px bg-surface-200"></div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Reimbursable Amount</span>
+              <span class="text-sm font-mono font-semibold text-st-bl-dark">$127.50</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Corporate Card Amount</span>
+              <div class="text-right">
+                <span class="text-sm font-mono text-ink-700">$810.50</span>
+                <div class="text-xxs text-ink-400">Reconciled — no reimbursement</div>
+              </div>
+            </div>
+            <div class="h-px bg-surface-200"></div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Payment Method</span>
+              <span class="text-sm text-ink-900">ACH Direct Deposit</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Bank Account</span>
+              <span class="text-sm font-mono text-ink-700">****3456</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-xs text-ink-500">Estimated Payment</span>
+              <span class="text-sm text-ink-900 font-medium">Mar 11, 2026 (T+2)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment status -->
+        <div>
+          <div class="bg-white border border-surface-200 rounded-card p-5 mb-5">
+            <h4 class="text-sm font-semibold text-ink-900 mb-5">Payment Status</h4>
+            <div class="flex items-center justify-between">
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-st-gl-base flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span class="text-xxs text-st-gl-dark font-medium">Approved</span>
+              </div>
+              <div class="flex-1 h-0.5 bg-st-gl-base mx-2"></div>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-st-gl-base flex items-center justify-center">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span class="text-xxs text-st-gl-dark font-medium">Queued</span>
+              </div>
+              <div class="flex-1 h-0.5 bg-brand-500 mx-2"></div>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center pulse-dot">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <span class="text-xxs text-brand-500 font-semibold">Processing</span>
+              </div>
+              <div class="flex-1 h-0.5 bg-surface-300 mx-2"></div>
+              <div class="flex flex-col items-center gap-1">
+                <div class="w-8 h-8 rounded-full bg-white border-2 border-surface-300 flex items-center justify-center">
+                  <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 10v1"/></svg>
+                </div>
+                <span class="text-xxs text-ink-400">Paid</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-surface-warm border border-gold-200 rounded-card p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span class="text-xs font-semibold text-gold-500">Batch Info</span>
+            </div>
+            <p class="text-xs text-ink-700">Included in payment batch <span class="font-mono font-medium">ACH-20260309-PM</span> with 4 other reimbursements.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 10: Payment Status ==================== -->
+    <div id="step-10" class="step">
+      <div class="persona-employee rounded-lg px-4 py-2.5 mb-5 flex items-center gap-3">
+        <div class="w-8 h-8 bg-st-bl-base rounded-full flex items-center justify-center text-white text-xs font-semibold">JD</div>
+        <div>
+          <div class="text-sm font-medium text-ink-900">Now viewing as: Jane Doe (Employee)</div>
+          <div class="text-xs text-ink-500">Sales Department</div>
+        </div>
+      </div>
+
+      <!-- KPI cards -->
+      <div class="grid grid-cols-4 gap-4 mb-5">
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-xs text-ink-500 mb-1">Pending</div>
+          <div class="text-xl font-bold font-mono text-ink-900">$0.00</div>
+        </div>
+        <div class="bg-white border border-brand-200 rounded-card p-4">
+          <div class="text-xs text-ink-500 mb-1">Processing</div>
+          <div class="text-xl font-bold font-mono text-brand-500">$127.50</div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-xs text-ink-500 mb-1">Paid This Month</div>
+          <div class="text-xl font-bold font-mono text-ink-900">$234.80</div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-xs text-ink-500 mb-1">Paid YTD</div>
+          <div class="text-xl font-bold font-mono text-ink-900">$1,847.25</div>
+        </div>
+      </div>
+
+      <!-- Current reimbursement -->
+      <div class="bg-white border-2 border-brand-400 rounded-card p-5 mb-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h4 class="text-md font-semibold text-ink-900">March 2026 - Sales Travel & Entertainment</h4>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-brand-50 text-brand-500">Processing &mdash; Est. Mar 11</span>
+              <span class="text-xs text-ink-400">ACH ****3456</span>
+            </div>
+          </div>
+          <div class="text-xl font-bold font-mono text-brand-500">$127.50</div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="border-l-2 border-surface-200 ml-3 pl-5 space-y-3">
+          <div class="relative">
+            <div class="absolute -left-[25px] top-0.5 w-3 h-3 rounded-full bg-st-gl-base border-2 border-white"></div>
+            <div class="text-xs text-ink-400">Mar 9, 2:34 PM</div>
+            <div class="text-sm text-ink-700">Report submitted</div>
+          </div>
+          <div class="relative">
+            <div class="absolute -left-[25px] top-0.5 w-3 h-3 rounded-full bg-st-gl-base border-2 border-white"></div>
+            <div class="text-xs text-ink-400">Mar 9, 2:45 PM</div>
+            <div class="text-sm text-ink-700">Manager approved <span class="text-ink-400">(Mark Johnson)</span></div>
+          </div>
+          <div class="relative">
+            <div class="absolute -left-[25px] top-0.5 w-3 h-3 rounded-full bg-st-gl-base border-2 border-white"></div>
+            <div class="text-xs text-ink-400">Mar 9, 3:05 PM</div>
+            <div class="text-sm text-ink-700">Finance approved <span class="text-ink-400">(Lisa Park)</span></div>
+          </div>
+          <div class="relative">
+            <div class="absolute -left-[25px] top-0.5 w-3 h-3 rounded-full bg-st-gl-base border-2 border-white"></div>
+            <div class="text-xs text-ink-400">Mar 9, 3:12 PM</div>
+            <div class="text-sm text-ink-700">Posted to QuickBooks <span class="font-mono text-xs text-brand-500">JE-2026-03-0847</span></div>
+          </div>
+          <div class="relative">
+            <div class="absolute -left-[25px] top-0.5 w-3 h-3 rounded-full bg-st-gl-base border-2 border-white"></div>
+            <div class="text-xs text-ink-400">Mar 9, 3:15 PM</div>
+            <div class="text-sm text-ink-700">Reimbursement queued</div>
+          </div>
+          <div class="relative">
+            <div class="absolute -left-[25px] top-0.5 w-3 h-3 rounded-full bg-brand-500 border-2 border-white pulse-dot"></div>
+            <div class="text-xs text-ink-400">Mar 11 (est.)</div>
+            <div class="text-sm text-brand-500 font-medium">Payment via ACH</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment history -->
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden mb-6">
+        <div class="bg-surface-50 border-b border-surface-200 px-5 py-2.5">
+          <span class="text-xs font-semibold text-ink-500 uppercase tracking-wide">Payment History</span>
+        </div>
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-surface-200">
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase px-5 py-2">Date</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase px-5 py-2">Report</th>
+              <th class="text-right text-xxs font-semibold text-ink-500 uppercase px-5 py-2">Amount</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase px-5 py-2">Method</th>
+              <th class="text-left text-xxs font-semibold text-ink-500 uppercase px-5 py-2">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100 text-sm">
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-ink-700">Mar 3</td>
+              <td class="px-5 py-2.5 text-ink-900">Feb Mileage Reimbursement</td>
+              <td class="px-5 py-2.5 text-right font-mono text-ink-900">$189.30</td>
+              <td class="px-5 py-2.5 text-ink-500 font-mono text-xs">ACH ****3456</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Paid</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-ink-700">Feb 18</td>
+              <td class="px-5 py-2.5 text-ink-900">Jan Conference Expenses</td>
+              <td class="px-5 py-2.5 text-right font-mono text-ink-900">$45.50</td>
+              <td class="px-5 py-2.5 text-ink-500 font-mono text-xs">ACH ****3456</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Paid</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-ink-700">Feb 3</td>
+              <td class="px-5 py-2.5 text-ink-900">Jan Client Dinner</td>
+              <td class="px-5 py-2.5 text-right font-mono text-ink-900">$78.25</td>
+              <td class="px-5 py-2.5 text-ink-500 font-mono text-xs">ACH ****3456</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Paid</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Final completed stepper -->
+      <div class="bg-st-gl-light border border-st-gl-border rounded-card p-5 text-center">
+        <svg class="w-8 h-8 text-st-gl-base mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <h4 class="text-md font-semibold text-st-gl-dark mb-1">Workflow Complete</h4>
+        <p class="text-xs text-ink-500">You have walked through the entire Centime Expense lifecycle &mdash; from expense creation to reimbursement.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <div class="sticky bottom-0 bg-white border-t border-surface-200 px-6 py-3">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <button id="btn-prev" onclick="prevStep()" class="text-sm font-medium text-ink-500 hover:text-ink-900 flex items-center gap-1.5 transition disabled:opacity-30 disabled:cursor-not-allowed">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Previous
+      </button>
+      <div id="step-counter" class="text-xs text-ink-400"></div>
+      <button id="btn-next" onclick="nextStep()" class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-5 py-2 rounded-lg flex items-center gap-1.5 transition">
+        <span id="btn-next-label">Next</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const STEPS = [
+      { id:1, label:'My Expenses',     title:'My Expenses',              desc:'View your expenses and unmatched card transactions.',         action:'+ New Expense' },
+      { id:2, label:'Create Expense',   title:'Create Manual Expense',    desc:'Fill out expense details with receipt and attendees.',        action:'Save & Add to Report \u2192' },
+      { id:3, label:'Card Import',      title:'Import Card Transaction',  desc:'Review and categorize unmatched corporate card charges.',    action:'Create Expense \u2192' },
+      { id:4, label:'Build Report',     title:'Build Expense Report',     desc:'Bundle expenses into a report for submission.',              action:'Submit for Approval \u2192' },
+      { id:5, label:'Submitted',        title:'Report Submitted',         desc:'Confirmation and approval flow preview.',                   action:'Continue to Approval \u2192' },
+      { id:6, label:'Mgr Approval',     title:'Manager Approval',         desc:'The manager reviews and approves the expense report.',      action:'Approve \u2713' },
+      { id:7, label:'Finance Review',   title:'Finance Review',           desc:'Finance admin validates GL coding and cost centers.',        action:'Approve & Queue for Posting \u2192' },
+      { id:8, label:'GL Posting',       title:'Post to ERP',              desc:'Journal entry is created and posted to QuickBooks Online.', action:'View Reimbursement \u2192' },
+      { id:9, label:'Reimbursement',    title:'Reimbursement Processing', desc:'Personal card expenses are queued for ACH payment.',        action:'View Employee\u2019s Perspective \u2192' },
+      { id:10,label:'Payment Status',   title:'My Reimbursements',        desc:'Employee tracks their reimbursement status and history.',   action:'Restart Demo' }
+    ];
+
+    let currentStep = 1;
+    let postingAnimated = false;
+
+    function buildStepper() {
+      const container = document.getElementById('stepper');
+      container.innerHTML = '';
+      STEPS.forEach((s, i) => {
+        // Circle
+        const circle = document.createElement('div');
+        circle.className = 'stepper-circle';
+        circle.title = s.label;
+        circle.onclick = () => { if (s.id <= currentStep) goToStep(s.id); };
+
+        if (s.id < currentStep) {
+          circle.classList.add('completed');
+          circle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>';
+        } else if (s.id === currentStep) {
+          circle.classList.add('current');
+          circle.textContent = s.id;
+        } else {
+          circle.classList.add('future');
+          circle.textContent = s.id;
+        }
+        container.appendChild(circle);
+
+        // Label below (hidden on small screens)
+        // We skip the label for compactness — the circles with numbers are clear enough
+
+        // Line
+        if (i < STEPS.length - 1) {
+          const line = document.createElement('div');
+          line.className = 'stepper-line ' + (s.id < currentStep ? 'done' : 'pending');
+          container.appendChild(line);
+        }
+      });
+    }
+
+    function showStep(n) {
+      // Hide all
+      document.querySelectorAll('.step').forEach(el => { el.classList.remove('active'); });
+
+      // Show target
+      const target = document.getElementById('step-' + n);
+      if (target) {
+        // Small delay for transition
+        setTimeout(() => { target.classList.add('active'); }, 30);
+      }
+
+      // Update title
+      const s = STEPS[n - 1];
+      document.getElementById('step-title').textContent = s.title;
+      document.getElementById('step-desc').textContent = s.desc;
+
+      // Update nav buttons
+      document.getElementById('btn-prev').disabled = (n === 1);
+      document.getElementById('btn-prev').style.visibility = (n === 1) ? 'hidden' : 'visible';
+      document.getElementById('btn-next-label').textContent = s.action;
+
+      // Counter
+      document.getElementById('step-counter').textContent = 'Step ' + n + ' of ' + STEPS.length;
+
+      // Rebuild stepper
+      buildStepper();
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Step 8 animation
+      if (n === 8 && !postingAnimated) {
+        postingAnimated = true;
+        runPostingAnimation();
+      }
+    }
+
+    function goToStep(n) {
+      if (n < 1) n = 1;
+      if (n > 10) n = 1; // restart
+      currentStep = n;
+      showStep(n);
+    }
+
+    function nextStep() {
+      if (currentStep === 10) {
+        // Restart
+        postingAnimated = false;
+        // Reset posting UI
+        document.getElementById('posting-spinner').classList.remove('hidden');
+        document.getElementById('posting-success').classList.add('hidden');
+        document.getElementById('posting-result').classList.add('hidden');
+        goToStep(1);
+      } else {
+        goToStep(currentStep + 1);
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) goToStep(currentStep - 1);
+    }
+
+    function runPostingAnimation() {
+      // After 2 seconds, hide spinner and show success
+      setTimeout(() => {
+        document.getElementById('posting-spinner').classList.add('hidden');
+        document.getElementById('posting-success').classList.remove('hidden');
+        document.getElementById('posting-result').classList.remove('hidden');
+      }, 2000);
+    }
+
+    // Keyboard nav
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); nextStep(); }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prevStep(); }
+    });
+
+    // Init
+    showStep(1);
+  </script>
+
+</body>
+</html>
