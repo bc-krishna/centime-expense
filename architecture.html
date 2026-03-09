@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centime Expense — Technical Architecture</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50:'#e6f5f5',100:'#ccebeb',200:'#99d7d9',300:'#4db8bb',400:'#009a9f',500:'#008085',600:'#006d71',700:'#024743',800:'#013633',900:'#012524' },
+            gold: { 100:'#fef6dc',200:'#fde9a6',300:'#fdc231',400:'#e5ad1e',500:'#c4940f' },
+            surface: { 0:'#ffffff',warm:'#faf6ee',50:'#f7f8f9',100:'#f1f2f4',200:'#e3e5e8',300:'#cdd0d5' },
+            ink: { 900:'#0f1419',800:'#1a2028',700:'#2d3440',500:'#5f6b7a',400:'#8b95a3',300:'#b5bcc7' },
+            status: {
+              green:  { light:'#eefbf3',base:'#0f9d58',dark:'#0b7a42',border:'#b7eaca' },
+              amber:  { light:'#fef9eb',base:'#d4930d',dark:'#a87308',border:'#fde68a' },
+              red:    { light:'#fef2f2',base:'#d93025',dark:'#ae241c',border:'#fcc8c5' },
+              blue:   { light:'#ebf6ff',base:'#1a73e8',dark:'#1557b0',border:'#b3d4fc' },
+            }
+          },
+          fontFamily: { sans:['-apple-system','BlinkMacSystemFont','"Segoe UI"','Inter','Roboto','sans-serif'], mono:['"SF Mono"','"Fira Code"','Menlo','monospace'] },
+          fontSize: { 'xxs':['0.625rem',{lineHeight:'0.875rem'}],'xs':['0.75rem',{lineHeight:'1rem'}],'sm':['0.8125rem',{lineHeight:'1.25rem'}],'base':['0.875rem',{lineHeight:'1.375rem'}],'md':['0.9375rem',{lineHeight:'1.5rem'}],'lg':['1.125rem',{lineHeight:'1.75rem'}],'xl':['1.25rem',{lineHeight:'1.75rem'}],'2xl':['1.5rem',{lineHeight:'2rem'}],'3xl':['1.875rem',{lineHeight:'2.25rem'}] },
+          borderRadius: { card:'12px' }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { -webkit-font-smoothing: antialiased; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; }
+    .sl { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #5f6b7a; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e3e5e8; }
+    .sub { font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #8b95a3; margin-bottom: 0.5rem; }
+    .feat li { position: relative; padding-left: 1rem; font-size: 0.8125rem; line-height: 1.5; color: #2d3440; }
+    .feat li::before { content: ''; position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: #009a9f; }
+    nav a { transition: color .1s; }
+    nav a:hover { color: #008085; }
+    .badge { display: inline-block; font-size: 0.6875rem; font-weight: 600; padding: 0.125rem 0.5rem; border-radius: 9999px; }
+    .arrow-down { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid #cdd0d5; margin: 0 auto; }
+    .arrow-right { width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 8px solid #cdd0d5; }
+    .flow-connector { width: 2px; height: 20px; background: #cdd0d5; margin: 0 auto; }
+    @media print { body { font-size: 10px; } .no-print { display: none; } .page-break { page-break-before: always; } }
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-surface-50 text-ink-900">
+
+  <!-- Brand Header Bar -->
+  <div class="bg-brand-700 text-white">
+    <div class="max-w-5xl mx-auto px-8 py-5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-semibold">Centime Expense &mdash; Technical Architecture</h1>
+          <p class="text-xs text-brand-200 mt-0.5">v1.0 &middot; March 2026 &middot; Engineering Reference</p>
+        </div>
+      </div>
+      <div class="flex gap-2 no-print">
+        <a href="overview.html" class="text-xs text-brand-200 hover:text-white transition">Overview</a>
+        <span class="text-brand-300">&middot;</span>
+        <a href="spec.html" class="text-xs text-brand-200 hover:text-white transition">Spec</a>
+        <span class="text-brand-300">&middot;</span>
+        <a href="style-guide.html" class="text-xs text-brand-200 hover:text-white transition">Style Guide</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-8 py-10">
+
+    <!-- Table of Contents -->
+    <div class="mb-8 bg-white border border-surface-200 rounded-card p-5">
+      <div class="sub">Table of Contents</div>
+      <nav class="grid grid-cols-3 gap-x-6 gap-y-1 text-sm text-ink-700">
+        <a href="#s1">1. Architecture Overview</a>
+        <a href="#s5">5. Database Layer</a>
+        <a href="#s9">9. Multi-Tenancy &amp; White-Label</a>
+        <a href="#s2">2. Frontend</a>
+        <a href="#s6">6. AWS Infrastructure</a>
+        <a href="#s10">10. DevOps &amp; CI/CD</a>
+        <a href="#s3">3. Backend for Frontend (BFF)</a>
+        <a href="#s7">7. Authentication &amp; Security</a>
+        <a href="#s11">11. Performance Targets</a>
+        <a href="#s4">4. Middleware (Core Services)</a>
+        <a href="#s8">8. Integration Patterns</a>
+        <a href="#s12">12. Phased Delivery</a>
+      </nav>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 1. ARCHITECTURE OVERVIEW -->
+    <!-- ============================================ -->
+    <div id="s1" class="mb-10">
+      <div class="sl">1. Architecture Overview</div>
+      <p class="text-sm text-ink-700 mb-5 leading-relaxed">Centime Expense follows a layered, cloud-native architecture designed for horizontal scalability, multi-tenant isolation, and white-label customization. The system is built on AWS with a React frontend, Node.js BFF, and Spring Boot microservices core.</p>
+
+      <!-- Design Principles -->
+      <div class="sub mb-3">Design Principles</div>
+      <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-1.5">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+            </div>
+            <div class="text-sm font-semibold text-ink-900">Cloud-Native</div>
+          </div>
+          <p class="text-xs text-ink-500">AWS-native services, containerized workloads, infrastructure as code with Terraform.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-1.5">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div class="text-sm font-semibold text-ink-900">API-First</div>
+          </div>
+          <p class="text-xs text-ink-500">OpenAPI 3.0 contracts, versioned endpoints, consistent REST + event-driven patterns.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-1.5">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            </div>
+            <div class="text-sm font-semibold text-ink-900">Multi-Tenant</div>
+          </div>
+          <p class="text-xs text-ink-500">Shared infrastructure with logical tenant isolation via RLS, tenant-scoped caching, and per-tenant configuration.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-1.5">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+            </div>
+            <div class="text-sm font-semibold text-ink-900">White-Label</div>
+          </div>
+          <p class="text-xs text-ink-500">Fully customizable branding: logos, colors, domains, email templates, and mobile app theming per tenant.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-1.5">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+            </div>
+            <div class="text-sm font-semibold text-ink-900">Horizontally Scalable</div>
+          </div>
+          <p class="text-xs text-ink-500">Stateless services with auto-scaling, read replicas, and distributed caching for elastic throughput.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-1.5">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </div>
+            <div class="text-sm font-semibold text-ink-900">ADA Compliant</div>
+          </div>
+          <p class="text-xs text-ink-500">WCAG 2.1 Level AA across all interfaces, automated a11y testing in CI, screen reader optimized.</p>
+        </div>
+      </div>
+
+      <!-- Architecture Diagram -->
+      <div class="sub mb-3">System Architecture Diagram</div>
+      <div class="bg-white border border-surface-200 rounded-card p-6">
+        <div class="flex flex-col items-center gap-0">
+
+          <!-- Tier 1: Clients -->
+          <div class="w-full max-w-2xl grid grid-cols-2 gap-3 mb-1">
+            <div class="bg-surface-50 border border-surface-300 rounded-lg px-4 py-3 text-center">
+              <div class="text-xs font-semibold text-ink-800">Browser (React SPA)</div>
+              <div class="text-xxs text-ink-400 mt-0.5">Desktop + Responsive Web</div>
+            </div>
+            <div class="bg-surface-50 border border-surface-300 rounded-lg px-4 py-3 text-center">
+              <div class="text-xs font-semibold text-ink-800">Mobile App (PWA / RN)</div>
+              <div class="text-xxs text-ink-400 mt-0.5">iOS + Android</div>
+            </div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- Tier 2: CDN / Edge -->
+          <div class="w-full max-w-2xl bg-status-blue-light border border-status-blue-border rounded-lg px-6 py-3 text-center my-1">
+            <div class="text-xs font-semibold text-status-blue-dark">CloudFront CDN</div>
+            <div class="text-xxs text-ink-500 mt-0.5">Static assets, caching, WAF, SSL termination</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- Tier 3: Load Balancer -->
+          <div class="w-full max-w-2xl bg-status-blue-light border border-status-blue-border rounded-lg px-6 py-3 text-center my-1">
+            <div class="text-xs font-semibold text-status-blue-dark">Application Load Balancer (ALB)</div>
+            <div class="text-xxs text-ink-500 mt-0.5">TLS, path-based routing, health checks</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- Tier 4: BFF -->
+          <div class="w-full max-w-2xl bg-brand-50 border border-brand-200 rounded-lg px-6 py-3 text-center my-1">
+            <div class="text-xs font-semibold text-brand-700">BFF Layer &mdash; Node.js / Fastify</div>
+            <div class="text-xxs text-ink-500 mt-0.5">Auth, aggregation, tenant resolution, rate limiting, WebSocket</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- Tier 5: Middleware -->
+          <div class="w-full max-w-2xl bg-brand-700 text-white rounded-lg px-6 py-3 text-center my-1">
+            <div class="text-xs font-semibold">Middleware &mdash; Spring Boot Microservices</div>
+            <div class="text-xxs text-brand-200 mt-0.5">9 domain services, API Gateway, service mesh</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- Tier 6: Data + External -->
+          <div class="w-full max-w-2xl grid grid-cols-4 gap-3 mt-1">
+            <div class="bg-gold-100 border border-gold-300 rounded-lg px-3 py-3 text-center">
+              <div class="text-xs font-semibold text-gold-500">PostgreSQL</div>
+              <div class="text-xxs text-ink-400 mt-0.5">RDS Multi-AZ</div>
+            </div>
+            <div class="bg-gold-100 border border-gold-300 rounded-lg px-3 py-3 text-center">
+              <div class="text-xs font-semibold text-gold-500">Redis</div>
+              <div class="text-xxs text-ink-400 mt-0.5">ElastiCache Cluster</div>
+            </div>
+            <div class="bg-gold-100 border border-gold-300 rounded-lg px-3 py-3 text-center">
+              <div class="text-xs font-semibold text-gold-500">S3</div>
+              <div class="text-xxs text-ink-400 mt-0.5">Receipts + Assets</div>
+            </div>
+            <div class="bg-gold-100 border border-gold-300 rounded-lg px-3 py-3 text-center">
+              <div class="text-xs font-semibold text-gold-500">SQS / SNS</div>
+              <div class="text-xxs text-ink-400 mt-0.5">Event Bus</div>
+            </div>
+          </div>
+
+          <!-- External APIs -->
+          <div class="w-full max-w-2xl mt-4 pt-4 border-t border-surface-200">
+            <div class="sub text-center mb-2">External Integrations</div>
+            <div class="grid grid-cols-5 gap-2">
+              <div class="border border-status-blue-border bg-status-blue-light rounded-lg p-2 text-center">
+                <div class="text-xxs font-semibold text-status-blue-dark">Findity API</div>
+              </div>
+              <div class="border border-status-blue-border bg-status-blue-light rounded-lg p-2 text-center">
+                <div class="text-xxs font-semibold text-status-blue-dark">Centime GL</div>
+              </div>
+              <div class="border border-status-blue-border bg-status-blue-light rounded-lg p-2 text-center">
+                <div class="text-xxs font-semibold text-status-blue-dark">Centime AP</div>
+              </div>
+              <div class="border border-status-blue-border bg-status-blue-light rounded-lg p-2 text-center">
+                <div class="text-xxs font-semibold text-status-blue-dark">Visa / MC</div>
+              </div>
+              <div class="border border-status-blue-border bg-status-blue-light rounded-lg p-2 text-center">
+                <div class="text-xxs font-semibold text-status-blue-dark">Slack / Teams</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 2. FRONTEND -->
+    <!-- ============================================ -->
+    <div id="s2" class="mb-10">
+      <div class="sl">2. Frontend</div>
+
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <div class="sub mb-3">Tech Stack</div>
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">React 18</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">TypeScript 5</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Vite 5</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Tailwind CSS 3</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Radix UI</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">TanStack Query v5</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Zustand</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">React Hook Form</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Zod</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">React Router v6</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Recharts</span>
+          <span class="badge bg-brand-50 text-brand-700 border border-brand-200">date-fns</span>
+          <span class="badge bg-gold-100 text-gold-500 border border-gold-300">Vitest</span>
+          <span class="badge bg-gold-100 text-gold-500 border border-gold-300">Playwright</span>
+          <span class="badge bg-gold-100 text-gold-500 border border-gold-300">Storybook</span>
+          <span class="badge bg-gold-100 text-gold-500 border border-gold-300">axe-core</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="sub mb-1">State Management</div>
+            <ul class="feat space-y-1">
+              <li><strong>Server state:</strong> TanStack Query v5 &mdash; caching, deduplication, background refetching, optimistic updates</li>
+              <li><strong>Client state:</strong> Zustand &mdash; lightweight stores for UI state, tenant config, user preferences</li>
+              <li><strong>URL state:</strong> React Router v6 search params for filters, pagination, and deep linking</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub mb-1">Forms &amp; Validation</div>
+            <ul class="feat space-y-1">
+              <li><strong>React Hook Form</strong> with Zod schema validation for type-safe forms</li>
+              <li>Dynamic field arrays for line items, attendees, split coding</li>
+              <li>Server-side validation errors mapped to form fields</li>
+              <li>Auto-save drafts with debounced persistence</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub mb-1">Real-Time</div>
+            <ul class="feat space-y-1">
+              <li>WebSocket via BFF for live notifications, approval updates, card transaction alerts</li>
+              <li>Automatic reconnect with exponential backoff</li>
+              <li>Server-sent events fallback for environments blocking WS</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub mb-1">Mobile Strategy</div>
+            <ul class="feat space-y-1">
+              <li><strong>Phase 1:</strong> Progressive Web App (PWA) &mdash; offline support, camera access, push notifications</li>
+              <li><strong>Phase 2:</strong> React Native with shared business logic and native camera/GPS integration</li>
+              <li>Shared design tokens and component library across platforms</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub mb-1">Accessibility</div>
+            <ul class="feat space-y-1">
+              <li>axe-core automated scans in CI on every PR</li>
+              <li>ARIA landmarks, live regions, focus management</li>
+              <li>Full keyboard navigation for all workflows</li>
+              <li>Minimum 4.5:1 contrast ratio, reduced motion support</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub mb-1">Testing</div>
+            <ul class="feat space-y-1">
+              <li><strong>Unit:</strong> Vitest + React Testing Library &mdash; component and hook tests</li>
+              <li><strong>E2E:</strong> Playwright &mdash; critical path tests across browsers</li>
+              <li><strong>Visual:</strong> Storybook + Chromatic &mdash; component documentation and visual regression</li>
+              <li>Coverage target: 80% statements, 90% critical paths</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 3. BACKEND FOR FRONTEND -->
+    <!-- ============================================ -->
+    <div id="s3" class="mb-10">
+      <div class="sl">3. Backend for Frontend (BFF)</div>
+
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Node.js 20 LTS</span>
+            <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Fastify 4</span>
+            <span class="badge bg-brand-50 text-brand-700 border border-brand-200">TypeScript</span>
+            <span class="badge bg-brand-50 text-brand-700 border border-brand-200">ECS Fargate</span>
+          </div>
+        </div>
+
+        <div class="sub mb-2">Responsibilities</div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-surface-50 border border-surface-200 rounded-lg p-3">
+            <div class="text-xs font-semibold text-ink-800 mb-1">Authentication Gateway</div>
+            <p class="text-xxs text-ink-500">JWT validation via Cognito, session management, token refresh, CSRF protection.</p>
+          </div>
+          <div class="bg-surface-50 border border-surface-200 rounded-lg p-3">
+            <div class="text-xs font-semibold text-ink-800 mb-1">Tenant Resolution</div>
+            <p class="text-xxs text-ink-500">Extract tenant from subdomain/header, inject tenant context into all downstream calls.</p>
+          </div>
+          <div class="bg-surface-50 border border-surface-200 rounded-lg p-3">
+            <div class="text-xs font-semibold text-ink-800 mb-1">API Aggregation</div>
+            <p class="text-xxs text-ink-500">Compose responses from multiple microservices into frontend-optimized payloads.</p>
+          </div>
+          <div class="bg-surface-50 border border-surface-200 rounded-lg p-3">
+            <div class="text-xs font-semibold text-ink-800 mb-1">Rate Limiting</div>
+            <p class="text-xxs text-ink-500">Per-tenant and per-user rate limits via Redis sliding window counters.</p>
+          </div>
+          <div class="bg-surface-50 border border-surface-200 rounded-lg p-3">
+            <div class="text-xs font-semibold text-ink-800 mb-1">WebSocket Hub</div>
+            <p class="text-xxs text-ink-500">Manage persistent connections for real-time notifications, approval events, card alerts.</p>
+          </div>
+          <div class="bg-surface-50 border border-surface-200 rounded-lg p-3">
+            <div class="text-xs font-semibold text-ink-800 mb-1">Response Shaping</div>
+            <p class="text-xxs text-ink-500">Transform middleware responses, apply field-level permissions, paginate, and localize.</p>
+          </div>
+          <div class="bg-surface-50 border border-surface-200 rounded-lg p-3">
+            <div class="text-xs font-semibold text-ink-800 mb-1">File Upload Proxy</div>
+            <p class="text-xxs text-ink-500">Pre-signed S3 URLs for receipt uploads, virus scanning orchestration, image optimization.</p>
+          </div>
+          <div class="bg-surface-50 border border-surface-200 rounded-lg p-3">
+            <div class="text-xs font-semibold text-ink-800 mb-1">Request Logging</div>
+            <p class="text-xxs text-ink-500">Structured JSON logging, correlation IDs, latency metrics, audit trail propagation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 4. MIDDLEWARE (CORE SERVICES) -->
+    <!-- ============================================ -->
+    <div id="s4" class="mb-10">
+      <div class="sl">4. Middleware &mdash; Core Services</div>
+      <p class="text-sm text-ink-700 mb-4 leading-relaxed">The middleware tier consists of 9 Spring Boot microservices deployed on ECS Fargate, communicating via REST and SQS event bus. Each service owns its database schema and exposes versioned APIs.</p>
+
+      <div class="flex flex-wrap gap-1.5 mb-4">
+        <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Java 21</span>
+        <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Spring Boot 3.2</span>
+        <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Spring Security</span>
+        <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Spring Data JPA</span>
+        <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Flyway</span>
+        <span class="badge bg-brand-50 text-brand-700 border border-brand-200">MapStruct</span>
+        <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Resilience4j</span>
+        <span class="badge bg-brand-50 text-brand-700 border border-brand-200">Micrometer</span>
+      </div>
+
+      <!-- Service Grid -->
+      <div class="grid grid-cols-3 gap-3 mb-5">
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-5 h-5 bg-brand-500 rounded flex items-center justify-center"><span class="text-xxs font-bold text-white">E</span></div>
+            <div class="text-sm font-semibold text-ink-900">expense-service</div>
+          </div>
+          <p class="text-xs text-ink-500 mb-2">Core expense CRUD, receipt processing, categorization, split coding, report generation.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Findity Expense API</span>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-5 h-5 bg-brand-500 rounded flex items-center justify-center"><span class="text-xxs font-bold text-white">A</span></div>
+            <div class="text-sm font-semibold text-ink-900">approval-service</div>
+          </div>
+          <p class="text-xs text-ink-500 mb-2">Workflow engine, approval chains, delegation, escalation, auto-approve rules.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Findity Admin API</span>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-5 h-5 bg-brand-500 rounded flex items-center justify-center"><span class="text-xxs font-bold text-white">C</span></div>
+            <div class="text-sm font-semibold text-ink-900">card-service</div>
+          </div>
+          <p class="text-xs text-ink-500 mb-2">Card transaction ingestion, real-time feeds, receipt matching, card controls.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Findity Connect API</span>
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Visa / MC</span>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-5 h-5 bg-brand-500 rounded flex items-center justify-center"><span class="text-xxs font-bold text-white">P</span></div>
+            <div class="text-sm font-semibold text-ink-900">policy-service</div>
+          </div>
+          <p class="text-xs text-ink-500 mb-2">Policy rules engine, compliance checks, spending limits, receipt requirements, MCC restrictions.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge bg-surface-100 text-ink-500 text-xxs">Internal Only</span>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-5 h-5 bg-brand-500 rounded flex items-center justify-center"><span class="text-xxs font-bold text-white">G</span></div>
+            <div class="text-sm font-semibold text-ink-900">erp-service</div>
+          </div>
+          <p class="text-xs text-ink-500 mb-2">Bi-directional ERP sync, GL mapping, master data import, journal entry export.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Centime GL APIs</span>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-5 h-5 bg-brand-500 rounded flex items-center justify-center"><span class="text-xxs font-bold text-white">Q</span></div>
+            <div class="text-sm font-semibold text-ink-900">procurement-service</div>
+          </div>
+          <p class="text-xs text-ink-500 mb-2">Purchase requisitions, PO creation, budget tracking, catalog management.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Centime GL APIs</span>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-5 h-5 bg-brand-500 rounded flex items-center justify-center"><span class="text-xxs font-bold text-white">R</span></div>
+            <div class="text-sm font-semibold text-ink-900">reimbursement-service</div>
+          </div>
+          <p class="text-xs text-ink-500 mb-2">Reimbursement lifecycle, payment initiation, status tracking, reconciliation.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Centime AP</span>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-5 h-5 bg-brand-500 rounded flex items-center justify-center"><span class="text-xxs font-bold text-white">N</span></div>
+            <div class="text-sm font-semibold text-ink-900">notification-service</div>
+          </div>
+          <p class="text-xs text-ink-500 mb-2">Multi-channel notifications: email (SES), push, in-app, Slack, Teams. Template engine, delivery tracking.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">SES</span>
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Slack / Teams</span>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-5 h-5 bg-brand-500 rounded flex items-center justify-center"><span class="text-xxs font-bold text-white">D</span></div>
+            <div class="text-sm font-semibold text-ink-900">admin-service</div>
+          </div>
+          <p class="text-xs text-ink-500 mb-2">Tenant management, user provisioning, RBAC, white-label config, audit logging.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Cognito</span>
+            <span class="badge bg-status-blue-light text-status-blue-dark text-xxs">Centime Users</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cross-Cutting Concerns -->
+      <div class="sub mb-2">Cross-Cutting Concerns</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide w-1/4">Concern</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Implementation</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Observability</td><td class="px-5 py-2.5 text-sm text-ink-700">Micrometer metrics &rarr; CloudWatch, structured logging &rarr; CloudWatch Logs, X-Ray distributed tracing</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Resilience</td><td class="px-5 py-2.5 text-sm text-ink-700">Resilience4j circuit breakers, retry with jitter, bulkhead isolation, fallback strategies</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Configuration</td><td class="px-5 py-2.5 text-sm text-ink-700">AWS Systems Manager Parameter Store, per-environment overrides, encrypted secrets</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Database Migrations</td><td class="px-5 py-2.5 text-sm text-ink-700">Flyway versioned migrations, backward-compatible schema changes, zero-downtime deploys</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">API Versioning</td><td class="px-5 py-2.5 text-sm text-ink-700">URL-based versioning (/v1/, /v2/), deprecation headers, sunset policy</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Health Checks</td><td class="px-5 py-2.5 text-sm text-ink-700">Spring Actuator /health, /readiness, /liveness with dependency checks</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 5. DATABASE LAYER -->
+    <!-- ============================================ -->
+    <div id="s5" class="mb-10">
+      <div class="sl">5. Database Layer</div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <!-- PostgreSQL -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-7 h-7 bg-gold-100 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-gold-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+            </div>
+            <div class="text-sm font-semibold text-ink-900">PostgreSQL 16</div>
+          </div>
+          <div class="space-y-2">
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Service</div>
+              <div class="text-xs text-ink-700">Amazon RDS Multi-AZ</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Instance</div>
+              <div class="text-xs text-ink-700">db.r6g.xlarge (prod)</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Isolation</div>
+              <div class="text-xs text-ink-700">Row-level security (RLS) per tenant</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Read Replicas</div>
+              <div class="text-xs text-ink-700">1 replica for reporting queries</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Key Tables</div>
+              <div class="text-xs text-ink-700 font-mono bg-surface-50 rounded p-1.5 mt-0.5 leading-relaxed">tenants, users, expenses, expense_reports, approvals, policies, policy_rules, cards, card_transactions, purchase_orders, requisitions, budgets, audit_log</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Backups</div>
+              <div class="text-xs text-ink-700">Automated daily snapshots, 30-day retention, point-in-time recovery</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Redis -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-7 h-7 bg-status-red-light rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-status-red-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div class="text-sm font-semibold text-ink-900">Redis 7</div>
+          </div>
+          <div class="space-y-2">
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Service</div>
+              <div class="text-xs text-ink-700">Amazon ElastiCache (cluster mode)</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Instance</div>
+              <div class="text-xs text-ink-700">cache.r6g.large (prod)</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Use Cases</div>
+              <div class="text-xs text-ink-700">Session cache, API response cache, rate limiting counters, WebSocket pub/sub</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Key Patterns</div>
+              <div class="text-xs text-ink-700 font-mono bg-surface-50 rounded p-1.5 mt-0.5 leading-relaxed">sess:{userId}<br>tenant:{id}:config<br>rate:{tenantId}:{userId}<br>cache:expenses:{hash}<br>ws:channel:{tenantId}</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">TTL Strategy</div>
+              <div class="text-xs text-ink-700">Sessions: 24h, Config: 5min, API cache: 60s, Rate limits: sliding window</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- S3 -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-7 h-7 bg-status-amber-light rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-status-amber-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+            </div>
+            <div class="text-sm font-semibold text-ink-900">Amazon S3</div>
+          </div>
+          <div class="space-y-2">
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Buckets</div>
+              <div class="text-xs text-ink-700">receipts, exports, brand-assets, backups</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Encryption</div>
+              <div class="text-xs text-ink-700">SSE-S3 (AES-256) at rest, TLS in transit</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Access Pattern</div>
+              <div class="text-xs text-ink-700">Pre-signed URLs via BFF, 15-min expiry, tenant-prefixed keys</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Key Structure</div>
+              <div class="text-xs text-ink-700 font-mono bg-surface-50 rounded p-1.5 mt-0.5 leading-relaxed">receipts/{tenantId}/{userId}/{expenseId}/{filename}<br>exports/{tenantId}/{reportId}.xlsx<br>brand/{tenantId}/logo.{svg,png}</div>
+            </div>
+            <div>
+              <div class="text-xxs font-semibold text-ink-400 uppercase">Lifecycle</div>
+              <div class="text-xs text-ink-700">Receipts: 7yr retention (compliance), Exports: 90-day &rarr; Glacier, Temp: 24h expiry</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 6. AWS INFRASTRUCTURE -->
+    <!-- ============================================ -->
+    <div id="s6" class="mb-10">
+      <div class="sl">6. AWS Infrastructure</div>
+
+      <!-- Infrastructure Diagram -->
+      <div class="sub mb-3">Infrastructure Diagram</div>
+      <div class="bg-white border border-surface-200 rounded-card p-6 mb-5">
+        <div class="flex flex-col items-center gap-0">
+
+          <!-- Internet / DNS -->
+          <div class="w-full max-w-3xl grid grid-cols-1 gap-2 mb-1">
+            <div class="bg-surface-50 border border-surface-300 rounded-lg px-4 py-2.5 text-center">
+              <div class="text-xs font-semibold text-ink-800">Route 53 &mdash; DNS</div>
+              <div class="text-xxs text-ink-400">Custom domains per tenant, health-check routing, failover</div>
+            </div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- CloudFront -->
+          <div class="w-full max-w-3xl bg-status-blue-light border border-status-blue-border rounded-lg px-4 py-2.5 text-center my-1">
+            <div class="text-xs font-semibold text-status-blue-dark">CloudFront &mdash; CDN + WAF</div>
+            <div class="text-xxs text-ink-500">Edge caching, DDoS protection, geo-restriction, SSL/TLS</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- ALB -->
+          <div class="w-full max-w-3xl bg-status-blue-light border border-status-blue-border rounded-lg px-4 py-2.5 text-center my-1">
+            <div class="text-xs font-semibold text-status-blue-dark">Application Load Balancer</div>
+            <div class="text-xxs text-ink-500">Path routing: /api/* &rarr; BFF, /ws/* &rarr; WebSocket, /health &rarr; health check</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- Compute Tier -->
+          <div class="w-full max-w-3xl grid grid-cols-2 gap-3 my-1">
+            <div class="bg-brand-50 border border-brand-200 rounded-lg px-4 py-3 text-center">
+              <div class="text-xs font-semibold text-brand-700">BFF &mdash; ECS Fargate</div>
+              <div class="text-xxs text-ink-500 mt-0.5">Node.js / Fastify</div>
+              <div class="text-xxs text-ink-400">Auto-scaling: 2&ndash;20 tasks</div>
+            </div>
+            <div class="bg-brand-50 border border-brand-200 rounded-lg px-4 py-3 text-center">
+              <div class="text-xs font-semibold text-brand-700">API Gateway</div>
+              <div class="text-xxs text-ink-500 mt-0.5">Internal service routing</div>
+              <div class="text-xxs text-ink-400">Throttling, API keys</div>
+            </div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- Microservices -->
+          <div class="w-full max-w-3xl bg-brand-700 text-white rounded-lg px-4 py-3 text-center my-1">
+            <div class="text-xs font-semibold">Middleware Services &mdash; ECS Fargate</div>
+            <div class="text-xxs text-brand-200 mt-0.5">9 Spring Boot services &middot; Auto-scaling: 2&ndash;10 tasks per service &middot; Service discovery via Cloud Map</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="arrow-down"></div>
+
+          <!-- Data + Messaging Layer -->
+          <div class="w-full max-w-3xl grid grid-cols-2 gap-3 mt-1">
+            <!-- Left: Storage -->
+            <div class="space-y-2">
+              <div class="sub text-center">Storage</div>
+              <div class="bg-gold-100 border border-gold-300 rounded-lg px-3 py-2.5 text-center">
+                <div class="text-xs font-semibold text-gold-500">RDS PostgreSQL</div>
+                <div class="text-xxs text-ink-400">Multi-AZ, read replica</div>
+              </div>
+              <div class="bg-gold-100 border border-gold-300 rounded-lg px-3 py-2.5 text-center">
+                <div class="text-xs font-semibold text-gold-500">ElastiCache Redis</div>
+                <div class="text-xxs text-ink-400">Cluster mode, 2 shards</div>
+              </div>
+              <div class="bg-gold-100 border border-gold-300 rounded-lg px-3 py-2.5 text-center">
+                <div class="text-xs font-semibold text-gold-500">S3 Buckets</div>
+                <div class="text-xxs text-ink-400">Receipts, exports, assets</div>
+              </div>
+            </div>
+            <!-- Right: Messaging + External -->
+            <div class="space-y-2">
+              <div class="sub text-center">Messaging &amp; External</div>
+              <div class="bg-gold-100 border border-gold-300 rounded-lg px-3 py-2.5 text-center">
+                <div class="text-xs font-semibold text-gold-500">SQS Queues</div>
+                <div class="text-xxs text-ink-400">Event-driven async processing</div>
+              </div>
+              <div class="bg-gold-100 border border-gold-300 rounded-lg px-3 py-2.5 text-center">
+                <div class="text-xs font-semibold text-gold-500">SNS Topics</div>
+                <div class="text-xxs text-ink-400">Fan-out notifications</div>
+              </div>
+              <div class="bg-status-blue-light border border-status-blue-border rounded-lg px-3 py-2.5 text-center">
+                <div class="text-xs font-semibold text-status-blue-dark">External APIs</div>
+                <div class="text-xxs text-ink-400">Findity, Centime GL/AP, Visa/MC</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SQS Queues Table -->
+      <div class="sub mb-2">SQS Queues</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden mb-5">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Queue Name</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Purpose</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Producer</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Consumer</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">expense-submitted</td><td class="px-5 py-2.5 text-sm text-ink-700">Trigger approval workflow on expense submission</td><td class="px-5 py-2.5 text-xs text-ink-500">expense-service</td><td class="px-5 py-2.5 text-xs text-ink-500">approval-service</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">expense-approved</td><td class="px-5 py-2.5 text-sm text-ink-700">Initiate reimbursement and ERP sync</td><td class="px-5 py-2.5 text-xs text-ink-500">approval-service</td><td class="px-5 py-2.5 text-xs text-ink-500">reimbursement, erp</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">card-transaction</td><td class="px-5 py-2.5 text-sm text-ink-700">Process incoming real-time card transactions</td><td class="px-5 py-2.5 text-xs text-ink-500">card-service</td><td class="px-5 py-2.5 text-xs text-ink-500">expense-service</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">receipt-uploaded</td><td class="px-5 py-2.5 text-sm text-ink-700">OCR processing and receipt-to-transaction matching</td><td class="px-5 py-2.5 text-xs text-ink-500">BFF</td><td class="px-5 py-2.5 text-xs text-ink-500">expense-service</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">erp-sync</td><td class="px-5 py-2.5 text-sm text-ink-700">Async ERP journal entry posting</td><td class="px-5 py-2.5 text-xs text-ink-500">erp-service</td><td class="px-5 py-2.5 text-xs text-ink-500">erp-service</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">notification-dispatch</td><td class="px-5 py-2.5 text-sm text-ink-700">Multi-channel notification delivery</td><td class="px-5 py-2.5 text-xs text-ink-500">all services</td><td class="px-5 py-2.5 text-xs text-ink-500">notification-service</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">po-created</td><td class="px-5 py-2.5 text-sm text-ink-700">Post approved POs to ERP</td><td class="px-5 py-2.5 text-xs text-ink-500">procurement-service</td><td class="px-5 py-2.5 text-xs text-ink-500">erp-service</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">dead-letter</td><td class="px-5 py-2.5 text-sm text-ink-700">Failed message quarantine (all queues)</td><td class="px-5 py-2.5 text-xs text-ink-500">SQS</td><td class="px-5 py-2.5 text-xs text-ink-500">ops monitoring</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SNS Topics Table -->
+      <div class="sub mb-2">SNS Topics</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Topic Name</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Purpose</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Subscribers</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">expense-events</td><td class="px-5 py-2.5 text-sm text-ink-700">Fan-out for expense lifecycle events</td><td class="px-5 py-2.5 text-xs text-ink-500">notification, analytics, audit</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">approval-events</td><td class="px-5 py-2.5 text-sm text-ink-700">Approval state changes</td><td class="px-5 py-2.5 text-xs text-ink-500">notification, expense, reimbursement</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">card-events</td><td class="px-5 py-2.5 text-sm text-ink-700">Card transaction and control events</td><td class="px-5 py-2.5 text-xs text-ink-500">notification, expense, policy</td></tr>
+            <tr><td class="px-5 py-2.5 font-mono text-xs text-brand-600">system-alerts</td><td class="px-5 py-2.5 text-sm text-ink-700">Operational alerts and health events</td><td class="px-5 py-2.5 text-xs text-ink-500">PagerDuty, Slack ops channel</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 7. AUTHENTICATION & SECURITY -->
+    <!-- ============================================ -->
+    <div id="s7" class="mb-10">
+      <div class="sl">7. Authentication &amp; Security</div>
+
+      <!-- Auth Flow Diagram -->
+      <div class="sub mb-3">Authentication Flow</div>
+      <div class="bg-white border border-surface-200 rounded-card p-6 mb-5">
+        <div class="flex items-center justify-center gap-0 flex-wrap">
+          <!-- Step 1: User -->
+          <div class="bg-surface-50 border border-surface-300 rounded-lg px-4 py-3 text-center min-w-[100px]">
+            <div class="text-xs font-semibold text-ink-800">User</div>
+            <div class="text-xxs text-ink-400">Login</div>
+          </div>
+          <div class="flex items-center px-2">
+            <div class="arrow-right"></div>
+          </div>
+          <!-- Step 2: Cognito -->
+          <div class="bg-status-amber-light border border-status-amber-border rounded-lg px-4 py-3 text-center min-w-[120px]">
+            <div class="text-xs font-semibold text-status-amber-dark">AWS Cognito</div>
+            <div class="text-xxs text-ink-500">SAML / OIDC / Email</div>
+          </div>
+          <div class="flex items-center px-2">
+            <div class="arrow-right"></div>
+          </div>
+          <!-- Step 3: JWT -->
+          <div class="bg-status-green-light border border-status-green-border rounded-lg px-4 py-3 text-center min-w-[100px]">
+            <div class="text-xs font-semibold text-status-green-dark">JWT Issued</div>
+            <div class="text-xxs text-ink-500">Access + Refresh</div>
+          </div>
+          <div class="flex items-center px-2">
+            <div class="arrow-right"></div>
+          </div>
+          <!-- Step 4: BFF -->
+          <div class="bg-brand-50 border border-brand-200 rounded-lg px-4 py-3 text-center min-w-[100px]">
+            <div class="text-xs font-semibold text-brand-700">BFF</div>
+            <div class="text-xxs text-ink-500">Validate + Enrich</div>
+          </div>
+          <div class="flex items-center px-2">
+            <div class="arrow-right"></div>
+          </div>
+          <!-- Step 5: Middleware -->
+          <div class="bg-brand-700 rounded-lg px-4 py-3 text-center min-w-[100px]">
+            <div class="text-xs font-semibold text-white">Middleware</div>
+            <div class="text-xxs text-brand-200">Tenant Context</div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-surface-200 grid grid-cols-3 gap-3 text-xs text-ink-700">
+          <div><strong>Access Token:</strong> 15-min expiry, contains userId, tenantId, roles, permissions</div>
+          <div><strong>Refresh Token:</strong> 7-day expiry, rotated on use, stored in HttpOnly cookie</div>
+          <div><strong>SSO:</strong> SAML 2.0 and OIDC federation via Cognito User Pools</div>
+        </div>
+      </div>
+
+      <!-- Security Measures Table -->
+      <div class="sub mb-2">Security Measures</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden mb-5">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide w-1/4">Layer</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Measures</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Network</td><td class="px-5 py-2.5 text-sm text-ink-700">VPC with private subnets, Security Groups, NACLs, AWS WAF with OWASP Top 10 rule set</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Transport</td><td class="px-5 py-2.5 text-sm text-ink-700">TLS 1.2+ enforced everywhere, HSTS headers, certificate pinning for mobile</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Data at Rest</td><td class="px-5 py-2.5 text-sm text-ink-700">AES-256 encryption (RDS, S3, ElastiCache), KMS-managed keys, encrypted EBS volumes</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Application</td><td class="px-5 py-2.5 text-sm text-ink-700">Input validation (Zod / Hibernate Validator), parameterized queries, CSRF tokens, CSP headers</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Access Control</td><td class="px-5 py-2.5 text-sm text-ink-700">RBAC with fine-grained permissions, tenant isolation via RLS, field-level access control</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Audit</td><td class="px-5 py-2.5 text-sm text-ink-700">Full audit trail on all mutations, CloudTrail for AWS API calls, immutable audit log in PostgreSQL</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Secrets</td><td class="px-5 py-2.5 text-sm text-ink-700">AWS Secrets Manager for credentials, automatic rotation, no secrets in code or env vars</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Scanning</td><td class="px-5 py-2.5 text-sm text-ink-700">Snyk dependency scanning in CI, Trivy container image scanning, SAST via SonarQube</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Compliance Badges -->
+      <div class="sub mb-2">Compliance</div>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-white border border-surface-200 rounded-card p-4 text-center">
+          <div class="text-lg font-bold text-brand-500 mb-1">SOC 2 Type II</div>
+          <p class="text-xs text-ink-500">Annual audit, security and availability trust principles, continuous monitoring</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4 text-center">
+          <div class="text-lg font-bold text-brand-500 mb-1">PCI DSS</div>
+          <p class="text-xs text-ink-500">Card data handling compliance, tokenized storage, no PAN in logs or databases</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4 text-center">
+          <div class="text-lg font-bold text-brand-500 mb-1">WCAG 2.1 AA</div>
+          <p class="text-xs text-ink-500">ADA compliance across all interfaces, automated and manual accessibility testing</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 8. INTEGRATION PATTERNS -->
+    <!-- ============================================ -->
+    <div id="s8" class="mb-10">
+      <div class="sl">8. Integration Patterns</div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Findity -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center"><span class="text-xs font-bold text-brand-600">F</span></div>
+            <div class="text-sm font-semibold text-ink-900">Findity</div>
+          </div>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span class="text-ink-500">Protocol</span><span class="text-ink-700 font-medium">REST (HTTPS)</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Auth</span><span class="text-ink-700 font-medium">OAuth 2.0 Client Credentials</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Data Format</span><span class="text-ink-700 font-medium">JSON</span></div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-1">
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Circuit Breaker</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Retry (3x)</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Rate Limit Aware</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Webhook Receiver</span>
+          </div>
+        </div>
+
+        <!-- Centime GL -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center"><span class="text-xs font-bold text-brand-600">GL</span></div>
+            <div class="text-sm font-semibold text-ink-900">Centime GL</div>
+          </div>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span class="text-ink-500">Protocol</span><span class="text-ink-700 font-medium">REST (internal VPC)</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Auth</span><span class="text-ink-700 font-medium">mTLS + API Key</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Data Format</span><span class="text-ink-700 font-medium">JSON</span></div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-1">
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Bi-directional Sync</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Idempotent</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Retry (5x)</span>
+          </div>
+        </div>
+
+        <!-- Centime AP -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center"><span class="text-xs font-bold text-brand-600">AP</span></div>
+            <div class="text-sm font-semibold text-ink-900">Centime AP</div>
+          </div>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span class="text-ink-500">Protocol</span><span class="text-ink-700 font-medium">REST (internal VPC)</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Auth</span><span class="text-ink-700 font-medium">mTLS + API Key</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Data Format</span><span class="text-ink-700 font-medium">JSON</span></div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-1">
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Async via SQS</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Webhook Callbacks</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Idempotent</span>
+          </div>
+        </div>
+
+        <!-- Card Networks -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center"><span class="text-xs font-bold text-brand-600">V/M</span></div>
+            <div class="text-sm font-semibold text-ink-900">Card Networks (Visa / Mastercard)</div>
+          </div>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span class="text-ink-500">Protocol</span><span class="text-ink-700 font-medium">REST via Findity Connect API</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Auth</span><span class="text-ink-700 font-medium">Managed by Findity</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Data Format</span><span class="text-ink-700 font-medium">ISO 8583 (mapped to JSON)</span></div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-1">
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Real-time Push</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Dedup by txn ID</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">MCC Enrichment</span>
+          </div>
+        </div>
+
+        <!-- Slack / Teams -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center"><span class="text-xs font-bold text-brand-600">S/T</span></div>
+            <div class="text-sm font-semibold text-ink-900">Slack / Microsoft Teams</div>
+          </div>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span class="text-ink-500">Protocol</span><span class="text-ink-700 font-medium">REST + WebSocket (Bot API)</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Auth</span><span class="text-ink-700 font-medium">OAuth 2.0 (per workspace)</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Data Format</span><span class="text-ink-700 font-medium">JSON (Block Kit / Adaptive Cards)</span></div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-1">
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Interactive Messages</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Slash Commands</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">File Upload</span>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-6 h-6 bg-brand-50 rounded-md flex items-center justify-center"><span class="text-xs font-bold text-brand-600">@</span></div>
+            <div class="text-sm font-semibold text-ink-900">Email (SES)</div>
+          </div>
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between"><span class="text-ink-500">Protocol</span><span class="text-ink-700 font-medium">SMTP / SES API</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Auth</span><span class="text-ink-700 font-medium">IAM Role</span></div>
+            <div class="flex justify-between"><span class="text-ink-500">Features</span><span class="text-ink-700 font-medium">Inbound parsing, templates</span></div>
+          </div>
+          <div class="mt-3 flex flex-wrap gap-1">
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Receipt Forwarding</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">White-Label Sender</span>
+            <span class="badge bg-status-green-light text-status-green-dark text-xxs">Delivery Tracking</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 9. MULTI-TENANCY & WHITE-LABEL -->
+    <!-- ============================================ -->
+    <div id="s9" class="mb-10">
+      <div class="sl">9. Multi-Tenancy &amp; White-Label</div>
+
+      <!-- Tenant Isolation Visual -->
+      <div class="sub mb-3">Tenant Isolation Architecture</div>
+      <div class="bg-white border border-surface-200 rounded-card p-6 mb-5">
+        <div class="grid grid-cols-3 gap-4">
+          <!-- Shared Infrastructure -->
+          <div class="col-span-3 bg-surface-50 border border-surface-200 rounded-lg p-4 mb-2">
+            <div class="text-xs font-semibold text-ink-800 text-center mb-3">Shared Infrastructure (Single Deployment)</div>
+            <div class="grid grid-cols-4 gap-2">
+              <div class="bg-brand-50 border border-brand-200 rounded px-2 py-1.5 text-center text-xxs font-medium text-brand-700">ECS Cluster</div>
+              <div class="bg-brand-50 border border-brand-200 rounded px-2 py-1.5 text-center text-xxs font-medium text-brand-700">ALB</div>
+              <div class="bg-brand-50 border border-brand-200 rounded px-2 py-1.5 text-center text-xxs font-medium text-brand-700">CloudFront</div>
+              <div class="bg-brand-50 border border-brand-200 rounded px-2 py-1.5 text-center text-xxs font-medium text-brand-700">Redis Cluster</div>
+            </div>
+          </div>
+
+          <!-- Tenant A -->
+          <div class="border-2 border-brand-300 rounded-lg p-3 bg-brand-50/30">
+            <div class="text-xs font-bold text-brand-700 text-center mb-2">Tenant A (Centime Direct)</div>
+            <div class="space-y-1.5 text-xxs">
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>Domain:</strong> app.centime.com</div>
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>DB:</strong> RLS tenant_id = 'A'</div>
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>S3:</strong> /tenantA/*</div>
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>Brand:</strong> Centime default</div>
+            </div>
+          </div>
+
+          <!-- Tenant B -->
+          <div class="border-2 border-status-blue-border rounded-lg p-3 bg-status-blue-light/30">
+            <div class="text-xs font-bold text-status-blue-dark text-center mb-2">Tenant B (Bank Partner)</div>
+            <div class="space-y-1.5 text-xxs">
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>Domain:</strong> expenses.bankpartner.com</div>
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>DB:</strong> RLS tenant_id = 'B'</div>
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>S3:</strong> /tenantB/*</div>
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>Brand:</strong> Custom white-label</div>
+            </div>
+          </div>
+
+          <!-- Tenant C -->
+          <div class="border-2 border-status-amber-border rounded-lg p-3 bg-status-amber-light/30">
+            <div class="text-xs font-bold text-status-amber-dark text-center mb-2">Tenant C (Enterprise)</div>
+            <div class="space-y-1.5 text-xxs">
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>Domain:</strong> expense.acmecorp.com</div>
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>DB:</strong> RLS tenant_id = 'C'</div>
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>S3:</strong> /tenantC/*</div>
+              <div class="bg-white rounded px-2 py-1 border border-surface-200"><strong>Brand:</strong> Custom enterprise</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- White-Label Customization -->
+      <div class="sub mb-2">White-Label Customization</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide w-1/4">Customization</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Details</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide w-1/6">Storage</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Custom Domain</td><td class="px-5 py-2.5 text-sm text-ink-700">CNAME to CloudFront, ACM certificate auto-provisioning, Route 53 alias</td><td class="px-5 py-2.5 text-xs text-ink-500">Route 53 + ACM</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Logo &amp; Favicon</td><td class="px-5 py-2.5 text-sm text-ink-700">SVG/PNG upload, auto-resize for header, email, mobile splash</td><td class="px-5 py-2.5 text-xs text-ink-500">S3 brand bucket</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Color Palette</td><td class="px-5 py-2.5 text-sm text-ink-700">Primary, secondary, accent colors; auto-generate accessible shades via CSS custom properties</td><td class="px-5 py-2.5 text-xs text-ink-500">PostgreSQL</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Email Templates</td><td class="px-5 py-2.5 text-sm text-ink-700">Branded email header/footer, custom sender address, reply-to config</td><td class="px-5 py-2.5 text-xs text-ink-500">SES + PostgreSQL</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Mobile PWA</td><td class="px-5 py-2.5 text-sm text-ink-700">Custom app name, icon, splash screen, theme color in manifest.json</td><td class="px-5 py-2.5 text-xs text-ink-500">S3 brand bucket</td></tr>
+            <tr><td class="px-5 py-2.5 text-sm text-ink-700 font-medium">Login Page</td><td class="px-5 py-2.5 text-sm text-ink-700">Branded login screen with custom background image and welcome text</td><td class="px-5 py-2.5 text-xs text-ink-500">Cognito + S3</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 10. DEVOPS & CI/CD -->
+    <!-- ============================================ -->
+    <div id="s10" class="mb-10">
+      <div class="sl">10. DevOps &amp; CI/CD</div>
+
+      <!-- Pipeline Diagram -->
+      <div class="sub mb-3">Deployment Pipeline</div>
+      <div class="bg-white border border-surface-200 rounded-card p-6 mb-5">
+        <div class="flex items-center justify-center gap-0 flex-wrap">
+          <div class="bg-surface-50 border border-surface-300 rounded-lg px-4 py-3 text-center">
+            <div class="text-xs font-semibold text-ink-800">PR Created</div>
+            <div class="text-xxs text-ink-400">GitHub</div>
+          </div>
+          <div class="flex items-center px-1.5"><div class="arrow-right"></div></div>
+          <div class="bg-status-blue-light border border-status-blue-border rounded-lg px-4 py-3 text-center">
+            <div class="text-xs font-semibold text-status-blue-dark">Build</div>
+            <div class="text-xxs text-ink-500">Compile, lint, type-check</div>
+          </div>
+          <div class="flex items-center px-1.5"><div class="arrow-right"></div></div>
+          <div class="bg-status-amber-light border border-status-amber-border rounded-lg px-4 py-3 text-center">
+            <div class="text-xs font-semibold text-status-amber-dark">Test</div>
+            <div class="text-xxs text-ink-500">Unit, integration, E2E, a11y</div>
+          </div>
+          <div class="flex items-center px-1.5"><div class="arrow-right"></div></div>
+          <div class="bg-status-amber-light border border-status-amber-border rounded-lg px-4 py-3 text-center">
+            <div class="text-xs font-semibold text-status-amber-dark">Security</div>
+            <div class="text-xxs text-ink-500">Snyk, Trivy, SAST</div>
+          </div>
+          <div class="flex items-center px-1.5"><div class="arrow-right"></div></div>
+          <div class="bg-brand-50 border border-brand-200 rounded-lg px-4 py-3 text-center">
+            <div class="text-xs font-semibold text-brand-700">Staging</div>
+            <div class="text-xxs text-ink-500">Auto-deploy, smoke tests</div>
+          </div>
+          <div class="flex items-center px-1.5"><div class="arrow-right"></div></div>
+          <div class="bg-status-green-light border border-status-green-border rounded-lg px-4 py-3 text-center">
+            <div class="text-xs font-semibold text-status-green-dark">Production</div>
+            <div class="text-xxs text-ink-500">Manual gate, canary</div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-surface-200 grid grid-cols-4 gap-3 text-xs text-ink-700">
+          <div><strong>CI:</strong> GitHub Actions</div>
+          <div><strong>CD:</strong> AWS CodePipeline + ECS rolling deploy</div>
+          <div><strong>IaC:</strong> Terraform modules, state in S3</div>
+          <div><strong>Containers:</strong> ECR private registry</div>
+        </div>
+      </div>
+
+      <!-- Environments Table -->
+      <div class="sub mb-2">Environments</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Environment</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Purpose</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Deploy Trigger</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Data</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Scale</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr>
+              <td class="px-5 py-2.5"><span class="badge bg-status-blue-light text-status-blue-dark">dev</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Feature development, integration testing</td>
+              <td class="px-5 py-2.5 text-xs text-ink-500">Push to feature branch</td>
+              <td class="px-5 py-2.5 text-xs text-ink-500">Synthetic seed data</td>
+              <td class="px-5 py-2.5 text-xs text-ink-500">1 task per service</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5"><span class="badge bg-status-amber-light text-status-amber-dark">staging</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Pre-production validation, UAT</td>
+              <td class="px-5 py-2.5 text-xs text-ink-500">Merge to main</td>
+              <td class="px-5 py-2.5 text-xs text-ink-500">Sanitized prod clone</td>
+              <td class="px-5 py-2.5 text-xs text-ink-500">2 tasks per service</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-2.5"><span class="badge bg-status-green-light text-status-green-dark">production</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Live customer traffic</td>
+              <td class="px-5 py-2.5 text-xs text-ink-500">Manual approval gate</td>
+              <td class="px-5 py-2.5 text-xs text-ink-500">Live</td>
+              <td class="px-5 py-2.5 text-xs text-ink-500">2&ndash;20 tasks (auto-scale)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 11. PERFORMANCE TARGETS -->
+    <!-- ============================================ -->
+    <div id="s11" class="mb-10">
+      <div class="sl">11. Performance Targets</div>
+
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Metric</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Target</th>
+              <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Measurement</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr>
+              <td class="px-5 py-3 text-sm text-ink-700 font-medium">API Response (p95)</td>
+              <td class="px-5 py-3"><span class="text-status-green-dark font-semibold bg-status-green-light px-2 py-0.5 rounded">&lt; 200ms</span></td>
+              <td class="px-5 py-3 text-sm text-ink-500">CloudWatch Metrics, X-Ray traces</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 text-sm text-ink-700 font-medium">Largest Contentful Paint (LCP)</td>
+              <td class="px-5 py-3"><span class="text-status-green-dark font-semibold bg-status-green-light px-2 py-0.5 rounded">&lt; 1.5s</span></td>
+              <td class="px-5 py-3 text-sm text-ink-500">Real User Monitoring (RUM), Lighthouse CI</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 text-sm text-ink-700 font-medium">Card Feed Latency</td>
+              <td class="px-5 py-3"><span class="text-status-green-dark font-semibold bg-status-green-light px-2 py-0.5 rounded">&lt; 30s</span></td>
+              <td class="px-5 py-3 text-sm text-ink-500">Findity webhook &rarr; user notification end-to-end</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 text-sm text-ink-700 font-medium">Concurrent Users</td>
+              <td class="px-5 py-3"><span class="text-status-green-dark font-semibold bg-status-green-light px-2 py-0.5 rounded">10,000+</span></td>
+              <td class="px-5 py-3 text-sm text-ink-500">Load testing with k6, auto-scale validation</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 text-sm text-ink-700 font-medium">Uptime SLA</td>
+              <td class="px-5 py-3"><span class="text-status-green-dark font-semibold bg-status-green-light px-2 py-0.5 rounded">99.9%</span></td>
+              <td class="px-5 py-3 text-sm text-ink-500">Synthetic monitoring, multi-AZ health checks</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 text-sm text-ink-700 font-medium">Recovery Time Objective (RTO)</td>
+              <td class="px-5 py-3"><span class="text-status-amber-dark font-semibold bg-status-amber-light px-2 py-0.5 rounded">&lt; 1 hour</span></td>
+              <td class="px-5 py-3 text-sm text-ink-500">Multi-AZ failover, automated runbooks</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 text-sm text-ink-700 font-medium">Recovery Point Objective (RPO)</td>
+              <td class="px-5 py-3"><span class="text-status-amber-dark font-semibold bg-status-amber-light px-2 py-0.5 rounded">&lt; 5 minutes</span></td>
+              <td class="px-5 py-3 text-sm text-ink-500">RDS point-in-time recovery, S3 versioning</td>
+            </tr>
+            <tr>
+              <td class="px-5 py-3 text-sm text-ink-700 font-medium">OCR Processing</td>
+              <td class="px-5 py-3"><span class="text-status-green-dark font-semibold bg-status-green-light px-2 py-0.5 rounded">&lt; 5s</span></td>
+              <td class="px-5 py-3 text-sm text-ink-500">Receipt upload &rarr; extracted data returned</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 12. PHASED DELIVERY -->
+    <!-- ============================================ -->
+    <div id="s12" class="mb-10">
+      <div class="sl">12. Phased Delivery</div>
+
+      <div class="space-y-4">
+        <!-- MVP / Phase 1 -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-bold text-white bg-brand-500 px-2.5 py-0.5 rounded">Phase 1 &mdash; MVP</span>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="sub mb-1">Infrastructure</div>
+              <ul class="feat space-y-1">
+                <li>Single AWS region (us-east-1), Multi-AZ deployment</li>
+                <li>ECS Fargate for BFF + all 9 middleware services</li>
+                <li>RDS PostgreSQL Multi-AZ with 1 read replica</li>
+                <li>ElastiCache Redis cluster, S3 buckets</li>
+                <li>CloudFront CDN, ALB, Route 53</li>
+                <li>SQS queues + SNS topics for event bus</li>
+              </ul>
+            </div>
+            <div>
+              <div class="sub mb-1">Application Scope</div>
+              <ul class="feat space-y-1">
+                <li>Core expense management + receipt OCR</li>
+                <li>Real-time card feeds (Visa/MC via Findity)</li>
+                <li>Policy engine, approval workflows</li>
+                <li>All 5 ERP integrations via Centime GL</li>
+                <li>Centime AP reimbursement</li>
+                <li>PWA mobile, white-label, ADA compliance</li>
+                <li>Purchase requisitions + PO creation</li>
+                <li>Slack/Teams notifications</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-bold text-white bg-brand-400 px-2.5 py-0.5 rounded">Phase 2 &mdash; Fast Follow</span>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="sub mb-1">Infrastructure Additions</div>
+              <ul class="feat space-y-1">
+                <li>React Native mobile app (iOS + Android) build pipeline</li>
+                <li>Additional Redis sharding for increased load</li>
+                <li>Enhanced auto-scaling policies based on Phase 1 metrics</li>
+                <li>SCIM provisioning endpoint (admin-service)</li>
+              </ul>
+            </div>
+            <div>
+              <div class="sub mb-1">Application Scope</div>
+              <ul class="feat space-y-1">
+                <li>Virtual cards + card controls</li>
+                <li>GPS mileage tracking, per diem calculator</li>
+                <li>Delegation, custom fields, advanced white-label</li>
+                <li>VAT/GST tax reclaim, payroll integration</li>
+                <li>Slack/Teams actionable approvals</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-bold text-ink-700 bg-surface-200 px-2.5 py-0.5 rounded">Phase 3 &mdash; Growth</span>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="sub mb-1">Infrastructure Additions</div>
+              <ul class="feat space-y-1">
+                <li>Multi-region deployment (us-west-2 secondary)</li>
+                <li>Cross-region RDS replication</li>
+                <li>Global Accelerator for latency-based routing</li>
+                <li>ML inference endpoint (SageMaker) for anomaly detection</li>
+              </ul>
+            </div>
+            <div>
+              <div class="sub mb-1">Application Scope</div>
+              <ul class="feat space-y-1">
+                <li>AI anomaly detection for expenses</li>
+                <li>Multi-entity consolidated reporting</li>
+                <li>International currency and compliance</li>
+                <li>Voice entry, marketplace integrations</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 4 -->
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-xs font-bold text-ink-500 bg-surface-100 px-2.5 py-0.5 rounded">Phase 4 &mdash; Future</span>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="sub mb-1">Infrastructure Additions</div>
+              <ul class="feat space-y-1">
+                <li>Dedicated travel-service microservice</li>
+                <li>GDS (Global Distribution System) API integrations</li>
+                <li>Real-time pricing engine with caching layer</li>
+              </ul>
+            </div>
+            <div>
+              <div class="sub mb-1">Application Scope</div>
+              <ul class="feat space-y-1">
+                <li>Travel booking and itinerary management</li>
+                <li>Pre-trip approval workflows</li>
+                <li>Corporate travel policy enforcement</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-xs text-ink-400 pt-6 border-t border-surface-200">
+      <div class="flex justify-center gap-3 mb-2">
+        <a href="overview.html" class="text-brand-500 hover:text-brand-600 underline">Product Overview</a>
+        <span>&middot;</span>
+        <a href="spec.html" class="text-brand-500 hover:text-brand-600 underline">Detailed Specification</a>
+        <span>&middot;</span>
+        <a href="style-guide.html" class="text-brand-500 hover:text-brand-600 underline">Style Guide</a>
+        <span>&middot;</span>
+        <a href="mockup.html" class="text-brand-500 hover:text-brand-600 underline">Mockups</a>
+      </div>
+      Centime Expense &mdash; Technical Architecture &middot; v1.0 &middot; March 2026
+    </div>
+
+  </div>
+</body>
+</html>
