@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centime Expense — Detailed Product Specification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50:'#e6f5f5',100:'#ccebeb',200:'#99d7d9',300:'#4db8bb',400:'#009a9f',500:'#008085',600:'#006d71',700:'#024743',800:'#013633',900:'#012524' },
+            gold: { 100:'#fef6dc',200:'#fde9a6',300:'#fdc231',400:'#e5ad1e',500:'#c4940f' },
+            surface: { 0:'#ffffff',warm:'#faf6ee',50:'#f7f8f9',100:'#f1f2f4',200:'#e3e5e8',300:'#cdd0d5' },
+            ink: { 900:'#0f1419',800:'#1a2028',700:'#2d3440',500:'#5f6b7a',400:'#8b95a3',300:'#b5bcc7' },
+            status: {
+              green:  { light:'#eefbf3',base:'#0f9d58',dark:'#0b7a42',border:'#b7eaca' },
+              amber:  { light:'#fef9eb',base:'#d4930d',dark:'#a87308',border:'#fde68a' },
+              red:    { light:'#fef2f2',base:'#d93025',dark:'#ae241c',border:'#fcc8c5' },
+              blue:   { light:'#ebf6ff',base:'#1a73e8',dark:'#1557b0',border:'#b3d4fc' },
+            }
+          },
+          fontFamily: { sans:['-apple-system','BlinkMacSystemFont','"Segoe UI"','Inter','Roboto','sans-serif'], mono:['"SF Mono"','"Fira Code"','Menlo','monospace'] },
+          fontSize: { 'xxs':['0.625rem',{lineHeight:'0.875rem'}],'xs':['0.75rem',{lineHeight:'1rem'}],'sm':['0.8125rem',{lineHeight:'1.25rem'}],'base':['0.875rem',{lineHeight:'1.375rem'}],'md':['0.9375rem',{lineHeight:'1.5rem'}],'lg':['1.125rem',{lineHeight:'1.75rem'}],'xl':['1.25rem',{lineHeight:'1.75rem'}],'2xl':['1.5rem',{lineHeight:'2rem'}],'3xl':['1.875rem',{lineHeight:'2.25rem'}] },
+          borderRadius: { card:'12px' }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { -webkit-font-smoothing: antialiased; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; }
+    .sl { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #5f6b7a; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e3e5e8; }
+    .sub { font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #8b95a3; margin-bottom: 0.5rem; }
+    .feat li { position: relative; padding-left: 1rem; font-size: 0.8125rem; line-height: 1.5; color: #2d3440; }
+    .feat li::before { content: ''; position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: #009a9f; }
+    nav a { transition: color .1s; }
+    nav a:hover { color: #008085; }
+    @media print { body { font-size: 10px; } .no-print { display: none; } .page-break { page-break-before: always; } }
+  </style>
+</head>
+<body class="bg-surface-50 text-ink-900">
+  <div class="max-w-5xl mx-auto px-8 py-10">
+
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+        </div>
+        <div>
+          <h1 class="text-3xl font-semibold text-ink-900">Centime Expense</h1>
+          <p class="text-sm text-ink-500">Detailed Product Specification &middot; v1.0 &middot; March 2026 &middot; Draft</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="mb-8 bg-white border border-surface-200 rounded-card p-5">
+      <div class="sub">Table of Contents</div>
+      <nav class="grid grid-cols-3 gap-x-6 gap-y-1 text-sm text-ink-700">
+        <a href="#s1">1. Executive Summary</a>
+        <a href="#s7">7. Accessibility (ADA/WCAG)</a>
+        <a href="#s13">13. Security &amp; Infrastructure</a>
+        <a href="#s2">2. Target Market</a>
+        <a href="#s8">8. White-Label Branding</a>
+        <a href="#s14">14. Implementation</a>
+        <a href="#s3">3. Architecture</a>
+        <a href="#s9">9. Reporting &amp; Analytics</a>
+        <a href="#s15">15. Phasing / Roadmap</a>
+        <a href="#s4">4. Core Features</a>
+        <a href="#s10">10. Administration</a>
+        <a href="#s16">16. Success Metrics</a>
+        <a href="#s5">5. ERP Integrations</a>
+        <a href="#s11">11. Notifications</a>
+        <a href="#sA">A. Findity API Reference</a>
+        <a href="#s6">6. Mobile Experience</a>
+        <a href="#s12">12. Pricing Model</a>
+        <a href="#sB">B. Glossary</a>
+      </nav>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 1. EXECUTIVE SUMMARY -->
+    <!-- ============================================ -->
+    <div id="s1" class="mb-8">
+      <div class="sl">1. Executive Summary</div>
+      <p class="text-sm text-ink-700 mb-4 leading-relaxed">Centime Expense is a corporate expense management solution built in partnership with Findity (API provider) with Centime delivering the user experience. It is part of the broader Centime suite, with reimbursement payments handled by Centime AP.</p>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-xs font-semibold text-brand-500 uppercase tracking-wide mb-1">Card Interchange Revenue</div>
+          <p class="text-xs text-ink-700">Free with Centime-issued or partner cards. Per-user fees for third-party cards.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-xs font-semibold text-brand-500 uppercase tracking-wide mb-1">Card Agnostic</div>
+          <p class="text-xs text-ink-700">Any Visa/Mastercard corporate or personal card supported.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-xs font-semibold text-brand-500 uppercase tracking-wide mb-1">Bank Partner Friendly</div>
+          <p class="text-xs text-ink-700">White-label ready for bank partners and resellers.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-xs font-semibold text-brand-500 uppercase tracking-wide mb-1">Direct + Channel</div>
+          <p class="text-xs text-ink-700">Sell direct to mid-market and through bank partner channels.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-xs font-semibold text-brand-500 uppercase tracking-wide mb-1">Speed of Implementation</div>
+          <p class="text-xs text-ink-700">Rapid onboarding and deployment for customers.</p>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="text-xs font-semibold text-brand-500 uppercase tracking-wide mb-1">Private Label</div>
+          <p class="text-xs text-ink-700">Full branding support for partners and resellers.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 2. TARGET MARKET -->
+    <!-- ============================================ -->
+    <div id="s2" class="mb-8">
+      <div class="sl">2. Target Market</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-sm">
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-3 font-semibold text-ink-900 w-40">Segment</td><td class="px-5 py-3 text-ink-700">Mid-market US companies &mdash; $5M&ndash;$100M in annual sales</td></tr>
+            <tr><td class="px-5 py-3 font-semibold text-ink-900">Personas</td><td class="px-5 py-3 text-ink-700">CFOs, Controllers, AP Managers, Procurement Managers, Finance Teams, Employees, Approvers, Administrators</td></tr>
+            <tr><td class="px-5 py-3 font-semibold text-ink-900">Competitive Set</td><td class="px-5 py-3 text-ink-700">Fyle, PayHawk, Expensify, SAP Concur (expense); Procurify, Coupa (procurement crossover)</td></tr>
+            <tr><td class="px-5 py-3 font-semibold text-ink-900">Differentiators</td><td class="px-5 py-3 text-ink-700">Card interchange model, bank partnership ecosystem, tight AP integration, procurement-to-expense workflows, private labeling</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 3. ARCHITECTURE -->
+    <!-- ============================================ -->
+    <div id="s3" class="mb-8">
+      <div class="sl">3. Architecture Overview</div>
+
+      <div class="sub">3.1 Technology Partners</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden mb-4">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-surface-50 border-b border-surface-200"><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide">Layer</th><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide">Provider</th><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide">Role</th></tr></thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-2 text-ink-700">Expense Engine &amp; APIs</td><td class="px-5 py-2 font-semibold text-ink-900">Findity</td><td class="px-5 py-2 text-ink-700">Expense API, Admin API, Connect API &mdash; expense workflows, OCR, approvals, dimensions, export</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">UX / Frontend</td><td class="px-5 py-2 font-semibold text-ink-900">Centime</td><td class="px-5 py-2 text-ink-700">Web app, mobile app, white-label framework</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">GL / ERP Integration</td><td class="px-5 py-2 font-semibold text-ink-900">Centime GL APIs</td><td class="px-5 py-2 text-ink-700">Bi-directional sync with QuickBooks, Sage Intacct, NetSuite, Dynamics</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">User Management</td><td class="px-5 py-2 font-semibold text-ink-900">Centime User Mgmt</td><td class="px-5 py-2 text-ink-700">Finance team user provisioning, roles, SSO</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Payments / Reimbursement</td><td class="px-5 py-2 font-semibold text-ink-900">Centime AP</td><td class="px-5 py-2 text-ink-700">ACH/check payments for out-of-pocket reimbursements</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Card Issuing</td><td class="px-5 py-2 font-semibold text-ink-900">US Bank, FNBO</td><td class="px-5 py-2 text-ink-700">T&amp;E / Expense Management credit cards</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Card Networks</td><td class="px-5 py-2 font-semibold text-ink-900">Visa, Mastercard</td><td class="px-5 py-2 text-ink-700">Real-time transaction feeds</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub">3.2 Integration Architecture</div>
+      <div class="bg-white border border-surface-200 rounded-card p-6 mb-4">
+        <div class="flex flex-col items-center gap-3">
+          <div class="bg-brand-500 text-white rounded-lg px-8 py-3 text-sm font-semibold text-center w-full max-w-2xl">Centime Expense UX<br><span class="text-xs font-normal opacity-80">Web + Mobile + White-Label</span></div>
+          <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          <div class="bg-brand-700 text-white rounded-lg px-8 py-3 text-sm font-semibold text-center w-full max-w-2xl">Centime Middleware / BFF</div>
+          <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          <div class="grid grid-cols-5 gap-3 w-full max-w-2xl">
+            <div class="border border-brand-200 bg-brand-50 rounded-lg p-3 text-center"><div class="text-xs font-semibold text-brand-700">Findity APIs</div><div class="text-xxs text-ink-500 mt-1">Expense, Admin, Connect</div></div>
+            <div class="border border-brand-200 bg-brand-50 rounded-lg p-3 text-center"><div class="text-xs font-semibold text-brand-700">Visa / MC</div><div class="text-xxs text-ink-500 mt-1">Real-time Feeds</div></div>
+            <div class="border border-brand-200 bg-brand-50 rounded-lg p-3 text-center"><div class="text-xs font-semibold text-brand-700">Centime GL</div><div class="text-xxs text-ink-500 mt-1">ERP Sync</div></div>
+            <div class="border border-brand-200 bg-brand-50 rounded-lg p-3 text-center"><div class="text-xs font-semibold text-brand-700">Centime Users</div><div class="text-xxs text-ink-500 mt-1">Finance Team</div></div>
+            <div class="border border-brand-200 bg-brand-50 rounded-lg p-3 text-center"><div class="text-xs font-semibold text-brand-700">Centime AP</div><div class="text-xxs text-ink-500 mt-1">Payments</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub">3.3 Key Design Principles</div>
+      <div class="grid grid-cols-5 gap-3">
+        <div class="bg-white border border-surface-200 rounded-card p-3"><div class="text-xs font-semibold text-ink-900">Mobile-first</div><div class="text-xxs text-ink-500 mt-0.5">Responsive design</div></div>
+        <div class="bg-white border border-surface-200 rounded-card p-3"><div class="text-xs font-semibold text-ink-900">ADA/WCAG 2.1 AA</div><div class="text-xxs text-ink-500 mt-0.5">Full accessibility</div></div>
+        <div class="bg-white border border-surface-200 rounded-card p-3"><div class="text-xs font-semibold text-ink-900">ERP agnostic</div><div class="text-xxs text-ink-500 mt-0.5">Pluggable connectors</div></div>
+        <div class="bg-white border border-surface-200 rounded-card p-3"><div class="text-xs font-semibold text-ink-900">Multi-tenant</div><div class="text-xxs text-ink-500 mt-0.5">Per-tenant config</div></div>
+        <div class="bg-white border border-surface-200 rounded-card p-3"><div class="text-xs font-semibold text-ink-900">API-first</div><div class="text-xxs text-ink-500 mt-0.5">Partner integrations</div></div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 4. CORE FEATURES -->
+    <!-- ============================================ -->
+    <div id="s4" class="mb-8">
+      <div class="sl">4. Core Features</div>
+
+      <!-- 4.1 Expense Reporting -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <h3 class="text-md font-semibold text-ink-900 mb-3">4.1 Expense Reporting</h3>
+
+        <div class="sub">4.1.1 Expense Entry</div>
+        <ul class="feat space-y-1 mb-4">
+          <li>Manual expense creation with all standard fields (date, merchant, amount, currency, category, description)</li>
+          <li>Multi-currency support with automatic exchange rate lookup</li>
+          <li>Itemized expenses (e.g., hotel folio line items)</li>
+          <li>Mileage tracking with GPS and map-based route entry</li>
+          <li>Per diem calculations (GSA rates and custom rates)</li>
+          <li>Recurring expenses</li>
+          <li>Duplicate detection and warnings</li>
+          <li>Split expenses across multiple cost centers, projects, or GL codes</li>
+          <li>Personal expense flagging</li>
+          <li>Attendee tracking for meals and entertainment (names, titles, business purpose)</li>
+          <li>Billable expense flagging (mark expenses as client-billable)</li>
+        </ul>
+
+        <div class="sub">4.1.2 Expense Reports</div>
+        <ul class="feat space-y-1 mb-4">
+          <li>Group expenses into reports for submission</li>
+          <li>Report templates (by trip, by period, by project)</li>
+          <li>Pre-populated reports from card transactions</li>
+          <li>Auto-submit rules for low-value / policy-compliant expenses</li>
+          <li>Draft, submitted, approved, rejected, paid statuses</li>
+          <li>Report cloning and templates</li>
+          <li>Batch operations (select multiple expenses, bulk categorize, bulk submit)</li>
+        </ul>
+
+        <div class="sub">4.1.3 Delegates and Assistants</div>
+        <ul class="feat space-y-1">
+          <li>Expense entry delegation (executive assistants can submit on behalf of others)</li>
+          <li>Configurable delegation permissions</li>
+        </ul>
+      </div>
+
+      <!-- 4.2 Receipt Management -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <h3 class="text-md font-semibold text-ink-900 mb-3">4.2 Receipt Management</h3>
+
+        <div class="sub">4.2.1 Receipt Capture</div>
+        <ul class="feat space-y-1 mb-4">
+          <li>Mobile camera capture with real-time edge detection and image enhancement</li>
+          <li>Email forwarding (receipts@[tenant].centime-expense.com)</li>
+          <li>Drag-and-drop upload on web</li>
+          <li>Bulk receipt upload</li>
+          <li>E-receipt integrations (Uber, Lyft, airlines, hotels)</li>
+          <li>SMS/text message receipt forwarding</li>
+          <li>Slack and Microsoft Teams receipt submission</li>
+          <li>Lost receipt affidavit/declaration workflow</li>
+        </ul>
+
+        <div class="sub">4.2.2 Receipt Processing (OCR/AI)</div>
+        <ul class="feat space-y-1 mb-4">
+          <li>Automatic extraction: merchant name, date, total amount, currency, tax, tip, line items</li>
+          <li>Multi-language receipt support</li>
+          <li>Confidence scoring on extracted data</li>
+          <li>Auto-categorization based on merchant</li>
+          <li>Receipt-to-transaction matching</li>
+        </ul>
+
+        <div class="sub">4.2.3 Receipt Storage</div>
+        <ul class="feat space-y-1">
+          <li>Unlimited storage &middot; Original image preservation &middot; PDF, JPEG, PNG</li>
+          <li>Receipt audit trail (who uploaded, when, modifications)</li>
+          <li>IRS-compliant receipt archival</li>
+        </ul>
+      </div>
+
+      <!-- 4.3 Corporate Card Management -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <h3 class="text-md font-semibold text-ink-900 mb-3">4.3 Corporate Card Management</h3>
+
+        <div class="sub">4.3.1 Card Support</div>
+        <div class="grid grid-cols-4 gap-3 mb-4">
+          <div class="bg-brand-50 rounded-lg p-3"><div class="text-xs font-semibold text-brand-700">Centime-issued</div><div class="text-xxs text-ink-500 mt-1">US Bank &amp; FNBO T&amp;E cards</div></div>
+          <div class="bg-brand-50 rounded-lg p-3"><div class="text-xs font-semibold text-brand-700">Partner bank</div><div class="text-xxs text-ink-500 mt-1">Bank partner ecosystem cards</div></div>
+          <div class="bg-brand-50 rounded-lg p-3"><div class="text-xs font-semibold text-brand-700">Third-party</div><div class="text-xxs text-ink-500 mt-1">Any Visa/Mastercard corporate</div></div>
+          <div class="bg-brand-50 rounded-lg p-3"><div class="text-xs font-semibold text-brand-700">Personal</div><div class="text-xxs text-ink-500 mt-1">Policy-controllable</div></div>
+        </div>
+
+        <div class="sub">4.3.2 Real-Time Transaction Feed</div>
+        <ul class="feat space-y-1 mb-4">
+          <li><strong>Visa RTN</strong> &mdash; Authorization-level data in real-time</li>
+          <li><strong>Mastercard Notifications</strong> &mdash; Real-time push of card transactions</li>
+          <li>Automatic posting to user accounts</li>
+          <li>Pending vs. settled states &middot; Merchant enrichment (names, logos, MCC) &middot; Declined visibility</li>
+        </ul>
+
+        <div class="sub">4.3.3 Receipt-Transaction Matching</div>
+        <ul class="feat space-y-1 mb-4">
+          <li>Auto-match by amount, date, and merchant with confidence scoring</li>
+          <li>Smart matching using GPS proximity</li>
+          <li>Unmatched transaction alerts and receipt suggestions</li>
+        </ul>
+
+        <div class="sub">4.3.4 Card Controls (Phase 2)</div>
+        <ul class="feat space-y-1">
+          <li>Spend limits (per transaction, daily, monthly) &middot; MCC restrictions &middot; Geographic restrictions</li>
+          <li>Card freeze/unfreeze &middot; Virtual card issuance</li>
+        </ul>
+      </div>
+
+      <!-- 4.4 Policy Engine -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <h3 class="text-md font-semibold text-ink-900 mb-3">4.4 Policy Engine</h3>
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="sub">4.4.1 Policy Rules</div>
+            <ul class="feat space-y-1">
+              <li>Spending limits by category, role, department, project</li>
+              <li>Receipt requirements (threshold-based)</li>
+              <li>Duplicate detection &middot; Weekend/holiday rules</li>
+              <li>Preferred vendor enforcement</li>
+              <li>Per diem limits &middot; Mileage rate caps</li>
+              <li>Personal expense restrictions</li>
+              <li>Out-of-policy: warnings vs. hard blocks (configurable)</li>
+              <li>Attendee requirements for meals (threshold-based)</li>
+              <li>Itemization requirements</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub">4.4.2 Policy Configuration</div>
+            <ul class="feat space-y-1">
+              <li>No-code policy builder UI</li>
+              <li>Multiple policy sets (entity, dept, role, location)</li>
+              <li>Policy inheritance and overrides</li>
+              <li>Policy effective dates</li>
+              <li>Audit log for policy changes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.5 Approval Workflows -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <h3 class="text-md font-semibold text-ink-900 mb-3">4.5 Approval Workflows</h3>
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="sub">4.5.1 Workflow Configuration</div>
+            <ul class="feat space-y-1">
+              <li>Multi-level approval chains</li>
+              <li>Approval by: manager, cost center, project, custom</li>
+              <li>Amount-based routing with auto-approve</li>
+              <li>Sequential and parallel paths</li>
+              <li>Escalation rules and timeout handling</li>
+              <li>Out-of-office delegation / backup approvers</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub">4.5.2 Approver Experience</div>
+            <ul class="feat space-y-1">
+              <li>Approve/reject with comments</li>
+              <li>Line-item or full-report approval</li>
+              <li>Send back for revision</li>
+              <li>Batch approvals</li>
+              <li>Mobile push &middot; Email digest</li>
+              <li>Full approval audit trail</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.6 Reimbursement -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <h3 class="text-md font-semibold text-ink-900 mb-3">4.6 Reimbursement</h3>
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="sub">4.6.1 Out-of-Pocket</div>
+            <ul class="feat space-y-1">
+              <li>Integration with Centime AP for payment processing</li>
+              <li>ACH direct deposit to employee bank accounts</li>
+              <li>Payment status tracking (pending, processing, paid)</li>
+              <li>Multi-currency reimbursement</li>
+              <li>Payroll integration option (Phase 2)</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub">4.6.2 Card Reconciliation</div>
+            <ul class="feat space-y-1">
+              <li>Auto-reconciliation of approved expenses vs. card statement</li>
+              <li>Unreconciled transaction reporting</li>
+              <li>Statement-level sign-off</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.7 Collaboration -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <h3 class="text-md font-semibold text-ink-900 mb-3">4.7 Collaboration &amp; Messaging</h3>
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="sub">In-App</div>
+            <ul class="feat space-y-1">
+              <li>Comments and notes on expenses/reports</li>
+              <li>@mention team members</li>
+              <li>Conversation threads (submitter ↔ approver)</li>
+              <li>Attachment support</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub">Third-Party Integrations</div>
+            <ul class="feat space-y-1">
+              <li><strong>Slack</strong> &mdash; Notifications, receipt submission, approve/reject</li>
+              <li><strong>Microsoft Teams</strong> &mdash; Notifications, receipt submission, approve/reject</li>
+              <li>Configurable bot commands</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.8 Procurement Crossover -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4 border-l-4 border-l-gold-300">
+        <div class="flex items-center gap-2 mb-3">
+          <h3 class="text-md font-semibold text-ink-900">4.8 Procurement Crossover</h3>
+          <span class="text-xxs font-medium text-gold-500 bg-gold-100 px-2 py-0.5 rounded-full">NEW</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mb-4">
+          <div>
+            <div class="sub">4.8.1 Purchase Requests</div>
+            <ul class="feat space-y-1">
+              <li>Employee-initiated with item details, quantity, cost, justification</li>
+              <li>Catalog-based and free-form requests</li>
+              <li>Budget check at request time</li>
+              <li>Link to projects, departments, cost centers</li>
+              <li>Request templates for frequent items</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub">4.8.2 Purchase Orders</div>
+            <ul class="feat space-y-1">
+              <li>Auto-generate POs from approved requests</li>
+              <li>Configurable PO numbering</li>
+              <li>PO approval workflows (amount-based)</li>
+              <li>Status tracking (draft → approved → sent → received → closed)</li>
+              <li>Email PO to vendor &middot; Change orders with re-approval</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mb-4">
+          <div>
+            <div class="sub">4.8.3 Receiving &amp; Three-Way Matching <span class="text-xxs text-ink-400">(Phase 2)</span></div>
+            <ul class="feat space-y-1">
+              <li>Full or partial receipt confirmation</li>
+              <li>Three-way match: PO ↔ Receipt ↔ Invoice/Expense</li>
+              <li>Tolerance thresholds for variances</li>
+              <li>Exception handling &middot; Receiving notes</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub">4.8.4 Vendor Management <span class="text-xxs text-ink-400">(Phase 2)</span></div>
+            <ul class="feat space-y-1">
+              <li>Vendor directory with W-9 tracking</li>
+              <li>Preferred vendor lists by category</li>
+              <li>Performance tracking (delivery, quality, pricing)</li>
+              <li>Vendor onboarding workflow &middot; Spend analytics</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <div class="sub">4.8.5 Budget Management</div>
+            <ul class="feat space-y-1">
+              <li>Department and project budgets (monthly, quarterly, annual)</li>
+              <li>Real-time consumption tracking (committed + spent)</li>
+              <li>Alerts at 75%, 90%, 100% thresholds</li>
+              <li>Budget vs. actual reporting</li>
+              <li>Multi-level hierarchy (company → division → dept → project)</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub">4.8.6 Spend Controls &amp; 4.8.7 Procurement-Expense Bridge</div>
+            <ul class="feat space-y-1">
+              <li>Spending authority matrix</li>
+              <li>Pre-approved vendor/item catalogs</li>
+              <li>Blanket POs for recurring relationships</li>
+              <li>Card transactions auto-matched to POs</li>
+              <li>Consolidated spend view: procurement + card + out-of-pocket</li>
+              <li>Unified approval dashboards</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4.9 Tax / 4.10 Travel -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <h3 class="text-md font-semibold text-ink-900 mb-2">4.9 Tax Compliance <span class="text-xs font-normal text-ink-400">(Phase 2)</span></h3>
+          <ul class="feat space-y-1">
+            <li>VAT/GST capture on receipts (OCR extraction)</li>
+            <li>Tax reclaim workflow &middot; Tax code mapping to ERP</li>
+            <li>Country-specific rules &middot; Tax summary reports</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <h3 class="text-md font-semibold text-ink-900 mb-2">4.10 Travel <span class="text-xs font-normal text-ink-400">(Phase 4 &mdash; Future)</span></h3>
+          <ul class="feat space-y-1">
+            <li>Travel booking integration</li>
+            <li>Pre-trip approval workflows</li>
+            <li>Itinerary management</li>
+            <li>Travel policy enforcement at point of booking</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 5. ERP INTEGRATIONS -->
+    <!-- ============================================ -->
+    <div id="s5" class="mb-8">
+      <div class="sl">5. ERP Integrations</div>
+
+      <div class="sub">5.1 Supported ERPs</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden mb-4">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-surface-50 border-b border-surface-200"><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide">ERP</th><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide">Priority</th><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide">Integration Type</th></tr></thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-2 text-ink-700">QuickBooks Online</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-white bg-brand-500 px-2 py-0.5 rounded">P0 &mdash; Launch</span></td><td class="px-5 py-2 text-ink-700">API (REST)</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">QuickBooks Desktop</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-white bg-brand-500 px-2 py-0.5 rounded">P0 &mdash; Launch</span></td><td class="px-5 py-2 text-ink-700">Web Connector / SDK</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Sage Intacct</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-white bg-brand-500 px-2 py-0.5 rounded">P0 &mdash; Launch</span></td><td class="px-5 py-2 text-ink-700">API (REST/SOAP)</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Oracle NetSuite</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-brand-500 bg-brand-50 px-2 py-0.5 rounded">P1 &mdash; Fast Follow</span></td><td class="px-5 py-2 text-ink-700">SuiteTalk API / RESTlet</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Microsoft Dynamics 365</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-brand-500 bg-brand-50 px-2 py-0.5 rounded">P1 &mdash; Fast Follow</span></td><td class="px-5 py-2 text-ink-700">Dataverse API / OData</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="sub">5.2.1 Master Data Sync (ERP → Centime)</div>
+          <ul class="feat space-y-1">
+            <li>Chart of Accounts / GL codes</li>
+            <li>Cost centers / Departments</li>
+            <li>Projects / Classes</li>
+            <li>Vendors / Employees</li>
+            <li>Tax codes &middot; Currencies &middot; Payment terms</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="sub">5.2.2 Expense Export (Centime → ERP)</div>
+          <ul class="feat space-y-1">
+            <li>Journal entries, bills, or expense transactions</li>
+            <li>Configurable GL mapping</li>
+            <li>Batch or real-time sync</li>
+            <li>Credit card liability posting</li>
+            <li>Tax allocation &middot; Multi-entity support</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="sub">5.3 Integration Framework</div>
+          <ul class="feat space-y-1">
+            <li>Pluggable connector architecture</li>
+            <li>Field mapping UI for admins</li>
+            <li>Data transformation rules</li>
+            <li>Scheduled and on-demand sync</li>
+            <li>Webhook support</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 6-8: MOBILE, ADA, WHITE-LABEL -->
+    <!-- ============================================ -->
+    <div id="s6" class="mb-8">
+      <div class="sl">6. Mobile &middot; 7. Accessibility &middot; 8. White-Label</div>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white border border-surface-200 rounded-card p-5" id="s7">
+          <h3 class="text-sm font-semibold text-ink-900 mb-3">6. Mobile Experience</h3>
+          <ul class="feat space-y-1">
+            <li>iOS + Android (latest 2 versions) + PWA</li>
+            <li>Receipt camera with real-time OCR</li>
+            <li>Push notifications &middot; Offline mode</li>
+            <li>GPS mileage &middot; Location-based matching</li>
+            <li>Biometric auth &middot; Dark mode</li>
+            <li>Mobile approval workflows</li>
+            <li>Responsive web (tablet + desktop)</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <h3 class="text-sm font-semibold text-ink-900 mb-3">7. Accessibility (ADA)</h3>
+          <ul class="feat space-y-1">
+            <li>WCAG 2.1 Level AA &middot; Section 508</li>
+            <li>Full keyboard navigation</li>
+            <li>Screen reader (ARIA labels, roles)</li>
+            <li>Color contrast 4.5:1 &middot; Focus indicators</li>
+            <li>Text resize to 200% &middot; Alt text</li>
+            <li>44x44px touch targets (mobile)</li>
+            <li>Automated testing (axe-core) + manual audits</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5" id="s8">
+          <h3 class="text-sm font-semibold text-ink-900 mb-3">8. White-Label Branding</h3>
+          <ul class="feat space-y-1">
+            <li>Custom logo, colors, favicon</li>
+            <li>Custom login page &middot; Email templates</li>
+            <li>Custom domain (expenses.partner.com)</li>
+            <li>Custom mobile app listing</li>
+            <li>Custom ToS &amp; privacy links</li>
+            <li>Tenant-level config in admin console</li>
+            <li>Brand inheritance (parent → child)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 9. REPORTING -->
+    <!-- ============================================ -->
+    <div id="s9" class="mb-8">
+      <div class="sl">9. Reporting &amp; Analytics</div>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="sub">Standard Reports</div>
+          <ul class="feat space-y-1">
+            <li>Spend by dept, category, project, employee</li>
+            <li>Spend trends (monthly, quarterly, annual)</li>
+            <li>Policy violations &middot; Top spenders</li>
+            <li>Card utilization (corporate vs. personal)</li>
+            <li>Outstanding reports &middot; Reimbursement aging</li>
+            <li>Receipt compliance &middot; Budget vs. actual</li>
+            <li>Attendee compliance</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="sub">Executive Dashboard</div>
+          <ul class="feat space-y-1">
+            <li>Total spend (MTD, QTD, YTD)</li>
+            <li>Pending approvals count &amp; age</li>
+            <li>Policy compliance rate</li>
+            <li>Card adoption rate</li>
+            <li>Average processing time</li>
+            <li>Top categories</li>
+            <li>Role-based views (Admin, Finance, Manager, Employee)</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="sub">Custom Reports</div>
+          <ul class="feat space-y-1">
+            <li>Drag-and-drop report builder</li>
+            <li>Filters, grouping, sorting</li>
+            <li>Export: CSV, Excel, PDF</li>
+            <li>Scheduled delivery via email</li>
+            <li>Saved report templates</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 10-11: ADMIN, NOTIFICATIONS -->
+    <!-- ============================================ -->
+    <div id="s10" class="mb-8">
+      <div class="sl">10. Administration &middot; 11. Notifications</div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white border border-surface-200 rounded-card p-5" id="s11">
+          <h3 class="text-sm font-semibold text-ink-900 mb-3">10. Administration</h3>
+          <div class="sub">User Management</div>
+          <ul class="feat space-y-1 mb-3">
+            <li>SSO (SAML 2.0, OIDC) &middot; SCIM provisioning</li>
+            <li>RBAC (Admin, Finance Admin, Approver, Employee, Auditor, Delegate)</li>
+            <li>Custom roles &middot; Multi-entity assignment &middot; CSV import</li>
+          </ul>
+          <div class="sub">Organization Setup</div>
+          <ul class="feat space-y-1 mb-3">
+            <li>Company hierarchy (entities, depts, cost centers)</li>
+            <li>Projects, categories with GL mapping</li>
+            <li>Tax, currency, fiscal year config &middot; Custom fields</li>
+          </ul>
+          <div class="sub">Audit &amp; Compliance</div>
+          <ul class="feat space-y-1">
+            <li>Complete audit trail &middot; IP restrictions</li>
+            <li>Data retention &middot; GDPR &middot; SOC 2 Type II</li>
+            <li>Encryption: AES-256 at rest, TLS 1.2+ in transit</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <h3 class="text-sm font-semibold text-ink-900 mb-3">11. Notifications</h3>
+          <div class="sub">Channels</div>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <span class="text-xs bg-surface-100 text-ink-700 px-2 py-1 rounded">In-app</span>
+            <span class="text-xs bg-surface-100 text-ink-700 px-2 py-1 rounded">Push (mobile)</span>
+            <span class="text-xs bg-surface-100 text-ink-700 px-2 py-1 rounded">Email</span>
+            <span class="text-xs bg-surface-100 text-ink-700 px-2 py-1 rounded">Slack</span>
+            <span class="text-xs bg-surface-100 text-ink-700 px-2 py-1 rounded">Teams</span>
+            <span class="text-xs bg-surface-100 text-ink-400 px-2 py-1 rounded">SMS (Phase 2)</span>
+          </div>
+          <div class="sub">Events</div>
+          <ul class="feat space-y-1 mb-3">
+            <li>Report submitted / approved / rejected / sent back</li>
+            <li>Receipt required reminder</li>
+            <li>Policy violation alert</li>
+            <li>New card transaction posted</li>
+            <li>Reimbursement processed / paid</li>
+            <li>Approval pending reminder (with escalation)</li>
+            <li>ERP sync failure &middot; Delegate action</li>
+          </ul>
+          <div class="sub">Preferences</div>
+          <ul class="feat space-y-1">
+            <li>Per-user opt in/out by channel per event</li>
+            <li>Admin-enforced notifications</li>
+            <li>Quiet hours / DND settings</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 12. PRICING -->
+    <!-- ============================================ -->
+    <div id="s12" class="mb-8">
+      <div class="sl">12. Pricing Model</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-surface-50 border-b border-surface-200"><th class="text-left px-5 py-3 text-xs font-semibold text-ink-500 uppercase tracking-wide">Scenario</th><th class="text-left px-5 py-3 text-xs font-semibold text-ink-500 uppercase tracking-wide">Price</th></tr></thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-3 text-ink-700">Centime-issued card (US Bank / FNBO)</td><td class="px-5 py-3"><span class="text-status-green-dark font-semibold">Free</span> <span class="text-xs text-ink-400">&mdash; Revenue from interchange</span></td></tr>
+            <tr><td class="px-5 py-3 text-ink-700">Partner bank card</td><td class="px-5 py-3"><span class="text-status-green-dark font-semibold">Free</span> <span class="text-xs text-ink-400">&mdash; Interchange sharing agreement</span></td></tr>
+            <tr><td class="px-5 py-3 text-ink-700">Third-party corporate card</td><td class="px-5 py-3 text-ink-700">Per active user / month (tiered)</td></tr>
+            <tr><td class="px-5 py-3 text-ink-700">Personal card only</td><td class="px-5 py-3 text-ink-700">Per active user / month (tiered)</td></tr>
+          </tbody>
+        </table>
+        <div class="px-5 py-3 bg-surface-50 border-t border-surface-200 text-xs text-ink-500 space-y-1">
+          <div><strong>Active user:</strong> Submits, approves, or has card transactions in a calendar month. Admins/auditors who only configure/view are not counted.</div>
+          <div><strong>Billing:</strong> Monthly in arrears. Annual contracts with discount. Partner bank billing via channel agreements.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 13. SECURITY -->
+    <!-- ============================================ -->
+    <div id="s13" class="mb-8">
+      <div class="sl">13. Security &amp; Infrastructure</div>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="sub">Security</div>
+          <ul class="feat space-y-1">
+            <li>SOC 2 Type II &middot; PCI DSS</li>
+            <li>AES-256 at rest &middot; TLS 1.2+ in transit</li>
+            <li>MFA &middot; SSO (SAML 2.0, OIDC)</li>
+            <li>RBAC with least privilege</li>
+            <li>OAuth 2.0 API auth</li>
+            <li>Rate limiting &middot; DDoS protection</li>
+            <li>Vuln scanning &middot; Pen testing</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="sub">Infrastructure</div>
+          <ul class="feat space-y-1">
+            <li>Cloud-hosted (AWS or Azure)</li>
+            <li>Multi-region availability</li>
+            <li>99.9% uptime SLA</li>
+            <li>Automated backups (point-in-time)</li>
+            <li>Horizontal scaling</li>
+            <li>CDN for global performance</li>
+            <li>APM, error tracking, logging</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5">
+          <div class="sub">Data Residency</div>
+          <ul class="feat space-y-1">
+            <li>US data residency (primary)</li>
+            <li>Configurable residency (Phase 2)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 14. IMPLEMENTATION -->
+    <!-- ============================================ -->
+    <div id="s14" class="mb-8">
+      <div class="sl">14. Implementation &amp; Onboarding</div>
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-4">
+        <div class="sub">Onboarding Flow</div>
+        <div class="flex gap-2 flex-wrap">
+          <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium">1. Tenant provisioning</span>
+          <span class="text-xs text-ink-300">&rarr;</span>
+          <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium">2. Branding</span>
+          <span class="text-xs text-ink-300">&rarr;</span>
+          <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium">3. Org setup</span>
+          <span class="text-xs text-ink-300">&rarr;</span>
+          <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium">4. ERP connect</span>
+          <span class="text-xs text-ink-300">&rarr;</span>
+          <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium">5. Policy config</span>
+          <span class="text-xs text-ink-300">&rarr;</span>
+          <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium">6. Approvals</span>
+          <span class="text-xs text-ink-300">&rarr;</span>
+          <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium">7. Card feeds</span>
+          <span class="text-xs text-ink-300">&rarr;</span>
+          <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium">8. Users</span>
+          <span class="text-xs text-ink-300">&rarr;</span>
+          <span class="text-xs bg-brand-50 text-brand-700 px-3 py-1.5 rounded-full font-medium">9. Training</span>
+          <span class="text-xs text-ink-300">&rarr;</span>
+          <span class="text-xs bg-brand-500 text-white px-3 py-1.5 rounded-full font-medium">10. Live!</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="sub">Time-to-Value</div>
+          <ul class="feat space-y-1">
+            <li><strong>Self-service:</strong> &lt; 1 day for basic config</li>
+            <li><strong>Guided:</strong> &lt; 2 weeks for full deployment + ERP</li>
+            <li>Data migration tools for switching from competitors</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="sub">Support</div>
+          <ul class="feat space-y-1">
+            <li>In-app help center &middot; Chat &middot; Email</li>
+            <li>Phone support (premium tier)</li>
+            <li>Dedicated CSM for enterprise</li>
+            <li>Partner support portal for bank partners</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 15. PHASING -->
+    <!-- ============================================ -->
+    <div id="s15" class="mb-8">
+      <div class="sl">15. Phasing / Roadmap</div>
+      <div class="space-y-3">
+        <div class="bg-white border border-surface-200 rounded-card p-5 border-l-4 border-l-brand-500">
+          <div class="flex items-center gap-2 mb-2"><span class="text-xs font-bold text-white bg-brand-500 px-2 py-0.5 rounded">Phase 1</span><span class="text-sm font-semibold text-ink-900">MVP &mdash; Launch</span></div>
+          <div class="grid grid-cols-2 gap-x-6">
+            <ul class="feat space-y-1">
+              <li>Expense entry, reporting, submission</li>
+              <li>Receipt capture and OCR (Findity)</li>
+              <li>Policy engine (core rules)</li>
+              <li>Multi-level approval workflows</li>
+              <li>Real-time card feed (Visa + MC)</li>
+              <li>Receipt-to-transaction matching</li>
+              <li>Corporate + personal card support</li>
+              <li>QBO, QBD, Sage Intacct integrations</li>
+              <li>Attendee tracking</li>
+              <li>E-receipt integrations</li>
+            </ul>
+            <ul class="feat space-y-1">
+              <li>Mobile app (iOS + Android)</li>
+              <li>Responsive web app</li>
+              <li>ADA/WCAG 2.1 AA compliance</li>
+              <li>White-label branding (core)</li>
+              <li>Standard reports + dashboard</li>
+              <li>SSO (SAML 2.0)</li>
+              <li>Centime AP reimbursement integration</li>
+              <li>Lost receipt affidavit</li>
+              <li>Slack/Teams notifications + receipts</li>
+              <li>Purchase requests, POs, budget tracking</li>
+            </ul>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5 border-l-4 border-l-brand-300">
+          <div class="flex items-center gap-2 mb-2"><span class="text-xs font-bold text-white bg-brand-400 px-2 py-0.5 rounded">Phase 2</span><span class="text-sm font-semibold text-ink-900">Fast Follow</span></div>
+          <div class="grid grid-cols-2 gap-x-6">
+            <ul class="feat space-y-1">
+              <li>NetSuite + Dynamics 365 integrations</li>
+              <li>SCIM user provisioning</li>
+              <li>Advanced reporting / report builder</li>
+              <li>Virtual card issuance</li>
+              <li>Card controls (limits, restrictions)</li>
+              <li>GPS mileage tracking</li>
+              <li>Per diem automation</li>
+              <li>Custom fields</li>
+              <li>Delegation / assistant support</li>
+            </ul>
+            <ul class="feat space-y-1">
+              <li>Advanced white-label (domain, app listing)</li>
+              <li>VAT/GST capture + tax reclaim</li>
+              <li>Payroll integration for reimbursement</li>
+              <li>Slack/Teams actionable approvals</li>
+              <li>Three-way matching (PO ↔ receipt ↔ invoice)</li>
+              <li>Vendor management + preferred catalogs</li>
+              <li>Advanced budgets (multi-level, carry-forward)</li>
+              <li>Procurement-to-expense bridge</li>
+            </ul>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5 border-l-4 border-l-surface-300">
+          <div class="flex items-center gap-2 mb-2"><span class="text-xs font-bold text-ink-700 bg-surface-200 px-2 py-0.5 rounded">Phase 3</span><span class="text-sm font-semibold text-ink-900">Growth</span></div>
+          <ul class="feat space-y-1">
+            <li>AI anomaly detection &middot; Multi-entity/subsidiary &middot; International (multi-language, multi-currency reimbursement)</li>
+            <li>Voice expense entry &middot; Advanced analytics + benchmarking &middot; Marketplace integrations (Uber, Lyft, airlines, hotels)</li>
+            <li>Blanket POs &middot; Vendor performance scoring</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-5 border-l-4 border-l-surface-200">
+          <div class="flex items-center gap-2 mb-2"><span class="text-xs font-bold text-ink-500 bg-surface-100 px-2 py-0.5 rounded">Phase 4</span><span class="text-sm font-semibold text-ink-900">Future</span></div>
+          <ul class="feat space-y-1">
+            <li>Travel booking integration &middot; Pre-trip approval workflows &middot; Itinerary management</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- 16. SUCCESS METRICS -->
+    <!-- ============================================ -->
+    <div id="s16" class="mb-8">
+      <div class="sl">16. Success Metrics</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-surface-50 border-b border-surface-200"><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide">Metric</th><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide">Target</th></tr></thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-2 text-ink-700">Time to first expense</td><td class="px-5 py-2 font-semibold text-brand-500">&lt; 5 minutes</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Implementation (guided)</td><td class="px-5 py-2 font-semibold text-brand-500">&lt; 2 weeks</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Receipt auto-match rate</td><td class="px-5 py-2 font-semibold text-brand-500">&gt; 85%</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">OCR accuracy</td><td class="px-5 py-2 font-semibold text-brand-500">&gt; 95%</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Card adoption (Centime-issued)</td><td class="px-5 py-2 font-semibold text-brand-500">&gt; 60%</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Policy compliance rate</td><td class="px-5 py-2 font-semibold text-brand-500">&gt; 90%</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Mobile submissions</td><td class="px-5 py-2 font-semibold text-brand-500">&gt; 40%</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Approval turnaround</td><td class="px-5 py-2 font-semibold text-brand-500">&lt; 24 hours</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">NPS</td><td class="px-5 py-2 font-semibold text-brand-500">&gt; 50</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Uptime</td><td class="px-5 py-2 font-semibold text-brand-500">99.9%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- APPENDIX A: FINDITY API -->
+    <!-- ============================================ -->
+    <div id="sA" class="mb-8">
+      <div class="sl">Appendix A: Findity API Capabilities</div>
+      <p class="text-xs text-ink-400 mb-4">Source: <a href="https://developer.findity.com/" class="text-brand-500 underline">developer.findity.com</a> (Beta) &middot; OAuth 2.0 authentication via <code class="text-xs bg-surface-100 px-1 rounded">/oauth/token</code></p>
+
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <h4 class="text-sm font-semibold text-brand-600 mb-2">Expense API</h4>
+          <div class="sub">User &amp; Org Context</div>
+          <ul class="feat space-y-0.5 mb-2 text-xs">
+            <li>User profile CRUD (<code>/me</code>)</li>
+            <li>Orgs, expense types, categories, currencies</li>
+            <li>Policy documents, custom fields</li>
+          </ul>
+          <div class="sub">Expense CRUD</div>
+          <ul class="feat space-y-0.5 mb-2 text-xs">
+            <li>Create/list/get/update/delete expenses</li>
+            <li>Fields-format variant (dynamic rendering)</li>
+            <li>Expense images, duplicate detection</li>
+          </ul>
+          <div class="sub">Reports, Content, Routes</div>
+          <ul class="feat space-y-0.5 mb-2 text-xs">
+            <li>Expense report CRUD + status tracking</li>
+            <li>Receipt content + OCR trigger</li>
+            <li>Place autocomplete + route directions</li>
+          </ul>
+          <div class="sub">Approvals &amp; Notifications</div>
+          <ul class="feat space-y-0.5 text-xs">
+            <li>List/approve/reject by person/chain</li>
+            <li>Notification pipeline + impersonation</li>
+            <li>Dynamic field rendering per expense type</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <h4 class="text-sm font-semibold text-brand-600 mb-2">Admin API</h4>
+          <div class="sub">Organizations</div>
+          <ul class="feat space-y-0.5 mb-2 text-xs">
+            <li>CRUD orgs + report counters + lookup</li>
+          </ul>
+          <div class="sub">Users &amp; Personnel</div>
+          <ul class="feat space-y-0.5 mb-2 text-xs">
+            <li>List/add/update/remove employees</li>
+            <li>Person data + accounting consultants</li>
+          </ul>
+          <div class="sub">Dimensions (GL Coding)</div>
+          <ul class="feat space-y-0.5 mb-2 text-xs">
+            <li>Dimension CRUD (cost centers, projects, depts)</li>
+            <li>Dimension values + approver assignments</li>
+          </ul>
+          <div class="sub">Chart of Accounts, Custom Fields</div>
+          <ul class="feat space-y-0.5 mb-2 text-xs">
+            <li>GL account CRUD + lock/unlock</li>
+            <li>Custom field schemas + values</li>
+          </ul>
+          <div class="sub">Policies, Categories, Carbon</div>
+          <ul class="feat space-y-0.5 text-xs">
+            <li>Policy document CRUD + export categories</li>
+            <li>Carbon emissions (total, monthly, per-dim)</li>
+            <li>Partner mgmt + license tracking</li>
+          </ul>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <h4 class="text-sm font-semibold text-brand-600 mb-2">Connect API</h4>
+          <div class="sub">Exports (Voucher Pipeline)</div>
+          <ul class="feat space-y-0.5 mb-2 text-xs">
+            <li>List/get exports per org</li>
+            <li>Get vouchers (structured entries)</li>
+            <li>Process/update export content + status</li>
+            <li>API recipient setup required</li>
+          </ul>
+          <div class="sub">Card Transactions</div>
+          <ul class="feat space-y-0.5 mb-2 text-xs">
+            <li>POST <code>/card-transactions</code></li>
+            <li>Real-time ingestion from Visa/MC</li>
+            <li>Transaction-to-expense matching</li>
+          </ul>
+          <div class="sub">Webhooks</div>
+          <ul class="feat space-y-0.5 text-xs">
+            <li>Event-driven notifications for real-time sync</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sub">Centime Integration Points</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-xs">
+          <thead><tr class="bg-surface-50 border-b border-surface-200"><th class="text-left px-4 py-2 font-semibold text-ink-500 uppercase tracking-wide">Findity Capability</th><th class="text-left px-4 py-2 font-semibold text-ink-500 uppercase tracking-wide">Centime Usage</th></tr></thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Expense API</td><td class="px-4 py-2 text-ink-700">Powers the Centime Expense UX &mdash; all expense entry, editing, reporting</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Content API</td><td class="px-4 py-2 text-ink-700">Receipt capture, OCR processing, image storage</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Approvals API</td><td class="px-4 py-2 text-ink-700">Multi-level approval workflows in Centime UX</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Admin &mdash; Dimensions</td><td class="px-4 py-2 text-ink-700">Maps to GL codes, cost centers, projects from Centime GL APIs</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Admin &mdash; Users</td><td class="px-4 py-2 text-ink-700">Synced with Centime User Management for finance team users</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Admin &mdash; Organizations</td><td class="px-4 py-2 text-ink-700">Multi-tenant setup, white-label org provisioning</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Connect &mdash; Exports</td><td class="px-4 py-2 text-ink-700">Centime GL APIs consume vouchers for ERP posting</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Connect &mdash; Card Transactions</td><td class="px-4 py-2 text-ink-700">Centime middleware ingests Visa/MC feeds &rarr; pushes to Findity</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Field Rendering</td><td class="px-4 py-2 text-ink-700">Dynamic fields for configurable expense forms</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Impersonation API</td><td class="px-4 py-2 text-ink-700">Powers delegate/assistant functionality</td></tr>
+            <tr><td class="px-4 py-2 font-medium text-ink-900">Notifications API</td><td class="px-4 py-2 text-ink-700">Feeds Centime notification system (push, email, Slack/Teams)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- APPENDIX B: GLOSSARY -->
+    <!-- ============================================ -->
+    <div id="sB" class="mb-8">
+      <div class="sl">Appendix B: Glossary</div>
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-surface-50 border-b border-surface-200"><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide w-40">Term</th><th class="text-left px-5 py-2 text-xs font-semibold text-ink-500 uppercase tracking-wide">Definition</th></tr></thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr><td class="px-5 py-2 font-medium text-ink-900">Active User</td><td class="px-5 py-2 text-ink-700">A user who submits, approves, or has card transactions in a calendar month</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">BFF</td><td class="px-5 py-2 text-ink-700">Backend for Frontend &mdash; middleware layer between UX and APIs</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">Blanket PO</td><td class="px-5 py-2 text-ink-700">A standing purchase order for recurring purchases from a vendor over a set period</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">Interchange</td><td class="px-5 py-2 text-ink-700">Fee paid by merchant's bank to cardholder's bank on card transactions</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">MCC</td><td class="px-5 py-2 text-ink-700">Merchant Category Code &mdash; 4-digit code classifying business type</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">OCR</td><td class="px-5 py-2 text-ink-700">Optical Character Recognition &mdash; extracting text from images</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">PO</td><td class="px-5 py-2 text-ink-700">Purchase Order &mdash; formal document authorizing a purchase from a vendor</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">RTN</td><td class="px-5 py-2 text-ink-700">Real-Time Notifications &mdash; Visa's real-time transaction notification service</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">T&amp;E</td><td class="px-5 py-2 text-ink-700">Travel &amp; Entertainment</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">Three-way match</td><td class="px-5 py-2 text-ink-700">Verification process comparing PO, goods receipt, and vendor invoice</td></tr>
+            <tr><td class="px-5 py-2 font-medium text-ink-900">White-label</td><td class="px-5 py-2 text-ink-700">Solution branded as the partner's own product</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-xs text-ink-400 pt-4 border-t border-surface-200">
+      <a href="overview.html" class="text-brand-500 hover:text-brand-600 underline">Product Overview</a> &middot;
+      <a href="style-guide.html" class="text-brand-500 hover:text-brand-600 underline">Style Guide</a> &middot;
+      <a href="mockup.html" class="text-brand-500 hover:text-brand-600 underline">MVP Mockup</a>
+    </div>
+
+  </div>
+</body>
+</html>
