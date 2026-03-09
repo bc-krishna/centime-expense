@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centime Expense — Mockups</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          brand: { 50:'#e6f5f5',100:'#ccebeb',200:'#99d7d9',300:'#4db8bb',400:'#009a9f',500:'#008085',600:'#006d71',700:'#024743',800:'#013633',900:'#012524' },
+          gold: { 100:'#fef6dc',200:'#fde9a6',300:'#fdc231',400:'#e5ad1e',500:'#c4940f' },
+          surface: { 0:'#ffffff',warm:'#faf6ee',50:'#f7f8f9',100:'#f1f2f4',200:'#e3e5e8',300:'#cdd0d5' },
+          ink: { 900:'#0f1419',800:'#1a2028',700:'#2d3440',500:'#5f6b7a',400:'#8b95a3',300:'#b5bcc7' },
+        },
+        fontFamily: { sans:['-apple-system','BlinkMacSystemFont','Segoe UI','Inter','Roboto','sans-serif'] },
+        fontSize: { 'xs':['0.75rem',{lineHeight:'1rem'}],'sm':['0.8125rem',{lineHeight:'1.25rem'}],'base':['0.875rem',{lineHeight:'1.375rem'}],'md':['0.9375rem',{lineHeight:'1.5rem'}],'lg':['1.125rem',{lineHeight:'1.75rem'}],'xl':['1.25rem',{lineHeight:'1.75rem'}],'2xl':['1.5rem',{lineHeight:'2rem'}],'3xl':['1.875rem',{lineHeight:'2.25rem'}] },
+        borderRadius: { card:'12px' }
+      }}
+    }
+  </script>
+</head>
+<body class="bg-surface-50 font-sans text-ink-900 antialiased min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-brand-700 text-white">
+    <div class="max-w-5xl mx-auto px-8 py-10">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-9 h-9 rounded-lg bg-gold-300 flex items-center justify-center">
+          <svg class="w-5 h-5 text-brand-800" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/></svg>
+        </div>
+        <h1 class="text-3xl font-bold">Centime Expense</h1>
+      </div>
+      <p class="text-white/70 text-md ml-12">MVP Mockups — FT-Design System</p>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main class="max-w-5xl mx-auto px-8 py-10">
+
+    <!-- Mockup Grid -->
+    <div class="grid grid-cols-2 gap-6">
+
+      <!-- Dashboards -->
+      <a href="dashboards.html" class="group bg-white border border-surface-200 rounded-card p-6 hover:border-brand-400 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
+            <svg class="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-ink-900 group-hover:text-brand-500 transition">Dashboards</h2>
+            <p class="text-xs text-ink-400">5 persona views</p>
+          </div>
+        </div>
+        <p class="text-sm text-ink-500 mb-4">Role-specific dashboards with KPIs, charts, and action items for every persona.</p>
+        <div class="flex flex-wrap gap-1.5">
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Employee</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Manager</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Finance Admin</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Executive</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Procurement Mgr</span>
+        </div>
+      </a>
+
+      <!-- Processes -->
+      <a href="processes.html" class="group bg-white border border-surface-200 rounded-card p-6 hover:border-brand-400 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
+            <svg class="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-ink-900 group-hover:text-brand-500 transition">Expenses & Processes</h2>
+            <p class="text-xs text-ink-400">6 screens</p>
+          </div>
+        </div>
+        <p class="text-sm text-ink-500 mb-4">End-to-end expense lifecycle from creation through approval, plus purchase requisitions.</p>
+        <div class="flex flex-wrap gap-1.5">
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Expense List</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">New Expense</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Reports</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Report Detail</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Approvals</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Requisitions</span>
+        </div>
+      </a>
+
+      <!-- Financial -->
+      <a href="financial.html" class="group bg-white border border-surface-200 rounded-card p-6 hover:border-brand-400 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
+            <svg class="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-ink-900 group-hover:text-brand-500 transition">Cards & Payments</h2>
+            <p class="text-xs text-ink-400">6 screens</p>
+          </div>
+        </div>
+        <p class="text-sm text-ink-500 mb-4">Real-time card feeds, receipt matching, reconciliation, and reimbursement via Centime AP.</p>
+        <div class="flex flex-wrap gap-1.5">
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Real-Time Feed</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Transactions</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Receipt Matching</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Reconciliation</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Reimbursement</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Payment History</span>
+        </div>
+      </a>
+
+      <!-- Admin -->
+      <a href="admin.html" class="group bg-white border border-surface-200 rounded-card p-6 hover:border-brand-400 hover:shadow-md transition">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center group-hover:bg-brand-100 transition">
+            <svg class="w-5 h-5 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-ink-900 group-hover:text-brand-500 transition">Administration</h2>
+            <p class="text-xs text-ink-400">6 screens</p>
+          </div>
+        </div>
+        <p class="text-sm text-ink-500 mb-4">Policy management, approval workflow builder, user directory, and roles & permissions.</p>
+        <div class="flex flex-wrap gap-1.5">
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Policy List</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Policy Builder</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Workflows</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">User Directory</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Add/Edit User</span>
+          <span class="text-xs bg-surface-100 text-ink-500 px-2 py-0.5 rounded-full">Roles & Perms</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- Also See -->
+    <div class="mt-10 pt-8 border-t border-surface-200">
+      <h3 class="text-sm font-semibold text-ink-500 mb-4">Also in this repository</h3>
+      <div class="flex gap-4">
+        <a href="../mockup.html" class="text-sm text-brand-500 hover:text-brand-600 hover:underline transition">Original MVP Mockup</a>
+        <span class="text-surface-300">|</span>
+        <a href="../style-guide.html" class="text-sm text-brand-500 hover:text-brand-600 hover:underline transition">FT-Design Style Guide</a>
+        <span class="text-surface-300">|</span>
+        <a href="../spec.html" class="text-sm text-brand-500 hover:text-brand-600 hover:underline transition">Product Spec</a>
+        <span class="text-surface-300">|</span>
+        <a href="../overview.html" class="text-sm text-brand-500 hover:text-brand-600 hover:underline transition">Product Overview</a>
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>

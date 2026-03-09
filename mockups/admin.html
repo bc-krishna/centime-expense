@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centime Expense — Admin: Policies & Users</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          brand: { 50:'#e6f5f5',100:'#ccebeb',200:'#99d7d9',300:'#4db8bb',400:'#009a9f',500:'#008085',600:'#006d71',700:'#024743',800:'#013633',900:'#012524' },
+          gold: { 100:'#fef6dc',200:'#fde9a6',300:'#fdc231',400:'#e5ad1e',500:'#c4940f' },
+          surface: { 0:'#ffffff',warm:'#faf6ee',50:'#f7f8f9',100:'#f1f2f4',200:'#e3e5e8',300:'#cdd0d5' },
+          ink: { 900:'#0f1419',800:'#1a2028',700:'#2d3440',500:'#5f6b7a',400:'#8b95a3',300:'#b5bcc7' },
+          st: { gl:{light:'#eefbf3',base:'#0f9d58',dark:'#0b7a42',border:'#b7eaca'}, am:{light:'#fef9eb',base:'#d4930d',dark:'#a87308',border:'#fde68a'}, rd:{light:'#fef2f2',base:'#d93025',dark:'#ae241c',border:'#fcc8c5'}, bl:{light:'#ebf6ff',base:'#1a73e8',dark:'#1557b0',border:'#b3d4fc'} }
+        },
+        fontFamily: { sans:['-apple-system','BlinkMacSystemFont','Segoe UI','Inter','Roboto','sans-serif'], mono:['"SF Mono"','Fira Code','Menlo','monospace'] },
+        fontSize: { 'xxs':['0.625rem',{lineHeight:'0.875rem'}],'xs':['0.75rem',{lineHeight:'1rem'}],'sm':['0.8125rem',{lineHeight:'1.25rem'}],'base':['0.875rem',{lineHeight:'1.375rem'}],'md':['0.9375rem',{lineHeight:'1.5rem'}],'lg':['1.125rem',{lineHeight:'1.75rem'}],'xl':['1.25rem',{lineHeight:'1.75rem'}],'2xl':['1.5rem',{lineHeight:'2rem'}] },
+        borderRadius: { card:'12px' }
+      }}
+    }
+  </script>
+  <style>
+    *{-webkit-font-smoothing:antialiased}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;margin:0;overflow:hidden;height:100vh}
+    .tab-page{display:none}.tab-page.active{display:block}
+    .nav-item{transition:all .12s ease}
+    .nav-item.active{background:rgba(255,255,255,.12)}
+    .trow{transition:background .1s ease}
+    .trow:hover{background:rgba(0,128,133,.04)}
+    .toggle-track{transition:background .15s ease}
+    .toggle-knob{transition:transform .15s ease}
+    .toggle-track.on{background:#008085}
+    .toggle-track.on .toggle-knob{transform:translateX(20px)}
+    .workflow-arrow{color:#cdd0d5}
+  </style>
+</head>
+<body class="bg-surface-50 text-ink-900 flex h-screen">
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="w-[220px] bg-brand-700 flex flex-col shrink-0 h-screen">
+  <div class="px-4 py-3.5 border-b border-white/10 flex items-center gap-2.5">
+    <div class="w-7 h-7 bg-white/15 rounded-lg flex items-center justify-center">
+      <svg class="w-3.5 h-3.5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+    </div>
+    <div>
+      <div class="text-sm font-semibold text-white">Centime Expense</div>
+      <div class="text-xxs text-white/50">Acme Corp</div>
+    </div>
+  </div>
+  <nav class="px-2 py-3 flex-1 overflow-y-auto">
+    <!-- MAIN -->
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Main</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+        My Expenses
+        <span class="ml-auto text-xxs font-medium bg-gold-300 text-brand-800 px-1.5 py-0.5 rounded-full">3</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Expense Reports
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        Card Transactions
+      </a>
+    </div>
+    <!-- ACTIONS -->
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Actions</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        Approvals
+        <span class="ml-auto text-xxs font-medium bg-st-rd-base text-white px-1.5 py-0.5 rounded-full">5</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        Requisitions
+      </a>
+    </div>
+    <!-- PAYMENTS -->
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Payments</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        Reimbursement
+      </a>
+    </div>
+    <!-- ADMIN -->
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Admin</div>
+      <a href="#" class="nav-item active flex items-center gap-2.5 px-2.5 py-1.5 text-sm font-medium text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        Policies
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m9 5.197v1"/></svg>
+        Users
+      </a>
+    </div>
+  </nav>
+  <!-- User -->
+  <div class="px-2 py-3 border-t border-white/10">
+    <div class="flex items-center gap-2.5 px-2.5">
+      <div class="w-7 h-7 bg-brand-400 rounded-full flex items-center justify-center text-xs font-semibold text-white">DK</div>
+      <div>
+        <div class="text-sm font-medium text-white">David Kim</div>
+        <div class="text-xxs text-white/50">IT &middot; Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="flex-1 flex flex-col h-screen overflow-hidden">
+
+  <!-- Top Bar -->
+  <header class="h-[52px] bg-white border-b border-surface-200 flex items-center justify-between px-5 shrink-0">
+    <h1 class="text-md font-semibold text-ink-900">Administration</h1>
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <svg class="w-4 h-4 text-ink-400 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" placeholder="Search..." class="border border-surface-300 rounded-lg pl-8 pr-3 py-1.5 text-sm text-ink-700 w-52 focus:outline-none focus:border-brand-400">
+      </div>
+      <button class="relative text-ink-400 hover:text-ink-700">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      </button>
+      <div class="w-7 h-7 bg-brand-400 rounded-full flex items-center justify-center text-xs font-semibold text-white">DK</div>
+    </div>
+  </header>
+
+  <!-- Tab Switcher -->
+  <div class="bg-white border-b border-surface-200 px-5 flex gap-0 shrink-0">
+    <button data-tab="policy-list" class="tab-btn relative px-4 py-2.5 text-sm font-medium text-brand-500 border-b-2 border-brand-500">Policy List</button>
+    <button data-tab="policy-builder" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700 border-b-2 border-transparent">Policy Builder</button>
+    <button data-tab="approval-workflows" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700 border-b-2 border-transparent">Approval Workflows</button>
+    <button data-tab="user-directory" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700 border-b-2 border-transparent">User Directory</button>
+    <button data-tab="add-edit-user" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700 border-b-2 border-transparent">Add/Edit User</button>
+    <button data-tab="roles-permissions" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700 border-b-2 border-transparent">Roles &amp; Permissions</button>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="flex-1 overflow-y-auto">
+
+<!-- ==================== PAGE 1: POLICY LIST ==================== -->
+<div id="tab-policy-list" class="tab-page active p-6">
+  <!-- Action bar -->
+  <div class="flex items-center justify-between mb-5">
+    <div class="flex items-center gap-3">
+      <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        New Policy
+      </button>
+    </div>
+    <div class="flex items-center gap-2">
+      <label class="text-sm text-ink-500">Status:</label>
+      <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+        <option>All</option>
+        <option>Active</option>
+        <option>Draft</option>
+        <option>Archived</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Policy Table -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-surface-50 border-b border-surface-200">
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Policy Name</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Applies To</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Rules</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Status</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Last Modified</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-100">
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Default Expense Policy</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">All Employees</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">12 rules</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Mar 1, 2026</td>
+          <td class="px-5 py-2.5">
+            <button onclick="switchTab('policy-builder')" class="text-sm text-brand-500 hover:text-brand-600 font-medium mr-3">Edit</button>
+            <button class="text-sm text-ink-400 hover:text-ink-600 font-medium">Clone</button>
+          </td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Executive Travel Policy</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">VP+</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">8 rules</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Feb 15, 2026</td>
+          <td class="px-5 py-2.5">
+            <button class="text-sm text-brand-500 hover:text-brand-600 font-medium mr-3">Edit</button>
+            <button class="text-sm text-ink-400 hover:text-ink-600 font-medium">Clone</button>
+          </td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Sales Team Policy</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Sales Department</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">10 rules</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Jan 20, 2026</td>
+          <td class="px-5 py-2.5">
+            <button class="text-sm text-brand-500 hover:text-brand-600 font-medium mr-3">Edit</button>
+            <button class="text-sm text-ink-400 hover:text-ink-600 font-medium">Clone</button>
+          </td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Intern Policy</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Interns</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">6 rules</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Jan 10, 2026</td>
+          <td class="px-5 py-2.5">
+            <button class="text-sm text-brand-500 hover:text-brand-600 font-medium mr-3">Edit</button>
+            <button class="text-sm text-ink-400 hover:text-ink-600 font-medium">Clone</button>
+          </td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Conference Policy</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">All Employees</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">5 rules</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark border border-st-am-border">Draft</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Mar 5, 2026</td>
+          <td class="px-5 py-2.5">
+            <button class="text-sm text-brand-500 hover:text-brand-600 font-medium mr-3">Edit</button>
+            <button class="text-sm text-st-gl-base hover:text-st-gl-dark font-medium">Activate</button>
+          </td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-500">Holiday Party Policy (2025)</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">All Employees</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">4 rules</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-surface-100 text-ink-500 border border-surface-300">Archived</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Dec 1, 2025</td>
+          <td class="px-5 py-2.5">
+            <button class="text-sm text-ink-400 hover:text-ink-600 font-medium mr-3">View</button>
+            <button class="text-sm text-ink-400 hover:text-ink-600 font-medium">Clone</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2: POLICY BUILDER ==================== -->
+<div id="tab-policy-builder" class="tab-page p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-5">
+    <div class="flex items-center gap-4">
+      <input type="text" value="Default Expense Policy" class="text-2xl font-semibold text-ink-900 bg-transparent border-b-2 border-transparent hover:border-surface-300 focus:border-brand-400 focus:outline-none px-0 py-0.5 w-80">
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-ink-500">Applies to:</span>
+        <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+          <option>All Employees</option>
+          <option>Sales Department</option>
+          <option>Engineering</option>
+          <option>VP+</option>
+          <option>Interns</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-sm text-ink-500">Status:</span>
+      <div class="flex items-center gap-2 bg-surface-100 rounded-lg p-0.5">
+        <button class="text-xs font-medium px-3 py-1 rounded-md bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</button>
+        <button class="text-xs font-medium px-3 py-1 rounded-md text-ink-500 hover:bg-surface-200">Draft</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rules Section -->
+  <div class="mb-6">
+    <h2 class="text-md font-semibold text-ink-900 mb-3 pb-2 border-b border-surface-200">Policy Rules</h2>
+    <div class="space-y-3">
+
+      <!-- Rule 1: Receipt Required -->
+      <div class="bg-white border border-surface-200 rounded-card p-4 flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="text-sm font-semibold text-ink-900">Receipt Required</h3>
+            <span class="text-xs text-ink-400 bg-surface-100 px-2 py-0.5 rounded">Receipt Requirements</span>
+          </div>
+          <p class="text-sm text-ink-500 mb-3">Required for expenses over $25.00</p>
+          <div class="flex items-center gap-3">
+            <label class="text-xs font-medium text-ink-700">Threshold:</label>
+            <div class="relative">
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-ink-400">$</span>
+              <input type="text" value="25.00" class="border border-surface-300 rounded-lg pl-6 pr-3 py-1.5 text-sm text-ink-700 w-24 focus:outline-none focus:border-brand-400">
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <div class="toggle-track on w-10 h-5 rounded-full bg-surface-300 flex items-center px-0.5 cursor-pointer" onclick="this.classList.toggle('on')">
+            <div class="toggle-knob w-4 h-4 bg-white rounded-full shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 2: Meal Limit -->
+      <div class="bg-white border border-surface-200 rounded-card p-4 flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="text-sm font-semibold text-ink-900">Meal Limit</h3>
+            <span class="text-xs text-ink-400 bg-surface-100 px-2 py-0.5 rounded">Spending Limits</span>
+          </div>
+          <p class="text-sm text-ink-500 mb-3">Maximum $75.00 per person</p>
+          <div class="flex items-center gap-3">
+            <label class="text-xs font-medium text-ink-700">Amount:</label>
+            <div class="relative">
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-ink-400">$</span>
+              <input type="text" value="75.00" class="border border-surface-300 rounded-lg pl-6 pr-3 py-1.5 text-sm text-ink-700 w-24 focus:outline-none focus:border-brand-400">
+            </div>
+            <label class="text-xs font-medium text-ink-700">Per:</label>
+            <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+              <option>person</option>
+              <option>meal</option>
+              <option>day</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <div class="toggle-track on w-10 h-5 rounded-full bg-surface-300 flex items-center px-0.5 cursor-pointer" onclick="this.classList.toggle('on')">
+            <div class="toggle-knob w-4 h-4 bg-white rounded-full shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 3: Hotel Limit -->
+      <div class="bg-white border border-surface-200 rounded-card p-4 flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="text-sm font-semibold text-ink-900">Hotel Limit</h3>
+            <span class="text-xs text-ink-400 bg-surface-100 px-2 py-0.5 rounded">Spending Limits</span>
+          </div>
+          <p class="text-sm text-ink-500 mb-3">Maximum $300.00 per night</p>
+          <div class="flex items-center gap-3">
+            <label class="text-xs font-medium text-ink-700">Amount:</label>
+            <div class="relative">
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-ink-400">$</span>
+              <input type="text" value="300.00" class="border border-surface-300 rounded-lg pl-6 pr-3 py-1.5 text-sm text-ink-700 w-24 focus:outline-none focus:border-brand-400">
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <div class="toggle-track on w-10 h-5 rounded-full bg-surface-300 flex items-center px-0.5 cursor-pointer" onclick="this.classList.toggle('on')">
+            <div class="toggle-knob w-4 h-4 bg-white rounded-full shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 4: Airfare Class -->
+      <div class="bg-white border border-surface-200 rounded-card p-4 flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="text-sm font-semibold text-ink-900">Airfare Class</h3>
+            <span class="text-xs text-ink-400 bg-surface-100 px-2 py-0.5 rounded">Spending Limits</span>
+          </div>
+          <p class="text-sm text-ink-500 mb-3">Economy class required. Business class for flights &gt; 6 hours</p>
+          <div class="flex items-center gap-3">
+            <label class="text-xs font-medium text-ink-700">Default class:</label>
+            <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+              <option>Economy</option>
+              <option>Premium Economy</option>
+              <option>Business</option>
+              <option>First</option>
+            </select>
+            <label class="text-xs font-medium text-ink-700">Upgrade after:</label>
+            <input type="text" value="6" class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 w-16 focus:outline-none focus:border-brand-400">
+            <span class="text-xs text-ink-500">hours</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <div class="toggle-track on w-10 h-5 rounded-full bg-surface-300 flex items-center px-0.5 cursor-pointer" onclick="this.classList.toggle('on')">
+            <div class="toggle-knob w-4 h-4 bg-white rounded-full shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 5: Duplicate Detection -->
+      <div class="bg-white border border-surface-200 rounded-card p-4 flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="text-sm font-semibold text-ink-900">Duplicate Detection</h3>
+            <span class="text-xs text-ink-400 bg-surface-100 px-2 py-0.5 rounded">Time-Based</span>
+          </div>
+          <p class="text-sm text-ink-500 mb-3">Flag duplicate expenses within 7 days</p>
+          <div class="flex items-center gap-3">
+            <label class="text-xs font-medium text-ink-700">Window:</label>
+            <input type="text" value="7" class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 w-16 focus:outline-none focus:border-brand-400">
+            <span class="text-xs text-ink-500">days</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <div class="toggle-track on w-10 h-5 rounded-full bg-surface-300 flex items-center px-0.5 cursor-pointer" onclick="this.classList.toggle('on')">
+            <div class="toggle-knob w-4 h-4 bg-white rounded-full shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 6: Personal Card -->
+      <div class="bg-white border border-surface-200 rounded-card p-4 flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="text-sm font-semibold text-ink-900">Personal Card</h3>
+            <span class="text-xs text-ink-400 bg-surface-100 px-2 py-0.5 rounded">Card Policies</span>
+          </div>
+          <p class="text-sm text-ink-500 mb-3">Personal cards: Allowed with warning</p>
+          <div class="flex items-center gap-3">
+            <label class="text-xs font-medium text-ink-700">Behavior:</label>
+            <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+              <option>Blocked</option>
+              <option selected>Warning</option>
+              <option>Allowed</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <div class="toggle-track on w-10 h-5 rounded-full bg-surface-300 flex items-center px-0.5 cursor-pointer" onclick="this.classList.toggle('on')">
+            <div class="toggle-knob w-4 h-4 bg-white rounded-full shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 7: Weekend Spending (OFF) -->
+      <div class="bg-white border border-surface-200 rounded-card p-4 flex items-start justify-between opacity-60">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="text-sm font-semibold text-ink-900">Weekend Spending</h3>
+            <span class="text-xs text-ink-400 bg-surface-100 px-2 py-0.5 rounded">Time-Based</span>
+          </div>
+          <p class="text-sm text-ink-500">Flag expenses on weekends</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <div class="toggle-track w-10 h-5 rounded-full bg-surface-300 flex items-center px-0.5 cursor-pointer" onclick="this.classList.toggle('on');this.closest('.rounded-card').classList.toggle('opacity-60')">
+            <div class="toggle-knob w-4 h-4 bg-white rounded-full shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rule 8: Preferred Vendors -->
+      <div class="bg-white border border-surface-200 rounded-card p-4 flex items-start justify-between">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1">
+            <h3 class="text-sm font-semibold text-ink-900">Preferred Vendors</h3>
+            <span class="text-xs text-ink-400 bg-surface-100 px-2 py-0.5 rounded">Vendor</span>
+          </div>
+          <p class="text-sm text-ink-500">Warn if not using preferred vendor</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="text-xs text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <div class="toggle-track on w-10 h-5 rounded-full bg-surface-300 flex items-center px-0.5 cursor-pointer" onclick="this.classList.toggle('on')">
+            <div class="toggle-knob w-4 h-4 bg-white rounded-full shadow-sm"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Rule -->
+    <div class="mt-4 flex items-center gap-3">
+      <button class="border border-dashed border-surface-300 text-sm text-ink-500 hover:text-brand-500 hover:border-brand-400 font-medium px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-colors">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Add Rule
+      </button>
+      <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-500 focus:outline-none focus:border-brand-400">
+        <option value="">Category...</option>
+        <option>Spending Limits</option>
+        <option>Receipt Requirements</option>
+        <option>Card Policies</option>
+        <option>Time-Based</option>
+        <option>Vendor</option>
+        <option>Custom</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Violation Behavior -->
+  <div class="bg-white border border-surface-200 rounded-card p-5 mb-6">
+    <h2 class="text-md font-semibold text-ink-900 mb-3 pb-2 border-b border-surface-200">Policy Violation Behavior</h2>
+    <div class="space-y-3">
+      <label class="flex items-center gap-3 cursor-pointer">
+        <input type="radio" name="violation" checked class="w-4 h-4 text-brand-500 accent-[#008085]">
+        <div>
+          <div class="text-sm font-medium text-ink-900">Warn and allow submission</div>
+          <div class="text-xs text-ink-400">Employees see a warning but can still submit the expense for review</div>
+        </div>
+      </label>
+      <label class="flex items-center gap-3 cursor-pointer">
+        <input type="radio" name="violation" class="w-4 h-4 text-brand-500 accent-[#008085]">
+        <div>
+          <div class="text-sm font-medium text-ink-900">Block submission</div>
+          <div class="text-xs text-ink-400">Expenses that violate policy cannot be submitted until corrected</div>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Bottom Actions -->
+  <div class="flex items-center gap-3">
+    <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">Save Policy</button>
+    <button class="border border-surface-300 text-sm font-medium text-ink-700 px-4 py-2 rounded-lg hover:bg-surface-50 transition-colors">Save as Draft</button>
+    <button onclick="switchTab('policy-list')" class="text-sm text-ink-500 hover:text-ink-700 font-medium px-4 py-2">Cancel</button>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3: APPROVAL WORKFLOWS ==================== -->
+<div id="tab-approval-workflows" class="tab-page p-6">
+  <!-- Action bar -->
+  <div class="flex items-center justify-between mb-5">
+    <h2 class="text-lg font-semibold text-ink-900">Approval Workflows</h2>
+    <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-colors">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      New Workflow
+    </button>
+  </div>
+
+  <div class="space-y-5">
+
+    <!-- Workflow 1: Standard Expense Approval -->
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-md font-semibold text-ink-900">Standard Expense Approval</h3>
+        <div class="flex items-center gap-2">
+          <button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <button class="text-sm text-ink-400 hover:text-ink-600 font-medium">Clone</button>
+        </div>
+      </div>
+      <!-- Flow diagram -->
+      <div class="mb-4">
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="border-2 border-brand-500 bg-brand-50 rounded-lg px-4 py-2.5 text-sm font-medium text-brand-600 text-center min-w-[100px]">Submit</div>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border border-surface-300 rounded-lg px-4 py-2.5 text-sm font-medium text-ink-700 text-center min-w-[100px]">Manager</div>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border border-surface-300 rounded-lg px-4 py-2.5 text-sm font-medium text-ink-700 text-center min-w-[120px]">Finance Review</div>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border-2 border-st-gl-base bg-st-gl-light rounded-lg px-4 py-2.5 text-sm font-medium text-st-gl-dark text-center min-w-[100px]">Approved</div>
+        </div>
+        <!-- Conditional branch -->
+        <div class="ml-[140px] mt-2 flex items-center gap-2">
+          <div class="w-px h-5 bg-surface-300 ml-8"></div>
+        </div>
+        <div class="ml-[120px] flex items-center gap-2 mt-1">
+          <span class="text-xs font-medium text-st-am-dark bg-st-am-light border border-st-am-border px-2 py-0.5 rounded">if &gt; $5,000</span>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border border-st-am-border bg-st-am-light rounded-lg px-4 py-2.5 text-sm font-medium text-st-am-dark text-center min-w-[100px]">VP Approval</div>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border border-surface-300 rounded-lg px-4 py-2.5 text-sm font-medium text-ink-700 text-center min-w-[120px]">Finance Review</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-4 text-xs text-ink-500 border-t border-surface-100 pt-3">
+        <span>Auto-approve &lt; $100</span>
+        <span class="text-surface-300">|</span>
+        <span>Escalation after 3 days</span>
+      </div>
+    </div>
+
+    <!-- Workflow 2: Purchase Requisition Approval -->
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-md font-semibold text-ink-900">Purchase Requisition Approval</h3>
+        <div class="flex items-center gap-2">
+          <button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <button class="text-sm text-ink-400 hover:text-ink-600 font-medium">Clone</button>
+        </div>
+      </div>
+      <div class="mb-4">
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="border-2 border-brand-500 bg-brand-50 rounded-lg px-4 py-2.5 text-sm font-medium text-brand-600 text-center min-w-[100px]">Submit</div>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border border-surface-300 rounded-lg px-4 py-2.5 text-sm font-medium text-ink-700 text-center min-w-[100px]">Dept Head</div>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border border-surface-300 rounded-lg px-4 py-2.5 text-sm font-medium text-ink-700 text-center min-w-[100px]">Finance</div>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border-2 border-st-gl-base bg-st-gl-light rounded-lg px-4 py-2.5 text-sm font-medium text-st-gl-dark text-center min-w-[100px]">PO Created</div>
+        </div>
+        <div class="ml-[140px] mt-2 flex items-center gap-2">
+          <div class="w-px h-5 bg-surface-300 ml-8"></div>
+        </div>
+        <div class="ml-[120px] flex items-center gap-2 mt-1">
+          <span class="text-xs font-medium text-st-am-dark bg-st-am-light border border-st-am-border px-2 py-0.5 rounded">if &gt; $10,000</span>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border border-st-am-border bg-st-am-light rounded-lg px-4 py-2.5 text-sm font-medium text-st-am-dark text-center min-w-[100px]">VP + CFO</div>
+          <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          <div class="border border-surface-300 rounded-lg px-4 py-2.5 text-sm font-medium text-ink-700 text-center min-w-[100px]">Finance</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workflow 3: Executive Expense Approval -->
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-md font-semibold text-ink-900">Executive Expense Approval</h3>
+        <div class="flex items-center gap-2">
+          <button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          <button class="text-sm text-ink-400 hover:text-ink-600 font-medium">Clone</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <div class="border-2 border-brand-500 bg-brand-50 rounded-lg px-4 py-2.5 text-sm font-medium text-brand-600 text-center min-w-[100px]">Submit</div>
+        <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        <div class="border border-surface-300 rounded-lg px-4 py-2.5 text-sm font-medium text-ink-700 text-center min-w-[100px]">CFO</div>
+        <svg class="w-6 h-6 workflow-arrow shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        <div class="border-2 border-st-gl-base bg-st-gl-light rounded-lg px-4 py-2.5 text-sm font-medium text-st-gl-dark text-center min-w-[100px]">Approved</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 4: USER DIRECTORY ==================== -->
+<div id="tab-user-directory" class="tab-page p-6">
+  <!-- Summary cards -->
+  <div class="grid grid-cols-4 gap-4 mb-5">
+    <div class="bg-white border border-surface-200 rounded-card p-4">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Total Users</div>
+      <div class="text-2xl font-semibold text-ink-900 mt-1">47</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-4">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Active</div>
+      <div class="text-2xl font-semibold text-st-gl-base mt-1">42</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-4">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Pending Invite</div>
+      <div class="text-2xl font-semibold text-st-am-base mt-1">3</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-4">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Deactivated</div>
+      <div class="text-2xl font-semibold text-ink-400 mt-1">2</div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="flex items-center gap-3 mb-4">
+    <div class="relative flex-1 max-w-xs">
+      <svg class="w-4 h-4 text-ink-400 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <input type="text" placeholder="Search users..." class="border border-surface-300 rounded-lg pl-8 pr-3 py-1.5 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+    </div>
+    <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+      <option>All Roles</option>
+      <option>Admin</option>
+      <option>Finance Admin</option>
+      <option>Manager/Approver</option>
+      <option>Employee</option>
+      <option>Auditor</option>
+    </select>
+    <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+      <option>All Departments</option>
+      <option>Engineering</option>
+      <option>Sales</option>
+      <option>Marketing</option>
+      <option>Finance</option>
+      <option>Operations</option>
+      <option>IT</option>
+    </select>
+    <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+      <option>All Statuses</option>
+      <option>Active</option>
+      <option>Pending Invite</option>
+      <option>Deactivated</option>
+    </select>
+  </div>
+
+  <!-- Action bar -->
+  <div class="flex items-center gap-3 mb-4">
+    <button onclick="switchTab('add-edit-user')" class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-colors">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Add User
+    </button>
+    <button class="border border-surface-300 text-sm font-medium text-ink-700 px-4 py-2 rounded-lg hover:bg-surface-50 transition-colors inline-flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      Import CSV
+    </button>
+    <button class="border border-surface-300 text-sm font-medium text-ink-700 px-4 py-2 rounded-lg hover:bg-surface-50 transition-colors inline-flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      Sync SSO
+    </button>
+  </div>
+
+  <!-- User Table -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-surface-50 border-b border-surface-200">
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Name</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Email</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Role</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Department</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Card</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Status</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Last Active</th>
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-100">
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Jane Doe</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">jane.doe@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Employee</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Engineering</td>
+          <td class="px-5 py-2.5 text-xs font-mono text-ink-500">Visa ****4523</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Today</td>
+          <td class="px-5 py-2.5"><button onclick="switchTab('add-edit-user')" class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Mike Torres</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">mike.t@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Employee</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Sales</td>
+          <td class="px-5 py-2.5 text-xs font-mono text-ink-500">MC ****8891</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Today</td>
+          <td class="px-5 py-2.5"><button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Sarah Chen</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">sarah.c@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Manager/Approver</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Sales</td>
+          <td class="px-5 py-2.5 text-xs font-mono text-ink-500">Visa ****7702</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Today</td>
+          <td class="px-5 py-2.5"><button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Tom Wilson</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">tom.w@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Employee</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Marketing</td>
+          <td class="px-5 py-2.5 text-xs font-mono text-ink-500">MC ****3356</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Yesterday</td>
+          <td class="px-5 py-2.5"><button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Mark Johnson</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">mark.j@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Finance Admin</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Finance</td>
+          <td class="px-5 py-2.5 text-sm text-ink-400">&mdash;</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Today</td>
+          <td class="px-5 py-2.5"><button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Lisa Park</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">lisa.p@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Employee</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Operations</td>
+          <td class="px-5 py-2.5 text-xs font-mono text-ink-500">Visa ****5501</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Mar 5</td>
+          <td class="px-5 py-2.5"><button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">David Kim</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">david.k@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Admin</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">IT</td>
+          <td class="px-5 py-2.5 text-sm text-ink-400">&mdash;</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Today</td>
+          <td class="px-5 py-2.5"><button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Amy Lee</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">amy.l@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Employee</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Engineering</td>
+          <td class="px-5 py-2.5 text-sm text-ink-400">&mdash;</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark border border-st-am-border">Pending Invite</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-400">&mdash;</td>
+          <td class="px-5 py-2.5">
+            <button class="text-sm text-st-am-base hover:text-st-am-dark font-medium mr-3">Resend</button>
+            <button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button>
+          </td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Chris Brown</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">chris.b@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Auditor</td>
+          <td class="px-5 py-2.5 text-sm text-ink-700">Finance</td>
+          <td class="px-5 py-2.5 text-sm text-ink-400">&mdash;</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border">Active</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Mar 3</td>
+          <td class="px-5 py-2.5"><button class="text-sm text-brand-500 hover:text-brand-600 font-medium">Edit</button></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-500">Bob Smith</td>
+          <td class="px-5 py-2.5 text-sm text-ink-400">bob.s@acme.com</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Employee</td>
+          <td class="px-5 py-2.5 text-sm text-ink-500">Sales</td>
+          <td class="px-5 py-2.5 text-xs font-mono text-ink-400">Visa ****9912</td>
+          <td class="px-5 py-2.5"><span class="text-xs font-medium px-2 py-0.5 rounded-full bg-surface-100 text-ink-500 border border-surface-300">Deactivated</span></td>
+          <td class="px-5 py-2.5 text-sm text-ink-400">Feb 1</td>
+          <td class="px-5 py-2.5"><button class="text-sm text-st-gl-base hover:text-st-gl-dark font-medium">Reactivate</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="px-5 py-3 border-t border-surface-200 text-sm text-ink-500">
+      Showing 10 of 47 users
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 5: ADD/EDIT USER ==================== -->
+<div id="tab-add-edit-user" class="tab-page p-6">
+  <div class="flex items-center justify-between mb-5">
+    <h2 class="text-lg font-semibold text-ink-900">Edit User</h2>
+  </div>
+
+  <div class="flex gap-6">
+    <!-- Left column (60%) -->
+    <div class="flex-[3]">
+      <!-- Profile section -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-5">
+        <h3 class="text-md font-semibold text-ink-900 mb-3 pb-2 border-b border-surface-200">Profile</h3>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="text-sm font-medium text-ink-700 mb-1 block">First Name</label>
+            <input type="text" value="Jane" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+          </div>
+          <div>
+            <label class="text-sm font-medium text-ink-700 mb-1 block">Last Name</label>
+            <input type="text" value="Doe" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="text-sm font-medium text-ink-700 mb-1 block">Email</label>
+          <input type="email" value="jane.doe@acme.com" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+        </div>
+        <div class="mb-4">
+          <label class="text-sm font-medium text-ink-700 mb-1 block">Phone <span class="text-ink-400 font-normal">(optional)</span></label>
+          <input type="tel" value="+1 (555) 123-4567" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+        </div>
+        <div class="mb-4">
+          <label class="text-sm font-medium text-ink-700 mb-1 block">Employee ID</label>
+          <input type="text" value="EMP-1042" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-ink-700 mb-1 block">Department</label>
+            <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+              <option selected>Engineering</option>
+              <option>Sales</option>
+              <option>Marketing</option>
+              <option>Finance</option>
+              <option>Operations</option>
+              <option>IT</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm font-medium text-ink-700 mb-1 block">Manager</label>
+            <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+              <option selected>Sarah Chen</option>
+              <option>Tom Wilson</option>
+              <option>Mark Johnson</option>
+              <option>David Kim</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Assignment section -->
+      <div class="bg-white border border-surface-200 rounded-card p-5">
+        <h3 class="text-md font-semibold text-ink-900 mb-3 pb-2 border-b border-surface-200">Card Assignment</h3>
+        <div class="mb-3">
+          <div class="flex items-center justify-between py-2.5 border-b border-surface-100">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-5 bg-st-bl-light border border-st-bl-border rounded flex items-center justify-center">
+                <span class="text-xxs font-bold text-st-bl-dark">VISA</span>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-ink-900">****4523</div>
+                <div class="text-xs text-ink-400">Corporate Visa</div>
+              </div>
+            </div>
+            <button class="text-xs text-st-rd-base hover:text-st-rd-dark font-medium">Remove</button>
+          </div>
+        </div>
+        <button class="border border-dashed border-surface-300 text-sm text-ink-500 hover:text-brand-500 hover:border-brand-400 font-medium px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-colors mb-3">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Assign Card
+        </button>
+        <div class="flex items-center gap-2 mt-2">
+          <input type="checkbox" checked class="w-4 h-4 accent-[#008085] rounded">
+          <label class="text-sm text-ink-700">Allow personal card use</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column (40%) -->
+    <div class="flex-[2]">
+      <!-- Role & Permissions -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-5">
+        <h3 class="text-md font-semibold text-ink-900 mb-3 pb-2 border-b border-surface-200">Role &amp; Permissions</h3>
+        <div class="mb-4">
+          <label class="text-sm font-medium text-ink-700 mb-1 block">Role</label>
+          <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+            <option>Admin</option>
+            <option>Finance Admin</option>
+            <option>Manager/Approver</option>
+            <option selected>Employee</option>
+            <option>Auditor</option>
+          </select>
+        </div>
+        <div class="space-y-2">
+          <label class="flex items-center gap-2.5">
+            <input type="checkbox" checked class="w-4 h-4 accent-[#008085] rounded">
+            <span class="text-sm text-ink-700">Submit expenses</span>
+          </label>
+          <label class="flex items-center gap-2.5">
+            <input type="checkbox" checked class="w-4 h-4 accent-[#008085] rounded">
+            <span class="text-sm text-ink-700">View own reports</span>
+          </label>
+          <label class="flex items-center gap-2.5">
+            <input type="checkbox" class="w-4 h-4 accent-[#008085] rounded">
+            <span class="text-sm text-ink-700">Approve expenses</span>
+          </label>
+          <label class="flex items-center gap-2.5">
+            <input type="checkbox" class="w-4 h-4 accent-[#008085] rounded">
+            <span class="text-sm text-ink-700">Manage policies</span>
+          </label>
+          <label class="flex items-center gap-2.5">
+            <input type="checkbox" class="w-4 h-4 accent-[#008085] rounded">
+            <span class="text-sm text-ink-700">View all reports</span>
+          </label>
+          <label class="flex items-center gap-2.5">
+            <input type="checkbox" class="w-4 h-4 accent-[#008085] rounded">
+            <span class="text-sm text-ink-700">Process reimbursements</span>
+          </label>
+          <label class="flex items-center gap-2.5">
+            <input type="checkbox" class="w-4 h-4 accent-[#008085] rounded">
+            <span class="text-sm text-ink-700">Manage users</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- GL Defaults -->
+      <div class="bg-white border border-surface-200 rounded-card p-5 mb-5">
+        <h3 class="text-md font-semibold text-ink-900 mb-3 pb-2 border-b border-surface-200">GL Defaults</h3>
+        <div class="mb-3">
+          <label class="text-sm font-medium text-ink-700 mb-1 block">Default Cost Center</label>
+          <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+            <option>CC-200 Engineering</option>
+            <option>CC-100 Sales</option>
+            <option>CC-300 Marketing</option>
+            <option>CC-400 Finance</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="text-sm font-medium text-ink-700 mb-1 block">Default Project</label>
+          <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+            <option>PRJ-001 Platform v2</option>
+            <option>PRJ-002 Mobile App</option>
+            <option>PRJ-003 Infrastructure</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-ink-700 mb-1 block">Default GL Account</label>
+          <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+            <option>6100 Travel &amp; Entertainment</option>
+            <option>6200 Office Supplies</option>
+            <option>6300 Software &amp; Subscriptions</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- SSO Info -->
+      <div class="bg-white border border-surface-200 rounded-card p-5">
+        <h3 class="text-md font-semibold text-ink-900 mb-3 pb-2 border-b border-surface-200">SSO Info</h3>
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs font-medium text-ink-400 uppercase tracking-wider">SSO Provider</label>
+            <div class="text-sm text-ink-900 mt-0.5">Okta</div>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-ink-400 uppercase tracking-wider">SSO ID</label>
+            <div class="text-sm text-ink-900 mt-0.5">jane.doe@acme.com</div>
+          </div>
+          <div>
+            <label class="text-xs font-medium text-ink-400 uppercase tracking-wider">Last SSO Login</label>
+            <div class="text-sm text-ink-900 mt-0.5">Mar 7, 2026 09:15 AM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Actions -->
+  <div class="flex items-center gap-3 mt-6">
+    <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">Save User</button>
+    <button class="border border-surface-300 text-sm font-medium text-ink-700 px-4 py-2 rounded-lg hover:bg-surface-50 transition-colors">Send Invite</button>
+    <button onclick="switchTab('user-directory')" class="text-sm text-ink-500 hover:text-ink-700 font-medium px-4 py-2">Cancel</button>
+  </div>
+</div>
+
+<!-- ==================== PAGE 6: ROLES & PERMISSIONS ==================== -->
+<div id="tab-roles-permissions" class="tab-page p-6">
+  <div class="flex items-center justify-between mb-5">
+    <h2 class="text-lg font-semibold text-ink-900">Roles &amp; Permissions Matrix</h2>
+  </div>
+
+  <!-- Permissions Matrix -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden mb-5">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-surface-50 border-b border-surface-200">
+          <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5 w-[220px]">Permission</th>
+          <th class="text-center text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Admin</th>
+          <th class="text-center text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Finance Admin</th>
+          <th class="text-center text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Manager</th>
+          <th class="text-center text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Employee</th>
+          <th class="text-center text-xs font-semibold text-ink-500 uppercase tracking-wider px-5 py-2.5">Auditor</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-100">
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Submit expenses</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Approve expenses</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">View all expenses</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Manage policies</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Manage users</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Process reimbursements</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">View reports/analytics</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Manage card assignments</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Configure ERP sync</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Audit trail access</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Create requisitions</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Approve requisitions</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+        <tr class="trow">
+          <td class="px-5 py-2.5 text-sm font-medium text-ink-900">White-label config</td>
+          <td class="px-5 py-2.5 text-center"><span class="text-st-gl-base font-bold">&#10003;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+          <td class="px-5 py-2.5 text-center"><span class="text-ink-300 font-bold">&#10007;</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button class="border border-dashed border-surface-300 text-sm text-ink-500 hover:text-brand-500 hover:border-brand-400 font-medium px-4 py-2 rounded-lg inline-flex items-center gap-1.5 transition-colors mb-8">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    Create Custom Role
+  </button>
+
+  <!-- SSO Configuration -->
+  <div class="bg-white border border-surface-200 rounded-card p-5">
+    <h3 class="text-md font-semibold text-ink-900 mb-3 pb-2 border-b border-surface-200">SSO Configuration</h3>
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="text-sm font-medium text-ink-700 mb-1 block">SSO Provider</label>
+        <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+          <option selected>Okta</option>
+          <option>Azure AD</option>
+          <option>Google Workspace</option>
+          <option>Custom SAML</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-sm font-medium text-ink-700 mb-1 block">Entity ID</label>
+        <input type="text" value="https://acme.okta.com/app/centime" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+      </div>
+    </div>
+    <div class="mb-4">
+      <label class="text-sm font-medium text-ink-700 mb-1 block">SSO URL</label>
+      <input type="text" value="https://acme.okta.com/sso/saml" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 w-full focus:outline-none focus:border-brand-400">
+    </div>
+    <div class="mb-4">
+      <label class="text-sm font-medium text-ink-700 mb-1 block">Certificate</label>
+      <div class="border-2 border-dashed border-surface-300 rounded-lg p-6 text-center">
+        <svg class="w-8 h-8 text-ink-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        <p class="text-sm text-ink-500">Drop certificate file here or <span class="text-brand-500 font-medium cursor-pointer">browse</span></p>
+        <p class="text-xs text-ink-400 mt-1">acme_okta_cert.pem uploaded</p>
+      </div>
+    </div>
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <div class="text-sm font-medium text-ink-900">Enable SCIM Provisioning</div>
+        <div class="text-xs text-ink-400">Automatically sync users from your identity provider</div>
+      </div>
+      <div class="toggle-track on w-10 h-5 rounded-full bg-surface-300 flex items-center px-0.5 cursor-pointer" onclick="this.classList.toggle('on')">
+        <div class="toggle-knob w-4 h-4 bg-white rounded-full shadow-sm"></div>
+      </div>
+    </div>
+    <button class="bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">Save SSO Config</button>
+  </div>
+</div>
+
+  </div><!-- end scrollable -->
+</div><!-- end main -->
+
+<script>
+function switchTab(tabName) {
+  // Hide all tab pages
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('tab-' + tabName);
+  if (page) page.classList.add('active');
+
+  // Update tab button styles
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.dataset.tab === tabName) {
+      btn.classList.add('text-brand-500', 'font-medium', 'border-brand-500');
+      btn.classList.remove('text-ink-500', 'border-transparent');
+    } else {
+      btn.classList.remove('text-brand-500', 'font-medium', 'border-brand-500');
+      btn.classList.add('text-ink-500', 'border-transparent');
+    }
+  });
+}
+
+// Tab click handlers
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+</script>
+
+</body>
+</html>

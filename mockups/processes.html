@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centime Expense — Processes Mockup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          brand: { 50:'#e6f5f5',100:'#ccebeb',200:'#99d7d9',300:'#4db8bb',400:'#009a9f',500:'#008085',600:'#006d71',700:'#024743',800:'#013633',900:'#012524' },
+          gold: { 100:'#fef6dc',200:'#fde9a6',300:'#fdc231',400:'#e5ad1e',500:'#c4940f' },
+          surface: { 0:'#ffffff',warm:'#faf6ee',50:'#f7f8f9',100:'#f1f2f4',200:'#e3e5e8',300:'#cdd0d5' },
+          ink: { 900:'#0f1419',800:'#1a2028',700:'#2d3440',500:'#5f6b7a',400:'#8b95a3',300:'#b5bcc7' },
+          st: { gl:{light:'#eefbf3',base:'#0f9d58',dark:'#0b7a42',border:'#b7eaca'}, am:{light:'#fef9eb',base:'#d4930d',dark:'#a87308',border:'#fde68a'}, rd:{light:'#fef2f2',base:'#d93025',dark:'#ae241c',border:'#fcc8c5'}, bl:{light:'#ebf6ff',base:'#1a73e8',dark:'#1557b0',border:'#b3d4fc'} }
+        },
+        fontFamily: { sans:['-apple-system','BlinkMacSystemFont','Segoe UI','Inter','Roboto','sans-serif'], mono:['"SF Mono"','Fira Code','Menlo','monospace'] },
+        fontSize: { 'xxs':['0.625rem',{lineHeight:'0.875rem'}],'xs':['0.75rem',{lineHeight:'1rem'}],'sm':['0.8125rem',{lineHeight:'1.25rem'}],'base':['0.875rem',{lineHeight:'1.375rem'}],'md':['0.9375rem',{lineHeight:'1.5rem'}],'lg':['1.125rem',{lineHeight:'1.75rem'}],'xl':['1.25rem',{lineHeight:'1.75rem'}],'2xl':['1.5rem',{lineHeight:'2rem'}] },
+        borderRadius: { card:'12px' }
+      }}
+    }
+  </script>
+  <style>
+    *{-webkit-font-smoothing:antialiased}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;margin:0;overflow:hidden;height:100vh}
+    .page{display:none}.page.active{display:block}
+    .nav-item{transition:all .12s ease}
+    .nav-item.active{background:rgba(255,255,255,.12)}
+    .trow{transition:background .1s ease}
+    .trow:hover{background:rgba(0,128,133,.04)}
+    [data-tab]{cursor:pointer}
+    .tab-underline{transition:all .15s ease}
+    input:focus,select:focus,textarea:focus{outline:none}
+    .toggle-track{width:36px;height:20px;border-radius:10px;background:#cdd0d5;position:relative;cursor:pointer;transition:background .2s}
+    .toggle-track.on{background:#008085}
+    .toggle-thumb{width:16px;height:16px;border-radius:50%;background:white;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    .toggle-track.on .toggle-thumb{left:18px}
+  </style>
+</head>
+<body class="bg-surface-50 text-ink-900 flex h-screen">
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="w-[220px] bg-brand-700 flex flex-col shrink-0 h-screen">
+  <!-- Logo -->
+  <div class="px-4 py-3.5 border-b border-white/10 flex items-center gap-2.5">
+    <div class="w-7 h-7 bg-white/15 rounded-lg flex items-center justify-center">
+      <svg class="w-3.5 h-3.5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+    </div>
+    <div>
+      <div class="text-sm font-semibold text-white">Centime Expense</div>
+      <div class="text-xxs text-white/50">Acme Corp</div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="px-2 py-3 flex-1 overflow-y-auto">
+    <!-- MAIN -->
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Main</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:bg-white/8 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item active flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white font-medium bg-white/12 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+        My Expenses
+        <span class="ml-auto text-xxs font-medium bg-gold-300 text-brand-800 px-1.5 py-0.5 rounded-full">3</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:bg-white/8 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Expense Reports
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:bg-white/8 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        Card Transactions
+      </a>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Actions</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:bg-white/8 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        Approvals
+        <span class="ml-auto text-xxs font-medium bg-st-rd-base text-white px-1.5 py-0.5 rounded-full">5</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:bg-white/8 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        Requisitions
+      </a>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Payments</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:bg-white/8 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Reimbursement
+      </a>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Admin</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:bg-white/8 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        Policies
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:bg-white/8 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+        Users
+      </a>
+    </div>
+  </nav>
+</aside>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="flex-1 flex flex-col min-w-0">
+
+  <!-- Top Bar -->
+  <header class="h-[52px] bg-white border-b border-surface-200 flex items-center justify-between px-5 shrink-0">
+    <h1 class="text-md font-semibold text-ink-900">Expenses &amp; Reports</h1>
+    <div class="flex items-center gap-3">
+      <!-- Search -->
+      <div class="relative">
+        <svg class="w-4 h-4 text-ink-400 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" placeholder="Search..." class="w-48 pl-8 pr-3 py-1.5 text-sm border border-surface-200 rounded-lg bg-surface-50 focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+      </div>
+      <!-- Bell -->
+      <button class="relative p-1.5 rounded-lg hover:bg-surface-50">
+        <svg class="w-4.5 h-4.5 text-ink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span class="absolute top-1 right-1 w-2 h-2 bg-st-rd-base rounded-full"></span>
+      </button>
+      <!-- Avatar -->
+      <div class="w-8 h-8 bg-brand-500 rounded-full flex items-center justify-center text-white text-xs font-semibold">JD</div>
+    </div>
+  </header>
+
+  <!-- Tab Switcher -->
+  <div class="bg-white border-b border-surface-200 px-5">
+    <div class="flex gap-0">
+      <button data-tab="expense-list" class="tab-btn relative px-4 py-2.5 text-sm font-medium text-brand-500">
+        Expense List
+        <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 tab-underline"></span>
+      </button>
+      <button data-tab="new-expense" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700">
+        New Expense
+        <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 tab-underline hidden"></span>
+      </button>
+      <button data-tab="expense-reports" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700">
+        Expense Reports
+        <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 tab-underline hidden"></span>
+      </button>
+      <button data-tab="report-detail" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700">
+        Report Detail
+        <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 tab-underline hidden"></span>
+      </button>
+      <button data-tab="approvals" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700">
+        Approvals
+        <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 tab-underline hidden"></span>
+      </button>
+      <button data-tab="requisitions" class="tab-btn relative px-4 py-2.5 text-sm text-ink-500 hover:text-ink-700">
+        Purchase Requisitions
+        <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500 tab-underline hidden"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="flex-1 overflow-y-auto">
+
+    <!-- ========== PAGE 1: EXPENSE LIST ========== -->
+    <div id="page-expense-list" class="page active p-5">
+      <!-- Filter Bar -->
+      <div class="flex items-center gap-3 mb-4">
+        <div class="flex items-center gap-2 border border-surface-300 rounded-lg px-3 py-2 text-sm bg-white">
+          <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span class="text-ink-700">Feb 1 – Mar 9, 2026</span>
+        </div>
+        <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+          <option>All Categories</option>
+          <option>Transportation</option>
+          <option>Lodging</option>
+          <option>Meals & Entertainment</option>
+          <option>Office Supplies</option>
+          <option>Airfare</option>
+        </select>
+        <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+          <option>All Statuses</option>
+          <option>Draft</option>
+          <option>Submitted</option>
+          <option>Pending</option>
+          <option>Approved</option>
+          <option>Paid</option>
+        </select>
+        <div class="relative flex-1 max-w-xs">
+          <svg class="w-4 h-4 text-ink-400 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" placeholder="Search expenses..." class="w-full pl-8 pr-3 py-2 text-sm border border-surface-300 rounded-lg bg-white focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+        </div>
+        <button class="ml-auto border border-surface-300 text-ink-700 hover:bg-surface-50 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Export
+        </button>
+      </div>
+
+      <!-- Expense Table -->
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Date</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Merchant</th>
+              <th class="text-right text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Amount</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Category</th>
+              <th class="text-center text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Receipt</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Policy</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Report</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 7</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Uber</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$34.50</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Transportation</td>
+              <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+              <td class="px-5 py-2.5 text-sm text-brand-500 font-medium">March Travel</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Submitted</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 6</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Hilton Hotels</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$289.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Lodging</td>
+              <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+              <td class="px-5 py-2.5 text-sm text-brand-500 font-medium">March Travel</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Submitted</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 5</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Staples</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$67.23</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Office Supplies</td>
+              <td class="px-5 py-2.5 text-center"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Missing</span></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Needs receipt</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-400">Unassigned</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-surface-100 text-ink-500">Draft</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 4</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Delta Airlines</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$456.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Airfare</td>
+              <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+              <td class="px-5 py-2.5 text-sm text-brand-500 font-medium">Q1 Client Trip</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Approved</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 3</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Olive Garden</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$124.50</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Meals & Entertainment</td>
+              <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Over limit</span></td>
+              <td class="px-5 py-2.5 text-sm text-brand-500 font-medium">March Meals</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Pending</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 1</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Amazon</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$89.99</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Office Supplies</td>
+              <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-400">Unassigned</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-surface-100 text-ink-500">Draft</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Feb 28</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Lyft</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$22.30</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Transportation</td>
+              <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+              <td class="px-5 py-2.5 text-sm text-brand-500 font-medium">Feb Travel</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Approved</span></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm text-ink-700">Feb 27</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">WeWork</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$450.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Office Space</td>
+              <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+              <td class="px-5 py-2.5 text-sm text-brand-500 font-medium">Feb Travel</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-brand-50 text-brand-600">Paid</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Pagination -->
+      <div class="flex items-center justify-between mt-3 text-sm text-ink-500">
+        <span>Showing 8 of 47 expenses</span>
+        <div class="flex items-center gap-1">
+          <button class="px-3 py-1.5 border border-surface-300 rounded-lg hover:bg-surface-50 text-ink-500">Prev</button>
+          <button class="px-3 py-1.5 bg-brand-500 text-white rounded-lg text-sm font-medium">1</button>
+          <button class="px-3 py-1.5 border border-surface-300 rounded-lg hover:bg-surface-50 text-ink-700">2</button>
+          <button class="px-3 py-1.5 border border-surface-300 rounded-lg hover:bg-surface-50 text-ink-700">3</button>
+          <span class="px-2 text-ink-400">...</span>
+          <button class="px-3 py-1.5 border border-surface-300 rounded-lg hover:bg-surface-50 text-ink-700">6</button>
+          <button class="px-3 py-1.5 border border-surface-300 rounded-lg hover:bg-surface-50 text-ink-500">Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PAGE 2: NEW EXPENSE ========== -->
+    <div id="page-new-expense" class="page p-5">
+      <div class="flex gap-6">
+        <!-- Left Column: Form (60%) -->
+        <div class="w-[60%]">
+          <div class="bg-white border border-surface-200 rounded-card p-6">
+            <h2 class="text-lg font-semibold text-ink-900 mb-5">New Expense</h2>
+
+            <!-- Expense Type -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-ink-700 mb-1">Expense Type</label>
+              <select class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+                <option>Regular</option>
+                <option>Mileage</option>
+                <option>Per Diem</option>
+              </select>
+            </div>
+
+            <!-- Date + Merchant -->
+            <div class="flex gap-4 mb-4">
+              <div class="w-1/2">
+                <label class="block text-sm font-medium text-ink-700 mb-1">Date</label>
+                <input type="date" value="2026-03-09" class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+              </div>
+              <div class="w-1/2">
+                <label class="block text-sm font-medium text-ink-700 mb-1">Merchant</label>
+                <input type="text" placeholder="e.g. Uber, Hilton..." class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+              </div>
+            </div>
+
+            <!-- Amount + Currency -->
+            <div class="flex gap-4 mb-4">
+              <div class="w-1/2">
+                <label class="block text-sm font-medium text-ink-700 mb-1">Amount</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-500">$</span>
+                  <input type="text" placeholder="0.00" class="w-full border border-surface-300 rounded-lg pl-7 pr-3 py-2 text-sm font-mono focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+                </div>
+              </div>
+              <div class="w-1/2">
+                <label class="block text-sm font-medium text-ink-700 mb-1">Currency</label>
+                <select class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+                  <option>USD</option>
+                  <option>EUR</option>
+                  <option>GBP</option>
+                  <option>CAD</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-ink-700 mb-1">Category</label>
+              <select class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+                <option>Travel</option>
+                <option>Meals & Entertainment</option>
+                <option>Lodging</option>
+                <option>Transportation</option>
+                <option>Office Supplies</option>
+                <option>Airfare</option>
+                <option>Software</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-5">
+              <label class="block text-sm font-medium text-ink-700 mb-1">Description</label>
+              <textarea rows="3" placeholder="Brief description of the expense..." class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400 resize-none"></textarea>
+            </div>
+
+            <!-- GL Coding Section (Collapsible) -->
+            <div class="border border-surface-200 rounded-lg mb-4">
+              <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('rotate-180')" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-ink-700 hover:bg-surface-50 rounded-lg">
+                <span>GL Coding</span>
+                <svg class="w-4 h-4 text-ink-400 chevron rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div class="px-4 pb-4 space-y-3">
+                <div>
+                  <label class="block text-sm font-medium text-ink-700 mb-1">Cost Center</label>
+                  <select class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+                    <option>Engineering</option>
+                    <option>Sales</option>
+                    <option>Marketing</option>
+                    <option>Operations</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-ink-700 mb-1">Project</label>
+                  <select class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+                    <option>Project Alpha</option>
+                    <option>Project Beta</option>
+                    <option>General</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-ink-700 mb-1">GL Account</label>
+                  <select class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+                    <option>6200 - Travel</option>
+                    <option>6300 - Meals</option>
+                    <option>6100 - Supplies</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attendees Section (Collapsible) -->
+            <div class="border border-surface-200 rounded-lg mb-4">
+              <button onclick="this.nextElementSibling.classList.toggle('hidden');this.querySelector('.chevron').classList.toggle('rotate-180')" class="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-ink-700 hover:bg-surface-50 rounded-lg">
+                <span>Attendees</span>
+                <svg class="w-4 h-4 text-ink-400 chevron transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div class="px-4 pb-4 hidden">
+                <div class="flex items-center justify-between bg-surface-50 rounded-lg px-3 py-2 mb-2">
+                  <div class="text-sm">
+                    <span class="font-medium text-ink-900">John Smith</span>
+                    <span class="text-ink-500">, VP Sales, Acme Corp</span>
+                  </div>
+                  <button class="text-ink-400 hover:text-st-rd-base">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+                <button class="text-sm text-brand-500 font-medium hover:text-brand-600 flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                  Add Attendee
+                </button>
+              </div>
+            </div>
+
+            <!-- Billable Toggle -->
+            <div class="flex items-center gap-3 mb-6">
+              <div class="toggle-track" onclick="this.classList.toggle('on')">
+                <div class="toggle-thumb"></div>
+              </div>
+              <span class="text-sm text-ink-700">Client billable</span>
+            </div>
+
+            <!-- Bottom Buttons -->
+            <div class="flex items-center gap-3 pt-4 border-t border-surface-200">
+              <button class="border border-surface-300 text-ink-700 hover:bg-surface-50 px-4 py-2 rounded-lg text-sm font-medium">Save as Draft</button>
+              <button class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Submit</button>
+              <button class="text-sm text-ink-500 hover:text-ink-700 ml-2">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Receipt + Policy (40%) -->
+        <div class="w-[40%] space-y-4">
+          <!-- Receipt Upload -->
+          <div class="bg-white border border-surface-200 rounded-card p-6">
+            <h3 class="text-sm font-semibold text-ink-900 mb-3">Receipt</h3>
+            <div class="border-2 border-dashed border-surface-300 rounded-lg p-8 text-center hover:border-brand-400 transition-colors cursor-pointer">
+              <svg class="w-10 h-10 text-ink-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <p class="text-sm text-ink-700 font-medium">Drop receipt here or click to upload</p>
+              <p class="text-xs text-ink-400 mt-1">PNG, JPG, or PDF up to 10MB</p>
+            </div>
+            <p class="text-xs text-ink-400 mt-3 text-center">Or email to <span class="text-brand-500 font-medium">receipts@acme.centime-expense.com</span></p>
+          </div>
+
+          <!-- Policy Check -->
+          <div class="bg-white border border-surface-200 rounded-card p-6">
+            <h3 class="text-sm font-semibold text-ink-900 mb-3">Policy Check</h3>
+            <div class="space-y-2.5">
+              <div class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-st-gl-base shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span class="text-sm text-ink-700">Amount within policy</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-st-gl-base shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span class="text-sm text-ink-700">Category allowed</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-st-am-base shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                <span class="text-sm text-st-am-dark">Receipt required for expenses &gt; $25</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PAGE 3: EXPENSE REPORTS ========== -->
+    <div id="page-expense-reports" class="page p-5">
+      <!-- Action Bar -->
+      <div class="flex items-center gap-3 mb-4">
+        <button class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          New Report
+        </button>
+        <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+          <option>All</option>
+          <option>Draft</option>
+          <option>Submitted</option>
+          <option>Approved</option>
+          <option>Rejected</option>
+          <option>Paid</option>
+        </select>
+      </div>
+
+      <!-- Reports Table -->
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Report Name</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Period</th>
+              <th class="text-center text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5"># Expenses</th>
+              <th class="text-right text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Total</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Status</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Submitted</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Q1 Client Travel</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Jan–Mar 2026</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">8</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$3,240.00</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Approved</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 3</td>
+              <td class="px-5 py-2.5"><button class="text-sm text-brand-500 font-medium hover:text-brand-600">View</button></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">March Office Supplies</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 2026</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">4</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$456.23</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Pending Approval</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 5</td>
+              <td class="px-5 py-2.5"><button class="text-sm text-brand-500 font-medium hover:text-brand-600">View</button></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Feb Team Dinner</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Feb 2026</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">1</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$189.00</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-surface-100 text-ink-500">Draft</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-400">&mdash;</td>
+              <td class="px-5 py-2.5 flex items-center gap-3">
+                <button class="text-sm text-brand-500 font-medium hover:text-brand-600">Edit</button>
+                <button class="text-sm text-brand-500 font-medium hover:text-brand-600">Submit</button>
+              </td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Q4 2025 Travel</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Oct–Dec 2025</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">12</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$5,678.00</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Paid</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Dec 15</td>
+              <td class="px-5 py-2.5"><button class="text-sm text-brand-500 font-medium hover:text-brand-600">View</button></td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Jan Conference</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Jan 2026</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">6</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$2,100.00</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-rd-light text-st-rd-dark">Rejected</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Feb 1</td>
+              <td class="px-5 py-2.5 flex items-center gap-3">
+                <button class="text-sm text-brand-500 font-medium hover:text-brand-600">View</button>
+                <button class="text-sm text-brand-500 font-medium hover:text-brand-600">Resubmit</button>
+              </td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Feb Supplies</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Feb 2026</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">3</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$234.50</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Processing</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Feb 20</td>
+              <td class="px-5 py-2.5"><button class="text-sm text-brand-500 font-medium hover:text-brand-600">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== PAGE 4: REPORT DETAIL ========== -->
+    <div id="page-report-detail" class="page p-5">
+      <div class="flex gap-6">
+        <!-- Main Content (70%) -->
+        <div class="w-[70%] space-y-5">
+          <!-- Header Card -->
+          <div class="bg-white border border-surface-200 rounded-card p-5">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h2 class="text-lg font-semibold text-ink-900">Q1 Client Travel</h2>
+                <p class="text-sm text-ink-500 mt-0.5">Submitted by <span class="font-medium text-ink-700">Jane Doe</span> on Mar 5, 2026</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Pending Approval</span>
+                <span class="text-lg font-semibold font-mono text-ink-900">$3,240.00</span>
+              </div>
+            </div>
+
+            <!-- Approval Timeline -->
+            <div class="flex items-center gap-0 mt-5">
+              <!-- Step 1: Submitted -->
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 bg-st-gl-light rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4 text-st-gl-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-st-gl-dark">Submitted</p>
+                  <p class="text-xxs text-ink-400">Mar 5</p>
+                </div>
+              </div>
+              <div class="flex-1 h-0.5 bg-st-gl-base mx-3"></div>
+              <!-- Step 2: Manager Review -->
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 bg-st-am-light rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4 text-st-am-base animate-spin" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" opacity=".3"/><path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-st-am-dark">Manager Review</p>
+                  <p class="text-xxs text-ink-400">Pending &mdash; Mark Johnson</p>
+                </div>
+              </div>
+              <div class="flex-1 h-0.5 bg-surface-200 mx-3"></div>
+              <!-- Step 3: Finance Approval -->
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 bg-surface-100 rounded-full flex items-center justify-center">
+                  <svg class="w-4 h-4 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-ink-400">Finance Approval</p>
+                  <p class="text-xxs text-ink-300">Waiting</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expense Items Table -->
+          <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+            <div class="px-5 py-3 border-b border-surface-200">
+              <h3 class="text-sm font-semibold text-ink-900">Expense Items</h3>
+            </div>
+            <table class="w-full">
+              <thead>
+                <tr class="bg-surface-50 border-b border-surface-200">
+                  <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Date</th>
+                  <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Merchant</th>
+                  <th class="text-right text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Amount</th>
+                  <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Category</th>
+                  <th class="text-center text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Receipt</th>
+                  <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Policy</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-surface-100">
+                <tr class="trow">
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Mar 2</td>
+                  <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Delta Airlines</td>
+                  <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$1,200.00</td>
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Airfare</td>
+                  <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+                  <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+                </tr>
+                <tr class="trow">
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Mar 3</td>
+                  <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Hilton Hotels</td>
+                  <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$890.00</td>
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Lodging</td>
+                  <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+                  <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+                </tr>
+                <tr class="trow">
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Mar 3</td>
+                  <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Olive Garden</td>
+                  <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$650.00</td>
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Meals & Entertainment</td>
+                  <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+                  <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Over limit</span></td>
+                </tr>
+                <tr class="trow">
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Mar 4</td>
+                  <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Uber</td>
+                  <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$340.00</td>
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Transportation</td>
+                  <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+                  <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+                </tr>
+                <tr class="trow">
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Mar 5</td>
+                  <td class="px-5 py-2.5 text-sm font-medium text-ink-900">FedEx Office</td>
+                  <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$160.00</td>
+                  <td class="px-5 py-2.5 text-sm text-ink-700">Other</td>
+                  <td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td>
+                  <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">OK</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right Sidebar (30%) -->
+        <div class="w-[30%] space-y-4">
+          <!-- Report Summary Card -->
+          <div class="bg-white border border-surface-200 rounded-card p-5">
+            <h3 class="text-sm font-semibold text-ink-900 mb-4">Category Breakdown</h3>
+            <div class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-ink-700">Airfare</span>
+                <span class="text-sm font-mono text-ink-900">$1,200.00</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-ink-700">Lodging</span>
+                <span class="text-sm font-mono text-ink-900">$890.00</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-ink-700">Meals</span>
+                <span class="text-sm font-mono text-ink-900">$650.00</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-ink-700">Transportation</span>
+                <span class="text-sm font-mono text-ink-900">$340.00</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-ink-700">Other</span>
+                <span class="text-sm font-mono text-ink-900">$160.00</span>
+              </div>
+              <div class="border-t border-surface-200 pt-2.5 mt-2.5 flex items-center justify-between">
+                <span class="text-sm font-semibold text-ink-900">Total</span>
+                <span class="text-sm font-semibold font-mono text-ink-900">$3,240.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comments Section -->
+          <div class="bg-white border border-surface-200 rounded-card p-5">
+            <h3 class="text-sm font-semibold text-ink-900 mb-4">Comments</h3>
+            <div class="bg-surface-50 rounded-lg p-3 mb-3">
+              <div class="flex items-center gap-2 mb-1.5">
+                <div class="w-6 h-6 bg-brand-500 rounded-full flex items-center justify-center text-white text-xxs font-semibold">MJ</div>
+                <span class="text-sm font-medium text-ink-900">Mark Johnson</span>
+                <span class="text-xxs text-ink-400 ml-auto">Mar 6</span>
+              </div>
+              <p class="text-sm text-ink-700">Please provide itemized hotel receipt for the Hilton charge.</p>
+            </div>
+            <div class="flex gap-2">
+              <input type="text" placeholder="Add a comment..." class="flex-1 border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+              <button class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-2 rounded-lg text-sm font-medium">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PAGE 5: APPROVALS ========== -->
+    <div id="page-approvals" class="page p-5">
+      <!-- Sub-tabs -->
+      <div class="flex gap-0 mb-4 border-b border-surface-200">
+        <button class="relative px-4 py-2 text-sm font-medium text-brand-500">
+          Pending <span class="ml-1 text-xxs font-medium bg-st-rd-light text-st-rd-dark px-1.5 py-0.5 rounded-full">7</span>
+          <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-brand-500"></span>
+        </button>
+        <button class="relative px-4 py-2 text-sm text-ink-500 hover:text-ink-700">Approved</button>
+        <button class="relative px-4 py-2 text-sm text-ink-500 hover:text-ink-700">Rejected</button>
+      </div>
+
+      <!-- Approvals Table -->
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Submitted By</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Report</th>
+              <th class="text-right text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Amount</th>
+              <th class="text-center text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Expenses</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Policy</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Submitted</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <!-- Row 1 — Expanded -->
+            <tr class="trow bg-brand-50/30">
+              <td class="px-5 py-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 bg-brand-400 rounded-full flex items-center justify-center text-white text-xxs font-semibold">JD</div>
+                  <span class="text-sm font-medium text-ink-900">Jane Doe</span>
+                </div>
+              </td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Q1 Client Travel</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$3,240.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">8</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">1 warning</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 5</td>
+              <td class="px-5 py-2.5"><button class="text-sm text-brand-500 font-medium hover:text-brand-600">Review</button></td>
+            </tr>
+            <!-- Expanded Review Panel -->
+            <tr>
+              <td colspan="7" class="px-5 py-4 bg-surface-50 border-t-0">
+                <div class="bg-white border border-surface-200 rounded-card p-5">
+                  <div class="flex items-start justify-between mb-4">
+                    <div>
+                      <h4 class="text-sm font-semibold text-ink-900">Review: Q1 Client Travel</h4>
+                      <p class="text-xs text-ink-500 mt-0.5">8 expenses totaling $3,240.00 by Jane Doe</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <svg class="w-4 h-4 text-st-am-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                      <span class="text-sm text-st-am-dark font-medium">Meals expense ($650) exceeds $500 daily limit</span>
+                    </div>
+                  </div>
+                  <!-- Mini expense table -->
+                  <div class="border border-surface-200 rounded-lg overflow-hidden mb-4">
+                    <table class="w-full text-sm">
+                      <thead><tr class="bg-surface-50"><th class="text-left px-3 py-1.5 text-xs font-semibold text-ink-500">Date</th><th class="text-left px-3 py-1.5 text-xs font-semibold text-ink-500">Merchant</th><th class="text-right px-3 py-1.5 text-xs font-semibold text-ink-500">Amount</th><th class="text-left px-3 py-1.5 text-xs font-semibold text-ink-500">Category</th></tr></thead>
+                      <tbody class="divide-y divide-surface-100">
+                        <tr><td class="px-3 py-1.5 text-ink-700">Mar 2</td><td class="px-3 py-1.5 text-ink-900">Delta Airlines</td><td class="px-3 py-1.5 text-right font-mono">$1,200.00</td><td class="px-3 py-1.5">Airfare</td></tr>
+                        <tr><td class="px-3 py-1.5 text-ink-700">Mar 3</td><td class="px-3 py-1.5 text-ink-900">Hilton Hotels</td><td class="px-3 py-1.5 text-right font-mono">$890.00</td><td class="px-3 py-1.5">Lodging</td></tr>
+                        <tr class="bg-st-am-light/30"><td class="px-3 py-1.5 text-ink-700">Mar 3</td><td class="px-3 py-1.5 text-ink-900">Olive Garden</td><td class="px-3 py-1.5 text-right font-mono text-st-am-dark font-medium">$650.00</td><td class="px-3 py-1.5"><span class="text-st-am-dark">Meals &amp; Ent.</span></td></tr>
+                        <tr><td class="px-3 py-1.5 text-ink-700">Mar 4</td><td class="px-3 py-1.5 text-ink-900">Uber</td><td class="px-3 py-1.5 text-right font-mono">$340.00</td><td class="px-3 py-1.5">Transport</td></tr>
+                        <tr><td class="px-3 py-1.5 text-ink-700">Mar 5</td><td class="px-3 py-1.5 text-ink-900">FedEx Office</td><td class="px-3 py-1.5 text-right font-mono">$160.00</td><td class="px-3 py-1.5">Other</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- Comment + Action buttons -->
+                  <div class="mb-4">
+                    <label class="block text-sm font-medium text-ink-700 mb-1">Comment</label>
+                    <textarea rows="2" placeholder="Add a comment (optional)..." class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400 resize-none"></textarea>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <button class="bg-st-gl-base hover:bg-st-gl-dark text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      Approve
+                    </button>
+                    <button class="bg-st-rd-base hover:bg-st-rd-dark text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 2 -->
+            <tr class="trow">
+              <td class="px-5 py-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 bg-st-bl-base rounded-full flex items-center justify-center text-white text-xxs font-semibold">MT</div>
+                  <span class="text-sm font-medium text-ink-900">Mike Torres</span>
+                </div>
+              </td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">March Marketing</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$1,890.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">5</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Compliant</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 6</td>
+              <td class="px-5 py-2.5"><button class="text-sm text-brand-500 font-medium hover:text-brand-600">Review</button></td>
+            </tr>
+            <!-- Row 3 -->
+            <tr class="trow">
+              <td class="px-5 py-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 bg-st-am-base rounded-full flex items-center justify-center text-white text-xxs font-semibold">SC</div>
+                  <span class="text-sm font-medium text-ink-900">Sarah Chen</span>
+                </div>
+              </td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Feb Sales Meals</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$456.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">3</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Compliant</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 4</td>
+              <td class="px-5 py-2.5"><button class="text-sm text-brand-500 font-medium hover:text-brand-600">Review</button></td>
+            </tr>
+            <!-- Row 4 -->
+            <tr class="trow">
+              <td class="px-5 py-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 bg-brand-300 rounded-full flex items-center justify-center text-white text-xxs font-semibold">TW</div>
+                  <span class="text-sm font-medium text-ink-900">Tom Wilson</span>
+                </div>
+              </td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Eng Team Supplies</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$780.50</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">6</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-rd-light text-st-rd-dark">2 violations</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 3</td>
+              <td class="px-5 py-2.5"><button class="text-sm text-brand-500 font-medium hover:text-brand-600">Review</button></td>
+            </tr>
+            <!-- Row 5 -->
+            <tr class="trow">
+              <td class="px-5 py-2.5">
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 bg-gold-400 rounded-full flex items-center justify-center text-white text-xxs font-semibold">LP</div>
+                  <span class="text-sm font-medium text-ink-900">Lisa Park</span>
+                </div>
+              </td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Ops Office Supplies</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$234.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700 text-center">2</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Compliant</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 2</td>
+              <td class="px-5 py-2.5"><button class="text-sm text-brand-500 font-medium hover:text-brand-600">Review</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== PAGE 6: PURCHASE REQUISITIONS ========== -->
+    <div id="page-requisitions" class="page p-5">
+      <!-- Action Bar -->
+      <div class="flex items-center gap-3 mb-4">
+        <button onclick="document.getElementById('pr-form').classList.toggle('hidden')" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          New Requisition
+        </button>
+        <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+          <option>All Statuses</option>
+          <option>Draft</option>
+          <option>Pending Approval</option>
+          <option>Approved</option>
+          <option>Rejected</option>
+        </select>
+      </div>
+
+      <!-- Requisitions Table -->
+      <div class="bg-white border border-surface-200 rounded-card overflow-hidden mb-5">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-surface-50 border-b border-surface-200">
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">PR#</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Requestor</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Description</th>
+              <th class="text-right text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Amount</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Department</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Budget Check</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Status</th>
+              <th class="text-left text-xs font-semibold text-ink-500 uppercase tracking-wide px-5 py-2.5">Date</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-surface-100">
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-mono text-brand-500 font-medium">PR-2026-042</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Jane Doe</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Ergonomic keyboards (10)</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$1,250.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Engineering</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Within budget</span></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Pending Approval</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 7</td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-mono text-brand-500 font-medium">PR-2026-041</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Mike Torres</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Conference booth materials</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$3,500.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Marketing</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">87% utilized</span></td>
+              <td class="px-5 py-2.5">
+                <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Approved</span>
+                <span class="text-xxs text-ink-400 ml-1">&rarr; PO-2026-038</span>
+              </td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 6</td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-mono text-brand-500 font-medium">PR-2026-040</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Sarah Chen</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Team lunch catering</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$450.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Sales</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Within budget</span></td>
+              <td class="px-5 py-2.5">
+                <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Approved</span>
+                <span class="text-xxs text-ink-400 ml-1">&rarr; PO-2026-037</span>
+              </td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 5</td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-mono text-brand-500 font-medium">PR-2026-039</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Tom Wilson</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Server upgrade</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$12,000.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Engineering</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-rd-light text-st-rd-dark">Over budget</span></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-rd-light text-st-rd-dark">Rejected</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 4</td>
+            </tr>
+            <tr class="trow">
+              <td class="px-5 py-2.5 text-sm font-mono text-brand-500 font-medium">PR-2026-038</td>
+              <td class="px-5 py-2.5 text-sm font-medium text-ink-900">Lisa Park</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Office supplies Q2</td>
+              <td class="px-5 py-2.5 text-sm font-mono text-right text-ink-900">$800.00</td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Operations</td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Within budget</span></td>
+              <td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-surface-100 text-ink-500">Draft</span></td>
+              <td class="px-5 py-2.5 text-sm text-ink-700">Mar 3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- New Requisition Form -->
+      <div id="pr-form" class="bg-white border border-surface-200 rounded-card p-6 hidden">
+        <h3 class="text-lg font-semibold text-ink-900 mb-5">New Purchase Requisition</h3>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-ink-700 mb-1">Item Description</label>
+            <input type="text" placeholder="Describe what you need to purchase..." class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-ink-700 mb-1">Quantity</label>
+            <input type="number" value="1" class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-ink-700 mb-1">Unit Cost</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-500">$</span>
+              <input type="text" placeholder="0.00" class="w-full border border-surface-300 rounded-lg pl-7 pr-3 py-2 text-sm font-mono focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-ink-700 mb-1">Total</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-500">$</span>
+              <input type="text" value="0.00" disabled class="w-full border border-surface-200 bg-surface-50 rounded-lg pl-7 pr-3 py-2 text-sm font-mono text-ink-500">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-ink-700 mb-1">Department</label>
+            <select class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+              <option>Engineering</option>
+              <option>Sales</option>
+              <option>Marketing</option>
+              <option>Operations</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-ink-700 mb-1">Project</label>
+            <select class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+              <option>Project Alpha</option>
+              <option>Project Beta</option>
+              <option>General</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-ink-700 mb-1">Preferred Vendor <span class="text-ink-400 font-normal">(optional)</span></label>
+            <input type="text" placeholder="e.g. Amazon, Dell..." class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-ink-700 mb-1">Business Justification</label>
+            <textarea rows="3" placeholder="Explain why this purchase is needed..." class="w-full border border-surface-300 rounded-lg px-3 py-2 text-sm focus:border-brand-400 focus:ring-1 focus:ring-brand-400 resize-none"></textarea>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 pt-4 border-t border-surface-200">
+          <button class="border border-surface-300 text-ink-700 hover:bg-surface-50 px-4 py-2 rounded-lg text-sm font-medium">Save as Draft</button>
+          <button class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Submit Requisition</button>
+          <button onclick="document.getElementById('pr-form').classList.add('hidden')" class="text-sm text-ink-500 hover:text-ink-700 ml-2">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end scrollable content -->
+</div><!-- end main content -->
+
+<!-- ===== TAB SWITCHING JS ===== -->
+<script>
+  const tabs = document.querySelectorAll('[data-tab]');
+  const pages = {
+    'expense-list': document.getElementById('page-expense-list'),
+    'new-expense': document.getElementById('page-new-expense'),
+    'expense-reports': document.getElementById('page-expense-reports'),
+    'report-detail': document.getElementById('page-report-detail'),
+    'approvals': document.getElementById('page-approvals'),
+    'requisitions': document.getElementById('page-requisitions'),
+  };
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Deactivate all tabs
+      tabs.forEach(t => {
+        t.classList.remove('text-brand-500', 'font-medium');
+        t.classList.add('text-ink-500');
+        t.querySelector('.tab-underline').classList.add('hidden');
+      });
+      // Activate clicked tab
+      tab.classList.add('text-brand-500', 'font-medium');
+      tab.classList.remove('text-ink-500');
+      tab.querySelector('.tab-underline').classList.remove('hidden');
+      // Hide all pages, show target
+      Object.values(pages).forEach(p => p.classList.remove('active'));
+      const target = tab.getAttribute('data-tab');
+      if (pages[target]) pages[target].classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

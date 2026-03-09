@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centime Expense — Card Transactions & Reimbursement</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          brand: { 50:'#e6f5f5',100:'#ccebeb',200:'#99d7d9',300:'#4db8bb',400:'#009a9f',500:'#008085',600:'#006d71',700:'#024743',800:'#013633',900:'#012524' },
+          gold: { 100:'#fef6dc',200:'#fde9a6',300:'#fdc231',400:'#e5ad1e',500:'#c4940f' },
+          surface: { 0:'#ffffff',warm:'#faf6ee',50:'#f7f8f9',100:'#f1f2f4',200:'#e3e5e8',300:'#cdd0d5' },
+          ink: { 900:'#0f1419',800:'#1a2028',700:'#2d3440',500:'#5f6b7a',400:'#8b95a3',300:'#b5bcc7' },
+          st: { gl:{light:'#eefbf3',base:'#0f9d58',dark:'#0b7a42',border:'#b7eaca'}, am:{light:'#fef9eb',base:'#d4930d',dark:'#a87308',border:'#fde68a'}, rd:{light:'#fef2f2',base:'#d93025',dark:'#ae241c',border:'#fcc8c5'}, bl:{light:'#ebf6ff',base:'#1a73e8',dark:'#1557b0',border:'#b3d4fc'} }
+        },
+        fontFamily: { sans:['-apple-system','BlinkMacSystemFont','Segoe UI','Inter','Roboto','sans-serif'], mono:['"SF Mono"','Fira Code','Menlo','monospace'] },
+        fontSize: { 'xxs':['0.625rem',{lineHeight:'0.875rem'}],'xs':['0.75rem',{lineHeight:'1rem'}],'sm':['0.8125rem',{lineHeight:'1.25rem'}],'base':['0.875rem',{lineHeight:'1.375rem'}],'md':['0.9375rem',{lineHeight:'1.5rem'}],'lg':['1.125rem',{lineHeight:'1.75rem'}],'xl':['1.25rem',{lineHeight:'1.75rem'}],'2xl':['1.5rem',{lineHeight:'2rem'}] },
+        borderRadius: { card:'12px' }
+      }}
+    }
+  </script>
+  <style>
+    *{-webkit-font-smoothing:antialiased}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;margin:0;overflow:hidden;height:100vh}
+    .tab-page{display:none}.tab-page.active{display:block}
+    .nav-item{transition:all .12s ease}
+    .trow{transition:background .1s ease}
+    .trow:hover{background:rgba(0,128,133,.04)}
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+    .pulse-dot{animation:pulse-dot 2s ease-in-out infinite}
+    .feed-item{border-left:4px solid transparent}
+    .feed-item.status-green{border-left-color:#0f9d58}
+    .feed-item.status-amber{border-left-color:#d4930d}
+    .feed-item.status-red{border-left-color:#d93025}
+    .match-line{position:relative}
+    .match-line::after{content:'';position:absolute;top:50%;right:-24px;width:24px;height:2px;background:#008085}
+    .match-line-r{position:relative}
+    .match-line-r::before{content:'';position:absolute;top:50%;left:-24px;width:24px;height:2px;background:#008085}
+  </style>
+</head>
+<body class="bg-surface-50 text-ink-900 flex h-screen">
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="w-[220px] bg-brand-700 flex flex-col shrink-0 h-screen">
+  <div class="px-4 py-3.5 border-b border-white/10 flex items-center gap-2.5">
+    <div class="w-7 h-7 bg-white/15 rounded-lg flex items-center justify-center">
+      <svg class="w-3.5 h-3.5 text-gold-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+    </div>
+    <div>
+      <div class="text-sm font-semibold text-white">Centime Expense</div>
+      <div class="text-xxs text-white/50">Acme Corp</div>
+    </div>
+  </div>
+  <nav class="px-2 py-3 flex-1 overflow-y-auto">
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Main</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+        My Expenses
+        <span class="ml-auto text-xxs font-medium bg-gold-300 text-brand-800 px-1.5 py-0.5 rounded-full">3</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Expense Reports
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm font-medium text-white bg-white/12 rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        Card Transactions
+      </a>
+    </div>
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Actions</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        Approvals
+        <span class="ml-auto text-xxs font-medium bg-st-rd-base text-white px-1.5 py-0.5 rounded-full">5</span>
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        Requisitions
+      </a>
+    </div>
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Payments</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        Reimbursement
+      </a>
+    </div>
+    <div class="mb-4">
+      <div class="px-2.5 py-1 text-xxs font-semibold text-white/40 uppercase tracking-wider">Admin</div>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        Policies
+      </a>
+      <a href="#" class="nav-item flex items-center gap-2.5 px-2.5 py-1.5 text-sm text-white/70 hover:text-white rounded-lg mt-0.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+        Users
+      </a>
+    </div>
+  </nav>
+  <div class="px-2 py-3 border-t border-white/10">
+    <div class="flex items-center gap-2.5 px-2.5">
+      <div class="w-7 h-7 bg-brand-400 rounded-full flex items-center justify-center text-xs font-semibold text-white">KP</div>
+      <div>
+        <div class="text-sm font-medium text-white">K. Patel</div>
+        <div class="text-xxs text-white/50">Finance &middot; Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<main class="flex-1 flex flex-col overflow-hidden">
+
+  <!-- TOP BAR -->
+  <header class="h-[52px] bg-white border-b border-surface-200 flex items-center justify-between px-6 shrink-0">
+    <h1 class="text-md font-semibold text-ink-900">Card Transactions &amp; Reimbursement</h1>
+    <div class="flex items-center gap-4">
+      <div class="relative">
+        <svg class="w-4 h-4 text-ink-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" placeholder="Search..." class="bg-surface-50 border border-surface-200 rounded-lg pl-9 pr-3 py-1.5 text-sm text-ink-700 w-56 focus:outline-none focus:border-brand-400">
+      </div>
+      <button class="relative text-ink-400 hover:text-ink-700">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span class="absolute -top-1 -right-1 w-2 h-2 bg-st-rd-base rounded-full"></span>
+      </button>
+      <div class="w-8 h-8 bg-brand-400 rounded-full flex items-center justify-center text-xs font-semibold text-white">KP</div>
+    </div>
+  </header>
+
+  <!-- TAB BAR -->
+  <div class="bg-white border-b border-surface-200 px-6 flex items-end gap-0 shrink-0">
+    <button onclick="showTab('feed')" data-tab="feed" class="tab-btn px-4 py-2.5 text-sm font-medium text-brand-500 border-b-2 border-brand-500">Real-Time Feed</button>
+    <button onclick="showTab('list')" data-tab="list" class="tab-btn px-4 py-2.5 text-sm text-ink-500 border-b-2 border-transparent hover:text-ink-700">Transaction List</button>
+    <button onclick="showTab('matching')" data-tab="matching" class="tab-btn px-4 py-2.5 text-sm text-ink-500 border-b-2 border-transparent hover:text-ink-700">Receipt Matching</button>
+    <button onclick="showTab('recon')" data-tab="recon" class="tab-btn px-4 py-2.5 text-sm text-ink-500 border-b-2 border-transparent hover:text-ink-700">Reconciliation</button>
+    <button onclick="showTab('reimburse')" data-tab="reimburse" class="tab-btn px-4 py-2.5 text-sm text-ink-500 border-b-2 border-transparent hover:text-ink-700">Reimbursement Queue</button>
+    <button onclick="showTab('history')" data-tab="history" class="tab-btn px-4 py-2.5 text-sm text-ink-500 border-b-2 border-transparent hover:text-ink-700">Payment History</button>
+  </div>
+
+  <!-- SCROLLABLE CONTENT -->
+  <div class="flex-1 overflow-y-auto p-6">
+
+<!-- ==================== TAB 1: REAL-TIME FEED ==================== -->
+<div id="tab-feed" class="tab-page active">
+  <div class="flex items-center gap-3 mb-5">
+    <h2 class="text-lg font-semibold text-ink-900">Live Transaction Feed</h2>
+    <span class="flex items-center gap-1.5 text-xs text-st-gl-dark bg-st-gl-light border border-st-gl-border px-2.5 py-1 rounded-full">
+      <span class="w-2 h-2 bg-st-gl-base rounded-full pulse-dot"></span>
+      Connected to Visa RTN + Mastercard
+    </span>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Today's Transactions</div>
+      <div class="text-2xl font-semibold text-ink-900 mt-1">8</div>
+      <div class="text-xs text-ink-400 mt-0.5">$2,340 total</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Awaiting Receipts</div>
+      <div class="text-2xl font-semibold text-st-am-base mt-1">3</div>
+      <div class="text-xs text-ink-400 mt-0.5">Needs attention</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Auto-Matched</div>
+      <div class="text-2xl font-semibold text-st-gl-base mt-1">5</div>
+      <div class="text-xs text-ink-400 mt-0.5">This week</div>
+    </div>
+  </div>
+
+  <!-- Feed items -->
+  <div class="space-y-2">
+    <!-- 1 -->
+    <div class="feed-item status-green bg-white border border-surface-200 rounded-card p-4 flex items-center gap-4">
+      <div class="shrink-0 w-20">
+        <div class="text-xs font-medium text-ink-900">Just now</div>
+        <div class="text-xxs text-ink-400">Visa ****4523</div>
+      </div>
+      <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-ink-900">Starbucks</div>
+        <div class="text-xs text-ink-400">Jane Doe &middot; Meals</div>
+      </div>
+      <div class="text-sm font-mono font-medium text-ink-900 shrink-0" style="font-variant-numeric:tabular-nums">$12.45</div>
+      <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border shrink-0">Receipt matched</span>
+    </div>
+    <!-- 2 -->
+    <div class="feed-item status-amber bg-white border border-surface-200 rounded-card p-4 flex items-center gap-4">
+      <div class="shrink-0 w-20">
+        <div class="text-xs font-medium text-ink-900">5 min ago</div>
+        <div class="text-xxs text-ink-400">MC ****8891</div>
+      </div>
+      <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-ink-900">American Airlines</div>
+        <div class="text-xs text-ink-400">Mike Torres &middot; Airfare</div>
+      </div>
+      <div class="text-sm font-mono font-medium text-ink-900 shrink-0" style="font-variant-numeric:tabular-nums">$567.00</div>
+      <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark border border-st-am-border shrink-0">Awaiting receipt</span>
+    </div>
+    <!-- 3 -->
+    <div class="feed-item status-green bg-white border border-surface-200 rounded-card p-4 flex items-center gap-4">
+      <div class="shrink-0 w-20">
+        <div class="text-xs font-medium text-ink-900">12 min ago</div>
+        <div class="text-xxs text-ink-400">Visa ****4523</div>
+      </div>
+      <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-ink-900">Uber</div>
+        <div class="text-xs text-ink-400">Jane Doe &middot; Transportation</div>
+      </div>
+      <div class="text-sm font-mono font-medium text-ink-900 shrink-0" style="font-variant-numeric:tabular-nums">$28.30</div>
+      <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border shrink-0">Auto-matched</span>
+    </div>
+    <!-- 4 -->
+    <div class="feed-item status-amber bg-white border border-surface-200 rounded-card p-4 flex items-center gap-4">
+      <div class="shrink-0 w-20">
+        <div class="text-xs font-medium text-ink-900">1 hr ago</div>
+        <div class="text-xxs text-ink-400">Visa ****7702</div>
+      </div>
+      <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-ink-900">Office Depot</div>
+        <div class="text-xs text-ink-400">Sarah Chen &middot; Supplies</div>
+      </div>
+      <div class="text-sm font-mono font-medium text-ink-900 shrink-0" style="font-variant-numeric:tabular-nums">$145.67</div>
+      <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark border border-st-am-border shrink-0">Awaiting receipt</span>
+    </div>
+    <!-- 5 -->
+    <div class="feed-item status-green bg-white border border-surface-200 rounded-card p-4 flex items-center gap-4">
+      <div class="shrink-0 w-20">
+        <div class="text-xs font-medium text-ink-900">2 hrs ago</div>
+        <div class="text-xxs text-ink-400">MC ****8891</div>
+      </div>
+      <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-ink-900">Marriott Hotels</div>
+        <div class="text-xs text-ink-400">Mike Torres &middot; Lodging</div>
+      </div>
+      <div class="text-sm font-mono font-medium text-ink-900 shrink-0" style="font-variant-numeric:tabular-nums">$312.00</div>
+      <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border shrink-0">Receipt matched</span>
+    </div>
+    <!-- 6 -->
+    <div class="feed-item status-green bg-white border border-surface-200 rounded-card p-4 flex items-center gap-4">
+      <div class="shrink-0 w-20">
+        <div class="text-xs font-medium text-ink-900">3 hrs ago</div>
+        <div class="text-xxs text-ink-400">Visa ****4523</div>
+      </div>
+      <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-ink-900">Lyft</div>
+        <div class="text-xs text-ink-400">Jane Doe &middot; Transportation</div>
+      </div>
+      <div class="text-sm font-mono font-medium text-ink-900 shrink-0" style="font-variant-numeric:tabular-nums">$19.50</div>
+      <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border shrink-0">Auto-matched</span>
+    </div>
+    <!-- 7 -->
+    <div class="feed-item status-green bg-white border border-surface-200 rounded-card p-4 flex items-center gap-4">
+      <div class="shrink-0 w-20">
+        <div class="text-xs font-medium text-ink-900">Yesterday</div>
+        <div class="text-xxs text-ink-400">Visa ****7702</div>
+      </div>
+      <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-ink-900">Amazon Business</div>
+        <div class="text-xs text-ink-400">Sarah Chen &middot; Supplies</div>
+      </div>
+      <div class="text-sm font-mono font-medium text-ink-900 shrink-0" style="font-variant-numeric:tabular-nums">$234.99</div>
+      <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark border border-st-gl-border shrink-0">Receipt matched</span>
+    </div>
+    <!-- 8 -->
+    <div class="feed-item status-red bg-white border border-surface-200 rounded-card p-4 flex items-center gap-4">
+      <div class="shrink-0 w-20">
+        <div class="text-xs font-medium text-ink-900">Yesterday</div>
+        <div class="text-xxs text-ink-400">MC ****3356</div>
+      </div>
+      <div class="w-8 h-8 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium text-ink-900">DoorDash</div>
+        <div class="text-xs text-ink-400">Tom Wilson &middot; Meals</div>
+      </div>
+      <div class="text-sm font-mono font-medium text-ink-900 shrink-0" style="font-variant-numeric:tabular-nums">$45.80</div>
+      <span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-rd-light text-st-rd-dark border border-st-rd-border shrink-0">Declined</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 2: TRANSACTION LIST ==================== -->
+<div id="tab-list" class="tab-page">
+  <!-- Filters -->
+  <div class="flex items-center gap-3 mb-5 flex-wrap">
+    <input type="date" value="2026-02-01" class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+    <span class="text-xs text-ink-400">to</span>
+    <input type="date" value="2026-03-09" class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+    <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+      <option>All Cardholders</option><option>Jane Doe</option><option>Mike Torres</option><option>Sarah Chen</option><option>Tom Wilson</option>
+    </select>
+    <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+      <option>All Cards</option><option>Visa ****4523</option><option>Visa ****7702</option><option>MC ****8891</option><option>MC ****3356</option>
+    </select>
+    <select class="border border-surface-300 rounded-lg px-3 py-1.5 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+      <option>All Statuses</option><option>Matched</option><option>Unmatched</option><option>Pending</option><option>Declined</option>
+    </select>
+    <div class="relative ml-auto">
+      <svg class="w-4 h-4 text-ink-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <input type="text" placeholder="Search merchant..." class="border border-surface-300 rounded-lg pl-9 pr-3 py-1.5 text-sm text-ink-700 w-48 focus:outline-none focus:border-brand-400">
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-surface-50 border-b border-surface-200">
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Date/Time</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Card</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Cardholder</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Merchant</th>
+          <th class="text-right px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Amount</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Category</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">MCC</th>
+          <th class="text-center px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Receipt</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 9, 10:24 AM</td><td class="px-5 py-2.5 text-sm text-ink-500">Visa ****4523</td><td class="px-5 py-2.5 text-sm">Jane Doe</td><td class="px-5 py-2.5 text-sm font-medium">Starbucks</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$12.45</td><td class="px-5 py-2.5 text-sm text-ink-500">Meals</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">5812</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 9, 10:15 AM</td><td class="px-5 py-2.5 text-sm text-ink-500">MC ****8891</td><td class="px-5 py-2.5 text-sm">Mike Torres</td><td class="px-5 py-2.5 text-sm font-medium">American Airlines</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$567.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Airfare</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">3000</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-am-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Pending</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 9, 10:02 AM</td><td class="px-5 py-2.5 text-sm text-ink-500">Visa ****4523</td><td class="px-5 py-2.5 text-sm">Jane Doe</td><td class="px-5 py-2.5 text-sm font-medium">Uber</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$28.30</td><td class="px-5 py-2.5 text-sm text-ink-500">Transportation</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">4121</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 9, 9:14 AM</td><td class="px-5 py-2.5 text-sm text-ink-500">Visa ****7702</td><td class="px-5 py-2.5 text-sm">Sarah Chen</td><td class="px-5 py-2.5 text-sm font-medium">Office Depot</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$145.67</td><td class="px-5 py-2.5 text-sm text-ink-500">Supplies</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">5943</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-am-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Pending</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 9, 8:30 AM</td><td class="px-5 py-2.5 text-sm text-ink-500">MC ****8891</td><td class="px-5 py-2.5 text-sm">Mike Torres</td><td class="px-5 py-2.5 text-sm font-medium">Marriott Hotels</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$312.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Lodging</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">7011</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 9, 7:45 AM</td><td class="px-5 py-2.5 text-sm text-ink-500">Visa ****4523</td><td class="px-5 py-2.5 text-sm">Jane Doe</td><td class="px-5 py-2.5 text-sm font-medium">Lyft</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$19.50</td><td class="px-5 py-2.5 text-sm text-ink-500">Transportation</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">4121</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 8, 4:22 PM</td><td class="px-5 py-2.5 text-sm text-ink-500">Visa ****7702</td><td class="px-5 py-2.5 text-sm">Sarah Chen</td><td class="px-5 py-2.5 text-sm font-medium">Amazon Business</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$234.99</td><td class="px-5 py-2.5 text-sm text-ink-500">Supplies</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">5999</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 8, 1:05 PM</td><td class="px-5 py-2.5 text-sm text-ink-500">MC ****3356</td><td class="px-5 py-2.5 text-sm">Tom Wilson</td><td class="px-5 py-2.5 text-sm font-medium">DoorDash</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$45.80</td><td class="px-5 py-2.5 text-sm text-ink-500">Meals</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">5812</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-ink-300 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-rd-light text-st-rd-dark">Declined</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 7, 6:30 PM</td><td class="px-5 py-2.5 text-sm text-ink-500">MC ****8891</td><td class="px-5 py-2.5 text-sm">Mike Torres</td><td class="px-5 py-2.5 text-sm font-medium">Delta SkyClub</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$59.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Travel</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">4511</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-gl-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 7, 12:15 PM</td><td class="px-5 py-2.5 text-sm text-ink-500">Visa ****4523</td><td class="px-5 py-2.5 text-sm">Jane Doe</td><td class="px-5 py-2.5 text-sm font-medium">Chipotle</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$15.92</td><td class="px-5 py-2.5 text-sm text-ink-500">Meals</td><td class="px-5 py-2.5 text-sm text-ink-400 font-mono">5812</td><td class="px-5 py-2.5 text-center"><svg class="w-4 h-4 text-st-am-base inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Unmatched</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- Pagination -->
+  <div class="flex items-center justify-between mt-4">
+    <div class="text-xs text-ink-400">Showing 1-10 of 47 transactions</div>
+    <div class="flex items-center gap-2">
+      <button class="border border-surface-300 text-ink-700 px-3 py-1.5 rounded-lg text-sm hover:bg-surface-50" disabled>Previous</button>
+      <button class="bg-brand-500 text-white px-3 py-1.5 rounded-lg text-sm font-medium">1</button>
+      <button class="border border-surface-300 text-ink-700 px-3 py-1.5 rounded-lg text-sm hover:bg-surface-50">2</button>
+      <button class="border border-surface-300 text-ink-700 px-3 py-1.5 rounded-lg text-sm hover:bg-surface-50">3</button>
+      <button class="border border-surface-300 text-ink-700 px-3 py-1.5 rounded-lg text-sm hover:bg-surface-50">Next</button>
+    </div>
+    <button class="border border-surface-300 text-ink-700 px-4 py-1.5 rounded-lg text-sm inline-flex items-center gap-1.5 hover:bg-surface-50">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Export CSV
+    </button>
+  </div>
+</div>
+
+<!-- ==================== TAB 3: RECEIPT MATCHING ==================== -->
+<div id="tab-matching" class="tab-page">
+  <div class="grid grid-cols-2 gap-6">
+    <!-- Left: Unmatched Transactions -->
+    <div>
+      <h3 class="text-sm font-semibold text-ink-900 mb-3">Unmatched Transactions</h3>
+      <div class="space-y-2">
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-ink-900">American Airlines</span>
+            <span class="text-sm font-mono font-medium" style="font-variant-numeric:tabular-nums">$567.00</span>
+          </div>
+          <div class="text-xs text-ink-400 mb-3">Mar 9 &middot; MC ****8891 &middot; Mike Torres</div>
+          <button class="bg-brand-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-brand-600">Find Receipt</button>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-ink-900">Office Depot</span>
+            <span class="text-sm font-mono font-medium" style="font-variant-numeric:tabular-nums">$145.67</span>
+          </div>
+          <div class="text-xs text-ink-400 mb-3">Mar 9 &middot; Visa ****7702 &middot; Sarah Chen</div>
+          <button class="bg-brand-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-brand-600">Find Receipt</button>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-ink-900">Chipotle</span>
+            <span class="text-sm font-mono font-medium" style="font-variant-numeric:tabular-nums">$15.92</span>
+          </div>
+          <div class="text-xs text-ink-400 mb-3">Mar 7 &middot; Visa ****4523 &middot; Jane Doe</div>
+          <button class="bg-brand-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-brand-600">Find Receipt</button>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-ink-900">Hilton Garden Inn</span>
+            <span class="text-sm font-mono font-medium" style="font-variant-numeric:tabular-nums">$198.00</span>
+          </div>
+          <div class="text-xs text-ink-400 mb-3">Mar 6 &middot; MC ****8891 &middot; Mike Torres</div>
+          <button class="bg-brand-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-brand-600">Find Receipt</button>
+        </div>
+      </div>
+    </div>
+    <!-- Right: Unmatched Receipts -->
+    <div>
+      <h3 class="text-sm font-semibold text-ink-900 mb-3">Unmatched Receipts</h3>
+      <div class="space-y-2">
+        <div class="bg-white border border-surface-200 rounded-card p-4 flex gap-3">
+          <div class="w-16 h-20 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="text-xxs text-ink-400 uppercase tracking-wide font-semibold mb-1">OCR Extracted</div>
+            <div class="text-sm font-medium text-ink-900">Office Depot #1247</div>
+            <div class="text-xs text-ink-500">$145.67 &middot; Mar 9, 2026</div>
+            <button class="mt-2 border border-surface-300 text-ink-700 px-3 py-1 rounded-lg text-xs font-medium hover:bg-surface-50">Match to Transaction</button>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4 flex gap-3">
+          <div class="w-16 h-20 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="text-xxs text-ink-400 uppercase tracking-wide font-semibold mb-1">OCR Extracted</div>
+            <div class="text-sm font-medium text-ink-900">American Airlines</div>
+            <div class="text-xs text-ink-500">$567.00 &middot; Mar 9, 2026</div>
+            <button class="mt-2 border border-surface-300 text-ink-700 px-3 py-1 rounded-lg text-xs font-medium hover:bg-surface-50">Match to Transaction</button>
+          </div>
+        </div>
+        <div class="bg-white border border-surface-200 rounded-card p-4 flex gap-3">
+          <div class="w-16 h-20 bg-surface-100 rounded-lg flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-ink-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <div class="text-xxs text-ink-400 uppercase tracking-wide font-semibold mb-1">OCR Extracted</div>
+            <div class="text-sm font-medium text-ink-900">Chipotle Mexican Grill</div>
+            <div class="text-xs text-ink-500">$15.92 &middot; Mar 7, 2026</div>
+            <button class="mt-2 border border-surface-300 text-ink-700 px-3 py-1 rounded-lg text-xs font-medium hover:bg-surface-50">Match to Transaction</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Suggested Matches -->
+  <div class="mt-8">
+    <h3 class="text-sm font-semibold text-ink-900 mb-3">Suggested Matches</h3>
+    <div class="space-y-3">
+      <!-- Match 1 -->
+      <div class="bg-white border border-brand-200 rounded-card p-4">
+        <div class="flex items-center gap-4">
+          <div class="flex-1 bg-surface-50 rounded-lg p-3">
+            <div class="text-xxs text-ink-400 uppercase tracking-wide font-semibold mb-1">Transaction</div>
+            <div class="text-sm font-medium text-ink-900">Office Depot &middot; $145.67</div>
+            <div class="text-xs text-ink-400">Mar 9 &middot; Visa ****7702 &middot; Sarah Chen</div>
+          </div>
+          <div class="flex flex-col items-center gap-1 shrink-0 px-2">
+            <div class="text-xs font-semibold text-brand-500">92%</div>
+            <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <div class="text-xxs text-ink-400">confidence</div>
+          </div>
+          <div class="flex-1 bg-surface-50 rounded-lg p-3">
+            <div class="text-xxs text-ink-400 uppercase tracking-wide font-semibold mb-1">Receipt</div>
+            <div class="text-sm font-medium text-ink-900">Office Depot #1247 &middot; $145.67</div>
+            <div class="text-xs text-ink-400">Mar 9, 2026 &middot; Uploaded by Sarah Chen</div>
+          </div>
+          <div class="flex gap-2 shrink-0">
+            <button class="bg-brand-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-brand-600">Confirm Match</button>
+            <button class="border border-surface-300 text-ink-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-surface-50">Reject</button>
+          </div>
+        </div>
+      </div>
+      <!-- Match 2 -->
+      <div class="bg-white border border-brand-200 rounded-card p-4">
+        <div class="flex items-center gap-4">
+          <div class="flex-1 bg-surface-50 rounded-lg p-3">
+            <div class="text-xxs text-ink-400 uppercase tracking-wide font-semibold mb-1">Transaction</div>
+            <div class="text-sm font-medium text-ink-900">American Airlines &middot; $567.00</div>
+            <div class="text-xs text-ink-400">Mar 9 &middot; MC ****8891 &middot; Mike Torres</div>
+          </div>
+          <div class="flex flex-col items-center gap-1 shrink-0 px-2">
+            <div class="text-xs font-semibold text-brand-500">87%</div>
+            <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            <div class="text-xxs text-ink-400">confidence</div>
+          </div>
+          <div class="flex-1 bg-surface-50 rounded-lg p-3">
+            <div class="text-xxs text-ink-400 uppercase tracking-wide font-semibold mb-1">Receipt</div>
+            <div class="text-sm font-medium text-ink-900">American Airlines &middot; $567.00</div>
+            <div class="text-xs text-ink-400">Mar 9, 2026 &middot; Uploaded by Mike Torres</div>
+          </div>
+          <div class="flex gap-2 shrink-0">
+            <button class="bg-brand-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-brand-600">Confirm Match</button>
+            <button class="border border-surface-300 text-ink-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-surface-50">Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 4: RECONCILIATION ==================== -->
+<div id="tab-recon" class="tab-page">
+  <!-- Statement Selector -->
+  <div class="flex items-center gap-3 mb-5">
+    <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 focus:outline-none focus:border-brand-400 w-80">
+      <option>February 2026 Statement — Visa ****4523</option>
+      <option>February 2026 Statement — Visa ****7702</option>
+      <option>February 2026 Statement — MC ****8891</option>
+      <option>January 2026 Statement — Visa ****4523</option>
+    </select>
+    <button class="bg-brand-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-600">Reconcile</button>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Statement Total</div>
+      <div class="text-2xl font-semibold text-ink-900 mt-1 font-mono" style="font-variant-numeric:tabular-nums">$14,567.00</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Matched</div>
+      <div class="text-2xl font-semibold text-st-gl-base mt-1 font-mono" style="font-variant-numeric:tabular-nums">$13,890.00</div>
+      <div class="text-xs text-st-gl-dark mt-0.5">95.4%</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Unmatched</div>
+      <div class="text-2xl font-semibold text-st-am-base mt-1 font-mono" style="font-variant-numeric:tabular-nums">$677.00</div>
+      <div class="text-xs text-st-am-dark mt-0.5">4.6%</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Discrepancies</div>
+      <div class="text-2xl font-semibold text-st-rd-base mt-1">2</div>
+      <div class="text-xs text-st-rd-dark mt-0.5">Needs review</div>
+    </div>
+  </div>
+
+  <!-- Reconciliation Table -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-surface-50 border-b border-surface-200">
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Transaction Date</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Merchant</th>
+          <th class="text-right px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Statement Amt</th>
+          <th class="text-right px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Expense Amt</th>
+          <th class="text-right px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Difference</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 3</td><td class="px-5 py-2.5 text-sm font-medium">Hilton Hotels</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$2,450.00</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$2,450.00</td><td class="px-5 py-2.5 text-sm font-mono text-right text-st-gl-base" style="font-variant-numeric:tabular-nums">$0.00</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 5</td><td class="px-5 py-2.5 text-sm font-medium">United Airlines</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$1,234.00</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$1,234.00</td><td class="px-5 py-2.5 text-sm font-mono text-right text-st-gl-base" style="font-variant-numeric:tabular-nums">$0.00</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 8</td><td class="px-5 py-2.5 text-sm font-medium">Starbucks</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$45.30</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$45.30</td><td class="px-5 py-2.5 text-sm font-mono text-right text-st-gl-base" style="font-variant-numeric:tabular-nums">$0.00</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow bg-st-am-light/30"><td class="px-5 py-2.5 text-sm">Feb 12</td><td class="px-5 py-2.5 text-sm font-medium">Amazon Web Services</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$432.00</td><td class="px-5 py-2.5 text-sm font-mono text-right text-ink-300" style="font-variant-numeric:tabular-nums">--</td><td class="px-5 py-2.5 text-sm font-mono text-right text-st-am-base" style="font-variant-numeric:tabular-nums">$432.00</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Unmatched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 14</td><td class="px-5 py-2.5 text-sm font-medium">Uber</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$67.50</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$67.50</td><td class="px-5 py-2.5 text-sm font-mono text-right text-st-gl-base" style="font-variant-numeric:tabular-nums">$0.00</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 19</td><td class="px-5 py-2.5 text-sm font-medium">Office Depot</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$3,210.00</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$3,210.00</td><td class="px-5 py-2.5 text-sm font-mono text-right text-st-gl-base" style="font-variant-numeric:tabular-nums">$0.00</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+        <tr class="trow bg-st-rd-light/30"><td class="px-5 py-2.5 text-sm">Feb 22</td><td class="px-5 py-2.5 text-sm font-medium">Marriott Hotels</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$245.00</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$232.50</td><td class="px-5 py-2.5 text-sm font-mono text-right text-st-rd-base font-semibold" style="font-variant-numeric:tabular-nums">$12.50</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-rd-light text-st-rd-dark">Discrepancy</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 26</td><td class="px-5 py-2.5 text-sm font-medium">Southwest Airlines</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$6,883.20</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$6,883.20</td><td class="px-5 py-2.5 text-sm font-mono text-right text-st-gl-base" style="font-variant-numeric:tabular-nums">$0.00</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Matched</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="flex items-center gap-3 mt-4">
+    <button class="bg-surface-200 text-ink-400 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed" disabled>Mark as Reconciled</button>
+    <span class="text-xs text-ink-400">Resolve all discrepancies to enable</span>
+    <button class="ml-auto border border-surface-300 text-ink-700 px-4 py-2 rounded-lg text-sm inline-flex items-center gap-1.5 hover:bg-surface-50">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Export Reconciliation Report
+    </button>
+  </div>
+</div>
+
+<!-- ==================== TAB 5: REIMBURSEMENT QUEUE ==================== -->
+<div id="tab-reimburse" class="tab-page">
+  <!-- Action Bar -->
+  <div class="flex items-center gap-3 mb-5">
+    <select class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+      <option>All Statuses</option><option>Pending</option><option>Processing</option><option>Scheduled</option><option>Paid</option><option>Failed</option>
+    </select>
+    <input type="date" value="2026-02-01" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+    <span class="text-xs text-ink-400">to</span>
+    <input type="date" value="2026-03-09" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+    <div class="ml-auto flex gap-2">
+      <button class="bg-brand-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-600">Process Selected</button>
+      <button class="border border-surface-300 text-ink-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-surface-50">Batch Payment</button>
+      <button class="border border-surface-300 text-ink-700 px-4 py-2 rounded-lg text-sm inline-flex items-center gap-1.5 hover:bg-surface-50">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Pending Review</div>
+      <div class="text-2xl font-semibold text-st-am-base mt-1 font-mono" style="font-variant-numeric:tabular-nums">$8,234</div>
+      <div class="text-xs text-ink-400 mt-0.5">5 employees</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Processing</div>
+      <div class="text-2xl font-semibold text-st-bl-base mt-1 font-mono" style="font-variant-numeric:tabular-nums">$3,456</div>
+      <div class="text-xs text-ink-400 mt-0.5">2 employees</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Scheduled</div>
+      <div class="text-2xl font-semibold text-brand-500 mt-1 font-mono" style="font-variant-numeric:tabular-nums">$2,100</div>
+      <div class="text-xs text-ink-400 mt-0.5">3 employees</div>
+    </div>
+    <div class="bg-white border border-surface-200 rounded-card p-5">
+      <div class="text-xxs font-semibold text-ink-400 uppercase tracking-wider">Paid This Month</div>
+      <div class="text-2xl font-semibold text-st-gl-base mt-1 font-mono" style="font-variant-numeric:tabular-nums">$45,678</div>
+      <div class="text-xs text-ink-400 mt-0.5">18 employees</div>
+    </div>
+  </div>
+
+  <!-- Reimbursement Table -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-surface-50 border-b border-surface-200">
+          <th class="text-left px-5 py-2.5 w-8"><input type="checkbox" class="rounded border-surface-300"></th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Employee</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Report(s)</th>
+          <th class="text-right px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Amount</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Method</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Approved</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Status</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Payment Date</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow"><td class="px-5 py-2.5"><input type="checkbox" class="rounded border-surface-300"></td><td class="px-5 py-2.5 text-sm font-medium">Jane Doe</td><td class="px-5 py-2.5 text-sm text-ink-500">March Travel</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$1,245.00</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm text-ink-500">Mar 5</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Pending Review</span></td><td class="px-5 py-2.5 text-sm text-ink-300">&mdash;</td><td class="px-5 py-2.5"><button class="bg-brand-500 text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-brand-600">Process</button></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5"><input type="checkbox" class="rounded border-surface-300"></td><td class="px-5 py-2.5 text-sm font-medium">Mike Torres</td><td class="px-5 py-2.5 text-sm text-ink-500">Feb Client Mtgs</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$890.00</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm text-ink-500">Mar 4</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Processing</span></td><td class="px-5 py-2.5 text-sm text-ink-300">&mdash;</td><td class="px-5 py-2.5"></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5"><input type="checkbox" class="rounded border-surface-300"></td><td class="px-5 py-2.5 text-sm font-medium">Sarah Chen</td><td class="px-5 py-2.5 text-sm text-ink-500">Q1 Supplies</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$456.23</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm text-ink-500">Mar 3</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-brand-50 text-brand-600">Scheduled Mar 10</span></td><td class="px-5 py-2.5 text-sm text-ink-500">Mar 10</td><td class="px-5 py-2.5"></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5"><input type="checkbox" class="rounded border-surface-300"></td><td class="px-5 py-2.5 text-sm font-medium">Tom Wilson</td><td class="px-5 py-2.5 text-sm text-ink-500">Feb Travel</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$2,100.00</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm text-ink-500">Feb 28</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Paid</span></td><td class="px-5 py-2.5 text-sm text-ink-500">Mar 3</td><td class="px-5 py-2.5"></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5"><input type="checkbox" class="rounded border-surface-300"></td><td class="px-5 py-2.5 text-sm font-medium">Lisa Park</td><td class="px-5 py-2.5 text-sm text-ink-500">Jan Conference</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$1,560.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Payroll</td><td class="px-5 py-2.5 text-sm text-ink-500">Feb 25</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Paid</span></td><td class="px-5 py-2.5 text-sm text-ink-500">Mar 1</td><td class="px-5 py-2.5"></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5"><input type="checkbox" class="rounded border-surface-300"></td><td class="px-5 py-2.5 text-sm font-medium">David Kim</td><td class="px-5 py-2.5 text-sm text-ink-500">Feb Meals</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$234.50</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm text-ink-500">Mar 2</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-rd-light text-st-rd-dark">Failed</span></td><td class="px-5 py-2.5 text-sm text-ink-300">&mdash;</td><td class="px-5 py-2.5"><button class="border border-st-rd-base text-st-rd-base px-3 py-1 rounded-lg text-xs font-medium hover:bg-st-rd-light">Retry</button></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5"><input type="checkbox" class="rounded border-surface-300"></td><td class="px-5 py-2.5 text-sm font-medium">Amy Lee</td><td class="px-5 py-2.5 text-sm text-ink-500">March Office</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$189.00</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm text-ink-500">Mar 6</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-am-light text-st-am-dark">Pending Review</span></td><td class="px-5 py-2.5 text-sm text-ink-300">&mdash;</td><td class="px-5 py-2.5"><button class="bg-brand-500 text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-brand-600">Process</button></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5"><input type="checkbox" class="rounded border-surface-300"></td><td class="px-5 py-2.5 text-sm font-medium">Chris Brown</td><td class="px-5 py-2.5 text-sm text-ink-500">Feb Travel</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$3,456.00</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm text-ink-500">Mar 1</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-bl-light text-st-bl-dark">Processing</span></td><td class="px-5 py-2.5 text-sm text-ink-300">&mdash;</td><td class="px-5 py-2.5"></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== TAB 6: PAYMENT HISTORY ==================== -->
+<div id="tab-history" class="tab-page">
+  <!-- Filters -->
+  <div class="flex items-center gap-3 mb-5">
+    <input type="date" value="2026-01-01" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+    <span class="text-xs text-ink-400">to</span>
+    <input type="date" value="2026-03-09" class="border border-surface-300 rounded-lg px-3 py-2 text-sm text-ink-700 focus:outline-none focus:border-brand-400">
+    <div class="relative ml-auto">
+      <svg class="w-4 h-4 text-ink-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <input type="text" placeholder="Search payments..." class="border border-surface-300 rounded-lg pl-9 pr-3 py-2 text-sm text-ink-700 w-56 focus:outline-none focus:border-brand-400">
+    </div>
+  </div>
+
+  <!-- Payment History Table -->
+  <div class="bg-white border border-surface-200 rounded-card overflow-hidden">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-surface-50 border-b border-surface-200">
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Payment Date</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Employee</th>
+          <th class="text-right px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Amount</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Report(s)</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Method</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Reference #</th>
+          <th class="text-left px-5 py-2.5 text-xs font-semibold text-ink-500 uppercase tracking-wide">Status</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-surface-200">
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 7, 2026</td><td class="px-5 py-2.5 text-sm font-medium">Emily Watson</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$2,345.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Feb Travel + Meals</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">ACH-20260307-001</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 5, 2026</td><td class="px-5 py-2.5 text-sm font-medium">Robert Chang</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$1,890.50</td><td class="px-5 py-2.5 text-sm text-ink-500">Q1 Conference</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">ACH-20260305-002</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 3, 2026</td><td class="px-5 py-2.5 text-sm font-medium">Tom Wilson</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$2,100.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Feb Travel</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">ACH-20260303-001</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Mar 1, 2026</td><td class="px-5 py-2.5 text-sm font-medium">Lisa Park</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$1,560.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Jan Conference</td><td class="px-5 py-2.5 text-sm text-ink-500">Payroll</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">PAY-20260301-014</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 28, 2026</td><td class="px-5 py-2.5 text-sm font-medium">Jane Doe</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$3,245.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Feb Travel</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">ACH-20260228-003</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 25, 2026</td><td class="px-5 py-2.5 text-sm font-medium">Sarah Chen</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$678.90</td><td class="px-5 py-2.5 text-sm text-ink-500">Jan Supplies</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">ACH-20260225-001</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 21, 2026</td><td class="px-5 py-2.5 text-sm font-medium">Mike Torres</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$4,120.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Jan Client Mtgs</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">ACH-20260221-002</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 14, 2026</td><td class="px-5 py-2.5 text-sm font-medium">Amy Lee</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$432.25</td><td class="px-5 py-2.5 text-sm text-ink-500">Jan Office</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">ACH-20260214-004</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 7, 2026</td><td class="px-5 py-2.5 text-sm font-medium">Chris Brown</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$5,670.00</td><td class="px-5 py-2.5 text-sm text-ink-500">Jan Travel</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">ACH-20260207-001</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+        <tr class="trow"><td class="px-5 py-2.5 text-sm">Feb 1, 2026</td><td class="px-5 py-2.5 text-sm font-medium">David Kim</td><td class="px-5 py-2.5 text-sm font-mono text-right" style="font-variant-numeric:tabular-nums">$312.80</td><td class="px-5 py-2.5 text-sm text-ink-500">Jan Meals</td><td class="px-5 py-2.5 text-sm text-ink-500">ACH</td><td class="px-5 py-2.5 text-sm font-mono text-ink-400">ACH-20260201-005</td><td class="px-5 py-2.5"><span class="text-xxs font-medium px-2 py-0.5 rounded-full bg-st-gl-light text-st-gl-dark">Completed</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Monthly Totals -->
+  <div class="mt-4 bg-white border border-surface-200 rounded-card p-5">
+    <h4 class="text-sm font-semibold text-ink-900 mb-3">Monthly Totals</h4>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="flex items-center justify-between px-4 py-2 bg-surface-50 rounded-lg">
+        <span class="text-sm text-ink-700">March 2026</span>
+        <span class="text-sm font-mono font-semibold text-ink-900" style="font-variant-numeric:tabular-nums">$7,895.50</span>
+      </div>
+      <div class="flex items-center justify-between px-4 py-2 bg-surface-50 rounded-lg">
+        <span class="text-sm text-ink-700">February 2026</span>
+        <span class="text-sm font-mono font-semibold text-ink-900" style="font-variant-numeric:tabular-nums">$14,458.95</span>
+      </div>
+      <div class="flex items-center justify-between px-4 py-2 bg-surface-50 rounded-lg">
+        <span class="text-sm text-ink-700">January 2026</span>
+        <span class="text-sm font-mono font-semibold text-ink-900" style="font-variant-numeric:tabular-nums">$22,354.45</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- end scrollable content -->
+</main>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('text-brand-500','border-brand-500','font-medium');
+    b.classList.add('text-ink-500','border-transparent');
+  });
+  const page = document.getElementById('tab-' + id);
+  const btn = document.querySelector('[data-tab="' + id + '"]');
+  if (page) page.classList.add('active');
+  if (btn) {
+    btn.classList.add('text-brand-500','border-brand-500','font-medium');
+    btn.classList.remove('text-ink-500','border-transparent');
+  }
+}
+</script>
+</body>
+</html>
