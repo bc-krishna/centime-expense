@@ -68,8 +68,7 @@ Centime Expense is a mid-market corporate expense management solution built on F
 - Payroll integration option (Phase 2)
 
 ### 7. ERP Integration
-- **Launch:** QuickBooks Online, QuickBooks Desktop, Sage Intacct
-- **Fast Follow:** NetSuite, Microsoft Dynamics 365
+- **All at launch:** QuickBooks Online, QuickBooks Desktop, Sage Intacct, NetSuite, Microsoft Dynamics 365
 - Bi-directional sync: master data in, approved expenses out
 - Configurable GL mapping, multi-entity support, error handling
 
@@ -79,13 +78,12 @@ Centime Expense is a mid-market corporate expense management solution built on F
 - Custom report builder with export to CSV/Excel/PDF
 - Scheduled reports via email
 
-### 9. Procurement Crossover
-- **Purchase requests** — Employee-initiated with approval workflows, budget checks, and catalog support
-- **Purchase orders** — Auto-generated from approved requests, PO tracking and change orders
-- **Three-way matching** — PO vs. receipt vs. invoice/expense with tolerance thresholds (Phase 2)
-- **Vendor management** — Vendor directory, preferred vendors, W-9 tracking, spend analytics (Phase 2)
+### 9. Purchase Requisitions & PO Creation
+- **Purchase requisitions** — Employee-initiated with item details, budget checks, and catalog support
+- **Requisition approvals** — Multi-level approval chains, amount-based routing, auto-approve for catalog items
+- **PO creation & posting** — Auto-generate POs from approved requisitions, post to ERP via Centime GL APIs
 - **Budget management** — Department/project budgets, real-time consumption, threshold alerts
-- **Procurement-to-expense bridge** — Card transactions matched to POs, consolidated spend view (Phase 2)
+- *Vendor management, PO matching, and downstream processes handled by Centime AP*
 
 ### 10. Administration & Security
 - SSO (SAML 2.0, OIDC) and SCIM provisioning
@@ -131,9 +129,9 @@ Centime UX (Web + Mobile + White-Label)
 
 | Phase | Scope |
 |-------|-------|
-| **Phase 1 — MVP** | Core expense management, receipt OCR, policy engine, approvals, real-time card feeds, receipt matching, QBO/QBD/Sage Intacct integrations, mobile apps, white-label, ADA compliance, Centime AP reimbursement, attendee tracking, e-receipts, Slack/Teams, purchase requests & POs, budget tracking |
-| **Phase 2 — Fast Follow** | NetSuite + Dynamics 365, SCIM, virtual cards, card controls, GPS mileage, per diem, custom fields, delegation, advanced white-label, VAT/GST tax reclaim, payroll reimbursement, Slack/Teams actionable approvals, three-way matching, vendor management, procurement-to-expense bridge |
-| **Phase 3 — Growth** | AI anomaly detection, multi-entity, international, voice entry, marketplace integrations, blanket POs, vendor scoring |
+| **Phase 1 — MVP** | Core expense management, receipt OCR, policy engine, approvals, real-time card feeds, receipt matching, all 5 ERP integrations (QBO, QBD, Sage Intacct, NetSuite, Dynamics), mobile apps, white-label, ADA compliance, Centime AP reimbursement, attendee tracking, e-receipts, Slack/Teams, purchase requisitions, PO creation/posting, budget tracking |
+| **Phase 2 — Fast Follow** | SCIM, virtual cards, card controls, GPS mileage, per diem, custom fields, delegation, advanced white-label, VAT/GST tax reclaim, payroll reimbursement, Slack/Teams actionable approvals, advanced budgets |
+| **Phase 3 — Growth** | AI anomaly detection, multi-entity, international, voice entry, marketplace integrations |
 | **Phase 4 — Future** | Travel booking, pre-trip approvals, itinerary management |
 
 ## Success Targets

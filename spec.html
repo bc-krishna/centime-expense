@@ -400,79 +400,53 @@
         </div>
       </div>
 
-      <!-- 4.8 Procurement Crossover -->
+      <!-- 4.8 Purchase Requisitions & PO Creation -->
       <div class="bg-white border border-surface-200 rounded-card p-5 mb-4 border-l-4 border-l-gold-300">
-        <div class="flex items-center gap-2 mb-3">
-          <h3 class="text-md font-semibold text-ink-900">4.8 Procurement Crossover</h3>
-          <span class="text-xxs font-medium text-gold-500 bg-gold-100 px-2 py-0.5 rounded-full">NEW</span>
+        <div class="flex items-center gap-2 mb-1">
+          <h3 class="text-md font-semibold text-ink-900">4.8 Purchase Requisitions &amp; PO Creation</h3>
         </div>
+        <p class="text-xs text-ink-400 mb-4 italic">Vendor management, PO matching, and downstream processes handled by Centime AP.</p>
 
-        <div class="grid grid-cols-2 gap-6 mb-4">
+        <div class="grid grid-cols-3 gap-6">
           <div>
-            <div class="sub">4.8.1 Purchase Requests</div>
+            <div class="sub">4.8.1 Purchase Requisitions</div>
             <ul class="feat space-y-1">
               <li>Employee-initiated with item details, quantity, cost, justification</li>
               <li>Catalog-based and free-form requests</li>
               <li>Budget check at request time</li>
               <li>Link to projects, departments, cost centers</li>
               <li>Request templates for frequent items</li>
+              <li>Status tracking (draft → submitted → approved → PO)</li>
             </ul>
           </div>
           <div>
-            <div class="sub">4.8.2 Purchase Orders</div>
+            <div class="sub">4.8.2 Requisition Approvals</div>
             <ul class="feat space-y-1">
-              <li>Auto-generate POs from approved requests</li>
+              <li>Multi-level approval chains</li>
+              <li>Amount-based routing</li>
+              <li>Sequential and parallel paths</li>
+              <li>Auto-approve for catalog items below threshold</li>
+              <li>Escalation rules &middot; Audit trail</li>
+            </ul>
+          </div>
+          <div>
+            <div class="sub">4.8.3 PO Creation &amp; Posting</div>
+            <ul class="feat space-y-1">
+              <li>Auto-generate POs from approved requisitions</li>
               <li>Configurable PO numbering</li>
-              <li>PO approval workflows (amount-based)</li>
-              <li>Status tracking (draft → approved → sent → received → closed)</li>
-              <li>Email PO to vendor &middot; Change orders with re-approval</li>
+              <li>Post to ERP via Centime GL APIs</li>
+              <li>Email PO to vendor</li>
+              <li>Change orders with re-approval</li>
             </ul>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-6 mb-4">
-          <div>
-            <div class="sub">4.8.3 Receiving &amp; Three-Way Matching <span class="text-xxs text-ink-400">(Phase 2)</span></div>
-            <ul class="feat space-y-1">
-              <li>Full or partial receipt confirmation</li>
-              <li>Three-way match: PO ↔ Receipt ↔ Invoice/Expense</li>
-              <li>Tolerance thresholds for variances</li>
-              <li>Exception handling &middot; Receiving notes</li>
-            </ul>
-          </div>
-          <div>
-            <div class="sub">4.8.4 Vendor Management <span class="text-xxs text-ink-400">(Phase 2)</span></div>
-            <ul class="feat space-y-1">
-              <li>Vendor directory with W-9 tracking</li>
-              <li>Preferred vendor lists by category</li>
-              <li>Performance tracking (delivery, quality, pricing)</li>
-              <li>Vendor onboarding workflow &middot; Spend analytics</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-6">
-          <div>
-            <div class="sub">4.8.5 Budget Management</div>
-            <ul class="feat space-y-1">
-              <li>Department and project budgets (monthly, quarterly, annual)</li>
-              <li>Real-time consumption tracking (committed + spent)</li>
-              <li>Alerts at 75%, 90%, 100% thresholds</li>
-              <li>Budget vs. actual reporting</li>
-              <li>Multi-level hierarchy (company → division → dept → project)</li>
-            </ul>
-          </div>
-          <div>
-            <div class="sub">4.8.6 Spend Controls &amp; 4.8.7 Procurement-Expense Bridge</div>
-            <ul class="feat space-y-1">
-              <li>Spending authority matrix</li>
-              <li>Pre-approved vendor/item catalogs</li>
-              <li>Blanket POs for recurring relationships</li>
-              <li>Card transactions auto-matched to POs</li>
-              <li>Consolidated spend view: procurement + card + out-of-pocket</li>
-              <li>Unified approval dashboards</li>
-            </ul>
-          </div>
+        <div class="mt-4 pt-4 border-t border-surface-100">
+          <div class="sub">4.8.4 Budget Management</div>
+          <ul class="feat space-y-1">
+            <li>Department and project budgets (monthly, quarterly, annual) &middot; Real-time consumption (committed + spent) &middot; Alerts at 75%, 90%, 100%</li>
+            <li>Budget vs. actual reporting &middot; Multi-level hierarchy (company → division → dept → project)</li>
+          </ul>
         </div>
       </div>
 
@@ -512,8 +486,8 @@
             <tr><td class="px-5 py-2 text-ink-700">QuickBooks Online</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-white bg-brand-500 px-2 py-0.5 rounded">P0 &mdash; Launch</span></td><td class="px-5 py-2 text-ink-700">API (REST)</td></tr>
             <tr><td class="px-5 py-2 text-ink-700">QuickBooks Desktop</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-white bg-brand-500 px-2 py-0.5 rounded">P0 &mdash; Launch</span></td><td class="px-5 py-2 text-ink-700">Web Connector / SDK</td></tr>
             <tr><td class="px-5 py-2 text-ink-700">Sage Intacct</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-white bg-brand-500 px-2 py-0.5 rounded">P0 &mdash; Launch</span></td><td class="px-5 py-2 text-ink-700">API (REST/SOAP)</td></tr>
-            <tr><td class="px-5 py-2 text-ink-700">Oracle NetSuite</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-brand-500 bg-brand-50 px-2 py-0.5 rounded">P1 &mdash; Fast Follow</span></td><td class="px-5 py-2 text-ink-700">SuiteTalk API / RESTlet</td></tr>
-            <tr><td class="px-5 py-2 text-ink-700">Microsoft Dynamics 365</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-brand-500 bg-brand-50 px-2 py-0.5 rounded">P1 &mdash; Fast Follow</span></td><td class="px-5 py-2 text-ink-700">Dataverse API / OData</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Oracle NetSuite</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-white bg-brand-500 px-2 py-0.5 rounded">P0 &mdash; Launch</span></td><td class="px-5 py-2 text-ink-700">SuiteTalk API / RESTlet</td></tr>
+            <tr><td class="px-5 py-2 text-ink-700">Microsoft Dynamics 365</td><td class="px-5 py-2"><span class="text-xxs font-semibold text-white bg-brand-500 px-2 py-0.5 rounded">P0 &mdash; Launch</span></td><td class="px-5 py-2 text-ink-700">Dataverse API / OData</td></tr>
           </tbody>
         </table>
       </div>
@@ -827,7 +801,7 @@
               <li>Real-time card feed (Visa + MC)</li>
               <li>Receipt-to-transaction matching</li>
               <li>Corporate + personal card support</li>
-              <li>QBO, QBD, Sage Intacct integrations</li>
+              <li>All 5 ERP integrations (QBO, QBD, Sage Intacct, NetSuite, Dynamics)</li>
               <li>Attendee tracking</li>
               <li>E-receipt integrations</li>
             </ul>
@@ -841,7 +815,7 @@
               <li>Centime AP reimbursement integration</li>
               <li>Lost receipt affidavit</li>
               <li>Slack/Teams notifications + receipts</li>
-              <li>Purchase requests, POs, budget tracking</li>
+              <li>Purchase requisitions, PO creation/posting, budgets</li>
             </ul>
           </div>
         </div>
@@ -849,7 +823,6 @@
           <div class="flex items-center gap-2 mb-2"><span class="text-xs font-bold text-white bg-brand-400 px-2 py-0.5 rounded">Phase 2</span><span class="text-sm font-semibold text-ink-900">Fast Follow</span></div>
           <div class="grid grid-cols-2 gap-x-6">
             <ul class="feat space-y-1">
-              <li>NetSuite + Dynamics 365 integrations</li>
               <li>SCIM user provisioning</li>
               <li>Advanced reporting / report builder</li>
               <li>Virtual card issuance</li>
@@ -864,10 +837,7 @@
               <li>VAT/GST capture + tax reclaim</li>
               <li>Payroll integration for reimbursement</li>
               <li>Slack/Teams actionable approvals</li>
-              <li>Three-way matching (PO ↔ receipt ↔ invoice)</li>
-              <li>Vendor management + preferred catalogs</li>
-              <li>Advanced budgets (multi-level, carry-forward)</li>
-              <li>Procurement-to-expense bridge</li>
+              <li>Advanced budget management (multi-level hierarchy)</li>
             </ul>
           </div>
         </div>
@@ -876,7 +846,6 @@
           <ul class="feat space-y-1">
             <li>AI anomaly detection &middot; Multi-entity/subsidiary &middot; International (multi-language, multi-currency reimbursement)</li>
             <li>Voice expense entry &middot; Advanced analytics + benchmarking &middot; Marketplace integrations (Uber, Lyft, airlines, hotels)</li>
-            <li>Blanket POs &middot; Vendor performance scoring</li>
           </ul>
         </div>
         <div class="bg-white border border-surface-200 rounded-card p-5 border-l-4 border-l-surface-200">

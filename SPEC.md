@@ -230,57 +230,40 @@ Centime Expense is a corporate expense management solution built in partnership 
 - **Microsoft Teams** — Approval notifications, receipt submission via Teams bot, approve/reject from Teams
 - Configurable bot commands (submit expense, check status, view pending approvals)
 
-### 4.8 Procurement Crossover
+### 4.8 Procurement — Purchase Requisition & PO Creation
 
-#### 4.8.1 Purchase Requests
+*Note: Vendor management, PO matching, receiving, and downstream procurement processes are handled by Centime AP. This module focuses on the upstream requisition-to-PO workflow.*
+
+#### 4.8.1 Purchase Requisitions
 - Employee-initiated purchase requests with item details, quantity, estimated cost, and business justification
 - Catalog-based requests (pre-approved items/vendors) and free-form requests
 - Budget check at request time (warn or block if over budget)
 - Link purchase requests to projects, departments, or cost centers
 - Request templates for frequently ordered items
+- Requisition status tracking (draft, submitted, approved, rejected, converted to PO)
 
-#### 4.8.2 Purchase Orders
-- Auto-generate POs from approved purchase requests
+#### 4.8.2 Requisition Approval Workflows
+- Multi-level approval chains (separate from expense approval)
+- Amount-based routing (e.g., < $1,000 manager, > $1,000 department head + finance)
+- Sequential and parallel approval paths
+- Auto-approval for pre-approved catalog items below threshold
+- Escalation rules and timeout handling
+- Approval audit trail
+
+#### 4.8.3 Purchase Order Creation & Posting
+- Auto-generate POs from approved requisitions
 - PO numbering with configurable sequences
-- PO approval workflows (separate from expense approval — amount-based routing)
-- PO status tracking (draft, pending approval, approved, sent to vendor, partially received, closed)
+- PO posting to ERP via Centime GL APIs (journal entries or PO documents)
 - Email PO to vendor directly from the system
 - PO change orders and amendments with re-approval
+- PO status tracking (draft, approved, posted to ERP, sent to vendor)
 
-#### 4.8.3 Receiving & Three-Way Matching
-- Goods/services received confirmation (full or partial receipt)
-- Three-way match: PO ↔ Receipt/Packing Slip ↔ Invoice/Expense
-- Tolerance thresholds for price and quantity variances
-- Exception handling for mismatches (auto-flag for review)
-- Receiving notes and attachments
-
-#### 4.8.4 Vendor Management
-- Vendor directory with contact information, payment terms, and tax IDs (W-9 tracking)
-- Preferred vendor lists by category
-- Vendor performance tracking (on-time delivery, quality, pricing)
-- Vendor onboarding workflow with document collection
-- Vendor spend analytics
-
-#### 4.8.5 Budget Management
+#### 4.8.4 Budget Management
 - Department and project budgets with period controls (monthly, quarterly, annual)
 - Real-time budget consumption tracking (committed + spent)
 - Budget alerts at configurable thresholds (e.g., 75%, 90%, 100%)
 - Budget vs. actual reporting
-- Budget carry-forward and adjustment workflows
 - Multi-level budget hierarchy (company → division → department → project)
-
-#### 4.8.6 Spend Controls
-- Spending authority matrix (who can approve what amounts)
-- Category-based spend limits
-- Pre-approved vendor/item catalogs to streamline common purchases
-- Blanket POs for recurring vendor relationships
-- Spot-buy tracking for unplanned purchases
-
-#### 4.8.7 Procurement-to-Expense Bridge
-- Card transactions automatically matched to POs where applicable
-- Expense line items linked to purchase orders for full audit trail
-- Consolidated spend view: procurement spend + card spend + out-of-pocket
-- Unified approval dashboards for both purchase requests and expense reports
 
 ### 4.9 Tax Compliance (Phase 2)
 
@@ -307,8 +290,8 @@ Centime Expense is a corporate expense management solution built in partnership 
 | QuickBooks Online | P0 — Launch | API (REST) |
 | QuickBooks Desktop | P0 — Launch | Web Connector / SDK |
 | Sage Intacct | P0 — Launch | API (REST/SOAP) |
-| Oracle NetSuite | P1 — Fast Follow | SuiteTalk API / RESTlet |
-| Microsoft Dynamics 365 | P1 — Fast Follow | Dataverse API / OData |
+| Oracle NetSuite | P0 — Launch | SuiteTalk API / RESTlet |
+| Microsoft Dynamics 365 | P0 — Launch | Dataverse API / OData |
 
 ### 5.2 Integration Data Flows
 
@@ -604,6 +587,8 @@ Centime Expense is a corporate expense management solution built in partnership 
 - QuickBooks Online integration
 - QuickBooks Desktop integration
 - Sage Intacct integration
+- Oracle NetSuite integration
+- Microsoft Dynamics 365 integration
 - Mobile app (iOS + Android)
 - Web app (responsive)
 - ADA/WCAG 2.1 AA compliance
@@ -615,12 +600,10 @@ Centime Expense is a corporate expense management solution built in partnership 
 - E-receipt integrations (Uber, Lyft, airlines, hotels)
 - Lost receipt affidavit workflow
 - Slack and Microsoft Teams notifications and receipt submission
-- Purchase requests and PO creation (core procurement)
+- Purchase requisitions, approval workflows, and PO creation/posting
 - Budget tracking (department and project level)
 
 ### Phase 2 — Fast Follow
-- NetSuite integration
-- Microsoft Dynamics 365 integration
 - SCIM user provisioning
 - Advanced reporting / report builder
 - Virtual card issuance
@@ -633,10 +616,7 @@ Centime Expense is a corporate expense management solution built in partnership 
 - VAT/GST capture and tax reclaim workflows
 - Payroll integration for reimbursement
 - Slack/Teams actionable approvals (approve/reject from bot)
-- Three-way matching (PO ↔ receipt ↔ invoice)
-- Vendor management and preferred vendor catalogs
-- Advanced budget management (multi-level hierarchy, carry-forward)
-- Procurement-to-expense bridge (card transactions matched to POs)
+- Advanced budget management (multi-level hierarchy)
 
 ### Phase 3 — Growth
 - AI-powered anomaly detection
@@ -645,8 +625,6 @@ Centime Expense is a corporate expense management solution built in partnership 
 - Voice-based expense entry
 - Advanced analytics and benchmarking
 - Marketplace integrations (direct booking data from Uber, Lyft, airlines, hotels)
-- Blanket POs and recurring vendor relationships
-- Vendor performance scoring
 
 ### Phase 4 — Future
 - Travel booking integration
@@ -834,12 +812,10 @@ Centime Expense is a corporate expense management solution built in partnership 
 |------|-----------|
 | Active User | A user who submits, approves, or has card transactions in a calendar month |
 | BFF | Backend for Frontend — middleware layer between UX and APIs |
-| Blanket PO | A standing purchase order for recurring purchases from a vendor over a set period |
 | Interchange | Fee paid by merchant's bank to cardholder's bank on card transactions |
 | MCC | Merchant Category Code — 4-digit code classifying business type |
 | OCR | Optical Character Recognition — extracting text from images |
 | PO | Purchase Order — formal document authorizing a purchase from a vendor |
 | RTN | Real-Time Notifications — Visa's real-time transaction notification service |
 | T&E | Travel & Entertainment |
-| Three-way match | Verification process comparing PO, goods receipt, and vendor invoice |
 | White-label | Solution branded as the partner's own product |
